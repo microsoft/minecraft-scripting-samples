@@ -3,11 +3,11 @@ page_type: sample
 author: mammerla
 description: A basic Hello World example of developing Minecraft scripts using TypeScript and a build process.
 ms.author: mikeam@microsoft.com
-ms.date: 03/01/2022
+ms.date: 04/01/2022
 languages:
-- json
+  - typescript
 products:
-- minecraft
+  - minecraft
 ---
 
 # Minecraft TypeScript Starter Project
@@ -36,27 +36,27 @@ Visit the [Visual Studio Code website](https://code.visualstudio.com) and instal
 
 1. Open a Windows Terminal or PowerShell window and change the working directory to your **cotta** folder:
 
-    ```powershell
-    cd c:\projects\cotta\
-    ```
+   ```powershell
+   cd c:\projects\cotta\
+   ```
 
 1. Use NPM to install our tools:
 
-    ```powershell
-    npm i
-    ```
+   ```powershell
+   npm i
+   ```
 
 1. When that's done, enter:
 
-    ```powershell
-    npm i gulp-cli --global
-    ```
+   ```powershell
+   npm i gulp-cli --global
+   ```
 
 1. Use this shortcut command to open the project in Visual Studio Code:
 
-    ```powershell
-    code .
-    ```
+   ```powershell
+   code .
+   ```
 
 It might also ask you to install the Minecraft Debugger and Blockception's Visual Studio Code plugin, which are plugins to Visual Studio Code that can help with Minecraft development. Go ahead and do that, if you haven't already.
 
@@ -166,10 +166,10 @@ Note that we wait until `START_TICK` (100 ticks in) before the world is actually
 
 Within the initialize function, we run commands that:
 
-* Clear out any existing mobs near the player in the world.
-* Set up a scoreboard objective for overall Level of the player, meaning the number of terracotta breaks they have
-* Give the current player a diamond sword and some dirty dirt
-* Use chat to give the player an instructional message
+- Clear out any existing mobs near the player in the world.
+- Set up a scoreboard objective for overall Level of the player, meaning the number of terracotta breaks they have
+- Give the current player a diamond sword and some dirty dirt
+- Use chat to give the player an instructional message
 
 Now, let's run the code. This time, we're going to run gulp in "watch mode" - meaning it will just sit in the background and watch for changes, and if they happen, they will automatically compile and deploy to the Minecraft folder. This way, we won't have to worry about separately compiling every time we make a change to code.
 
@@ -274,27 +274,27 @@ const ARENA_Z_OFFSET = 0;
 Finally, within `initializeBreakTheTerracotta`, let's add our arena initialization beneath the `overworld.runCommand("say BREAK THE TERRACOTTA!");` line of code:
 
 ```typescript
-  Utilities.fillBlock(
-    MinecraftBlockTypes.air,
-    ARENA_X_OFFSET - ARENA_X_SIZE / 2 + 1,
-    ARENA_Y_OFFSET,
-    ARENA_Z_OFFSET - ARENA_Z_SIZE / 2 + 1,
-    ARENA_X_OFFSET + ARENA_X_SIZE / 2 - 1,
-    ARENA_Y_OFFSET + 10,
-    ARENA_Z_OFFSET + ARENA_Z_SIZE / 2 - 1
-  );
+Utilities.fillBlock(
+  MinecraftBlockTypes.air,
+  ARENA_X_OFFSET - ARENA_X_SIZE / 2 + 1,
+  ARENA_Y_OFFSET,
+  ARENA_Z_OFFSET - ARENA_Z_SIZE / 2 + 1,
+  ARENA_X_OFFSET + ARENA_X_SIZE / 2 - 1,
+  ARENA_Y_OFFSET + 10,
+  ARENA_Z_OFFSET + ARENA_Z_SIZE / 2 - 1
+);
 
-  Utilities.fourWalls(
-    MinecraftBlockTypes.cobblestone,
-    ARENA_X_OFFSET - ARENA_X_SIZE / 2,
-    ARENA_Y_OFFSET,
-    ARENA_Z_OFFSET - ARENA_Z_SIZE / 2,
-    ARENA_X_OFFSET + ARENA_X_SIZE / 2,
-    ARENA_Y_OFFSET + 10,
-    ARENA_Z_OFFSET + ARENA_Z_SIZE / 2
-  );
+Utilities.fourWalls(
+  MinecraftBlockTypes.cobblestone,
+  ARENA_X_OFFSET - ARENA_X_SIZE / 2,
+  ARENA_Y_OFFSET,
+  ARENA_Z_OFFSET - ARENA_Z_SIZE / 2,
+  ARENA_X_OFFSET + ARENA_X_SIZE / 2,
+  ARENA_Y_OFFSET + 10,
+  ARENA_Z_OFFSET + ARENA_Z_SIZE / 2
+);
 
-  overworld.runCommand("tp @p " + String(ARENA_X_OFFSET - 3) + " " + ARENA_Y_OFFSET + " " + String(ARENA_Z_OFFSET - 3));
+overworld.runCommand("tp @p " + String(ARENA_X_OFFSET - 3) + " " + ARENA_Y_OFFSET + " " + String(ARENA_Z_OFFSET - 3));
 ```
 
 The first line just fills a cuboid with air - basically clearing out the arena of any previous items. The second line re-installs and adds four walls of cobblestone.
@@ -317,20 +317,20 @@ let spawnCountdown = 1;
 Add the following to the `gameTick` function, beneath the `curTick++` line of code:
 
 ```typescript
- if (curTick > START_TICK && curTick % 20 === 0) {
-    let overworld = world.getDimension("overworld");
+if (curTick > START_TICK && curTick % 20 === 0) {
+  let overworld = world.getDimension("overworld");
 
-    // no terracotta exists, and we're waiting to spawn a new one.
-    if (spawnCountdown > 0) {
-      spawnCountdown--;
+  // no terracotta exists, and we're waiting to spawn a new one.
+  if (spawnCountdown > 0) {
+    spawnCountdown--;
 
-      if (spawnCountdown <= 0) {
-        spawnNewTerracotta();
-      }
-    } else {
-      checkForTerracotta();
+    if (spawnCountdown <= 0) {
+      spawnNewTerracotta();
     }
+  } else {
+    checkForTerracotta();
   }
+}
 ```
 
 Now add the `spawnNewTerracotta()` and `checkForTerracotta()` functions after the last function and before the `world.events.tick.subscribe(gameTick);` line of code:
@@ -402,10 +402,10 @@ This function will spawn 1-2 zombies within the arena, at a random location. You
 Let's call that function within our `gameTick` method:
 
 ```typescript
-  let spawnInterval = Math.ceil(200 / ((score + 1) / 3));
-  if (curTick > START_TICK && curTick % spawnInterval === 0) {
-    spawnMobs();
-  }
+let spawnInterval = Math.ceil(200 / ((score + 1) / 3));
+if (curTick > START_TICK && curTick % spawnInterval === 0) {
+  spawnMobs();
+}
 ```
 
 For gameplay, we want mobs to spawn more frequently as your score goes up. To do this, the frequency at which `spawnMobs` is called depends on the `spawnInterval` variable. `spawnInterval` is the span of time between spawning new mobs. Because we divide this interval by our current score, this means that as our score goes up, the interval of time between spawning mobs gets shorter. This makes the challenge harder over time.
@@ -437,9 +437,9 @@ function addFuzzyLeaves() {
 And call that function in your gameTick() function:
 
 ```typescript
-  if (curTick > START_TICK && curTick % 29 === 0) {
-    addFuzzyLeaves();
-  }
+if (curTick > START_TICK && curTick % 29 === 0) {
+  addFuzzyLeaves();
+}
 ```
 
 You may wonder why the interval here is 29. The main idea was to select a number to avoid the chance that on a particular tick we do everything at once (create new leaves, spawn mobs AND check terracotta state), so we try to have offset schedules for all of these different game activities.
@@ -454,6 +454,6 @@ Like the randomly spawning leaves, you can see how you can add different gamepla
 
 ## Manifest
 
--[gulpfile.js](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/gulpfile.js): This file contains build instructions for Gulp, for building out TypeScript code.
--[scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/scripts): This contains all of your TypeScript files, that will be compiled and built into your projects.
--[behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/scripts): This contains resources and JSON files that define your behavior pack.
+- [gulpfile.js](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/gulpfile.js): This file contains build instructions for Gulp, for building out TypeScript code.
+- [scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/scripts): This contains all of your TypeScript files, that will be compiled and built into your projects.
+- [behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/behavior_packs): This contains resources and JSON files that define your behavior pack.
