@@ -1,8 +1,8 @@
 {
-  "name": "scripting-starter",
+  "name": "howto-gallery",
   "version": "0.1.0",
-  "productName": "Minecraft TypeScript Starter Project",
-  "description": "Minecraft TypeScript Starter Project",
+  "productName": "Minecraft TypeScript How-to Gallery",
+  "description": "Minecraft TypeScript How-to Gallery",
   "private": true,
   "devDependencies": {
     "@types/mojang-gametest": "^0.1.3",
