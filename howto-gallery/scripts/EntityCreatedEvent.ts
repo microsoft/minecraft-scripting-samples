@@ -2,9 +2,15 @@ import * as mc from "mojang-minecraft";
 
 let entityCreatedCallbacks: ((arg: mc.EntityCreateEvent) => void)[] = [];
 
-/// https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/entitycreateeventsignal#subscribe
-/// https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/entitycreateevent
-/// Registers and contains an entity created event handler
+const overworld = mc.world.getDimension("overworld");
+
+/**
+ * Registers and contains an entity created event handler.
+ * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
+ * @param {mc.Location} location Location to center this sample code around.
+ * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/entitycreateeventsignal#subscribe
+ * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/entitycreateevent
+ */
 export function runEntityCreatedEvent(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
   // register a new function that is called when a new entity is created.
   const entityCreatedCallback = mc.world.events.entityCreate.subscribe((entityEvent: mc.EntityCreateEvent) => {
@@ -19,17 +25,23 @@ export function runEntityCreatedEvent(log: (message: string, status?: number) =>
   entityCreatedCallbacks.push(entityCreatedCallback);
 }
 
-// https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/dimension#spawnentity
-// a simple function to create a horse
+/**
+ * A simple function to create a horse.
+ * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
+ * @param {mc.Location} location Location to center this sample code around.
+ * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/dimension#spawnentity
+ */
 export function createOldHorse(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
-  const overworld = mc.world.getDimension("overworld");
-
   // create a horse and trigger the 'ageable_grow_up' event, ensuring the horse is created as an adult
   overworld.spawnEntity("minecraft:horse<minecraft:ageable_grow_up>", targetLocation);
 }
 
-// https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/entitycreateeventsignal#unsubscribe
-// clean up after ourselves and remove an event.
+/**
+ * Clean up after ourselves and remove an event.
+ * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
+ * @param {mc.Location} location Location to center this sample code around.
+ * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/entitycreateeventsignal#unsubscribe
+ */
 export function unsubscribeEntityCreatedEvent(
   log: (message: string, status?: number) => void,
   targetLocation: mc.Location

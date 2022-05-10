@@ -13,6 +13,7 @@ const del = require("del");
 const os = require("os");
 const spawn = require("child_process").spawn;
 const sourcemaps = require("gulp-sourcemaps");
+const snippetsBuilder = require("./tools/gulp-snippets");
 
 const worldsFolderName = useMinecraftDedicatedServer ? "worlds" : "minecraftWorlds";
 
@@ -301,6 +302,10 @@ function startServer(callbackFunction) {
   callbackFunction();
 }
 
+function buildSnippets() {
+  return gulp.src("scripts/**/*.ts").pipe(snippetsBuilder());
+}
+
 exports.clean_build = clean_build;
 exports.copy_behavior_packs = copy_behavior_packs;
 exports.copy_resource_packs = copy_resource_packs;
@@ -321,3 +326,4 @@ exports.updateworld = gulp.series(
 );
 exports.ingestworld = gulp.series(clean_dev_world_backup, backup_dev_world, clean_dev_world, ingest_localmc_world);
 exports.updateconfig = gulp.series(clean_localmc_config, deploy_localmc_config);
+exports.buildsnippets = gulp.series(buildSnippets);

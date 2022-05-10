@@ -1,7 +1,27 @@
 import * as mc from "mojang-minecraft";
 
-import * as ece from "./EntityCreatedEvent";
-import * as spawnItem from "./SpawnItem";
+import * as sdf1 from "./EntityCreatedEvent";
+import * as sdf2 from "./SpawnItem";
+import * as sdf3 from "./CreateExplosion";
+import * as sdf4 from "./CreateItemStacks";
+import * as sdf5 from "./CreateMobs";
+import * as sdf6 from "./PistonActivateEvent";
+import * as sdf7 from "./TickEvent";
+
+const mojangMinecraftFuncs: {
+  [name: string]: ((log: (message: string, status?: number) => void, location: mc.Location) => void)[];
+} = {
+  runEntityCreatedEvent: [sdf1.runEntityCreatedEvent, sdf1.createOldHorse, sdf1.unsubscribeEntityCreatedEvent],
+  createOldHorse: [sdf1.createOldHorse],
+  spawnItem: [sdf2.spawnItem, sdf2.testThatEntityIsFeatherItem],
+  createNoBlockExplosion: [sdf3.createExplosion],
+  createFireAndWaterExplosions: [sdf3.createFireAndWaterExplosions],
+  createExplosion: [sdf3.createExplosion],
+  itemStacks: [sdf4.itemStacks],
+  quickFoxLazyDog: [sdf5.quickFoxLazyDog],
+  pistonEvent: [sdf6.pistonEvent],
+  trapTick: [sdf7.trapTick],
+};
 
 let tickCount = 0;
 
@@ -10,14 +30,6 @@ const pendingFuncs: {
   func: (log: (message: string, status?: number) => void, location: mc.Location) => void;
   location: mc.Location;
 }[] = [];
-
-const sampleFuncs: {
-  [name: string]: ((log: (message: string, status?: number) => void, location: mc.Location) => void)[];
-} = {
-  runEntityCreatedEvent: [ece.runEntityCreatedEvent, ece.createOldHorse, ece.unsubscribeEntityCreatedEvent],
-  createOldHorse: [ece.createOldHorse],
-  spawnItem: [spawnItem.spawnItem, spawnItem.testThatEntityIsFeatherItem],
-};
 
 function gameplayLogger(message: string, status?: number) {
   if (status !== undefined && status > 0) {
@@ -44,13 +56,13 @@ function newChatMessage(chatEvent: mc.ChatEvent) {
     }
 
     const nearbyBlockLoc = nearbyBlock.location;
-    const nearbyLoc = new mc.Location(nearbyBlockLoc.x, nearbyBlockLoc.y, nearbyBlockLoc.z);
+    const nearbyLoc = new mc.Location(nearbyBlockLoc.x, nearbyBlockLoc.y + 1, nearbyBlockLoc.z);
 
     const sampleId = message.substring(6);
 
-    for (const sampleFuncKey in sampleFuncs) {
+    for (const sampleFuncKey in mojangMinecraftFuncs) {
       if (sampleFuncKey.toLowerCase() === sampleId) {
-        let foo = sampleFuncs[sampleFuncKey];
+        let foo = mojangMinecraftFuncs[sampleFuncKey];
 
         runSample(sampleFuncKey + tickCount, foo, nearbyLoc);
 
