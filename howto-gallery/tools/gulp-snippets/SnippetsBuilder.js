@@ -12,6 +12,8 @@ class SnippetsBuilder {
   _targetFolderPath;
   _snippets = [];
   _snippetsByModules = {};
+  _scriptLibaryMainCode = "";
+  _libraryCode = {};
 
   constructor(targetFolderPath) {
     if (!targetFolderPath.endsWith("/") && !targetFolderPath.endsWith("\\")) {
@@ -26,6 +28,26 @@ class SnippetsBuilder {
   }
 
   resolve(filePath, content) {
+    let filePathLower = filePath.toLowerCase();
+
+    if (filePathLower.indexOf("samplemanager.") >= 0) {
+      this._scriptLibaryMainCode = this.stripLinesContaining(content, "import * as ");
+      this._scriptLibaryMainCode = this.stripLinesContaining(this._scriptLibaryMainCode, "console.");
+    } else if (filePathLower.endsWith("samplelibrary.ts")) {
+      let lastSlash = Math.max(filePathLower.lastIndexOf("/"), filePathLower.lastIndexOf("\\"));
+
+      if (lastSlash >= 0) {
+        let libraryContent = content.replace(/sdf\d{1,4}\./g, "");
+        libraryContent = libraryContent.replace(/sm\./g, "");
+        libraryContent = this.stripLinesContaining(libraryContent, "import * as sdf");
+        libraryContent = this.stripLinesContaining(libraryContent, "import * as mc ");
+        libraryContent = this.stripLinesContaining(libraryContent, "import SampleManager from ");
+
+        this._libraryCode["mojang-" + filePathLower.substring(lastSlash + 1, filePathLower.length - 16)] =
+          libraryContent;
+      }
+    }
+
     let seeLinkStart = content.indexOf("@see ");
 
     while (seeLinkStart >= 0) {
@@ -43,38 +65,51 @@ class SnippetsBuilder {
           let urlSegments = urlLink.split("/");
 
           if (urlSegments.length >= 2 && urlSegments[0].startsWith("mojang-")) {
-            let nextFunction = content.indexOf("export function", endOfSeeLinkLine);
+            let nextExport = content.indexOf("export ", endOfSeeLinkLine);
 
-            if (nextFunction >= 0) {
-              let firstParen = content.indexOf("(", nextFunction);
-              let endOfFunction = content.indexOf("\r\n}", nextFunction);
+            if (nextExport >= 0) {
+              let nextFunction = content.indexOf(" function", nextExport);
 
-              if (endOfFunction > firstParen && firstParen > nextFunction) {
-                let name = content.substring(nextFunction + 16, firstParen);
-                let functionCode = content.substring(nextFunction, endOfFunction + 3);
+              if (nextFunction >= 0) {
+                let firstParen = content.indexOf("(", nextFunction);
+                let endOfFunction = content.indexOf("\r\n}", nextFunction);
 
-                let firstBrace = functionCode.indexOf("{");
+                if (endOfFunction > firstParen && firstParen > nextFunction) {
+                  let name = content.substring(nextFunction + 10, firstParen);
+                  let functionCode = content.substring(nextExport, endOfFunction + 3);
 
-                if (firstBrace >= 0) {
-                  let codeSampleCore = functionCode.substring(firstBrace + 3, functionCode.length - 3);
+                  let firstBrace = functionCode.indexOf("{");
 
-                  let cs = new CodeSnippet();
-                  cs.name = name;
-                  cs.segments = urlSegments;
-                  cs.function = functionCode;
-                  cs.codeSampleCore = codeSampleCore;
+                  if (firstBrace >= 0) {
+                    let codeSampleCore = functionCode.substring(firstBrace + 3, functionCode.length - 3);
 
-                  this._snippets.push(cs);
+                    let cs = new CodeSnippet();
+                    cs.name = name;
+                    cs.segments = urlSegments;
+                    cs.function = functionCode;
+                    cs.codeSampleCore = codeSampleCore;
 
-                  if (!this._snippetsByModules[urlSegments[0]]) {
-                    this._snippetsByModules[urlSegments[0]] = [];
+                    this._snippets.push(cs);
+
+                    if (!this._snippetsByModules[urlSegments[0]]) {
+                      this._snippetsByModules[urlSegments[0]] = [];
+                    }
+
+                    this._snippetsByModules[urlSegments[0]].push(cs);
+
+                    // console.log("Snippet '" + name + "' discovered for " + urlSegments.join("."));
+
+                    let localUrlSegments = Array.from(urlSegments);
+
+                    if (localUrlSegments[0] === localUrlSegments[1]) {
+                      localUrlSegments.shift();
+                    }
+
+                    this.writeFile(
+                      "docsnips/" + localUrlSegments.join("/") + "/examples/" + name + ".ts",
+                      codeSampleCore
+                    );
                   }
-
-                  this._snippetsByModules[urlSegments[0]].push(cs);
-
-                  console.log("Snippet '" + name + "' discovered for " + urlSegments.join("."));
-
-                  this.writeFile("docsnips/" + urlSegments.join("/") + "/examples/" + name + ".ts", codeSampleCore);
                 }
               }
             }
@@ -124,11 +159,17 @@ class SnippetsBuilder {
 
       this.writeFile("samplejson/" + moduleKey + "-samples.json", jsonMarkup);
 
-      this.writeFile(
-        "typescript/" + moduleKey + "/" + moduleKey + "-tests.ts",
+      let tsTestFileMarkup =
         'import * as mc from "mojang-minecraft";\r\n\r\nconst overworld = mc.world.getDimension("overworld");\r\n\r\n' +
-          moduleType.join("\r\n\r\n")
-      );
+        moduleType.join("\r\n\r\n");
+
+      tsTestFileMarkup += "\r\n" + this._scriptLibaryMainCode + "\r\n";
+
+      if (this._libraryCode[moduleKey]) {
+        tsTestFileMarkup += "\r\n" + this._libraryCode[moduleKey] + "\r\n";
+      }
+
+      this.writeFile("typescript/" + moduleKey + "-tests.ts", tsTestFileMarkup);
     }
 
     return content;
@@ -136,6 +177,28 @@ class SnippetsBuilder {
 
   getQuoteSafeContent(content) {
     content = content.replace(/"/g, '\\"');
+
+    return content;
+  }
+
+  stripLinesContaining(content, containing) {
+    let i = content.indexOf(containing);
+
+    while (i >= 0) {
+      let previousNewLine = content.lastIndexOf("\n", i);
+      let nextNewLine = content.indexOf("\n", i);
+
+      if (nextNewLine >= 0) {
+        if (previousNewLine < 0) {
+          previousNewLine = 0;
+        }
+
+        content = content.substring(0, previousNewLine) + content.substring(nextNewLine + 1, content.length);
+        i = content.indexOf(containing, previousNewLine);
+      } else {
+        i++;
+      }
+    }
 
     return content;
   }

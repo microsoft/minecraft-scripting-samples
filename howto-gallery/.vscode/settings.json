@@ -13,6 +13,17 @@
     },
     "git.ignoreLimitWarning": true,
     "editor.formatOnSave": true,
+    "search.exclude": {
+        "**/.git": true,
+        "**/node_modules": true,
+        "**/build": true
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/node_modules": true, 
+        "**/build": true
+    },
     "cSpell.words": [
         "gametest",
         "gametests",

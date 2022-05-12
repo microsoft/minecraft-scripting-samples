@@ -2,7 +2,7 @@ import * as mc from "mojang-minecraft";
 
 const overworld = mc.world.getDimension("overworld");
 
-let pistonActivateCallbacks: ((arg: mc.BeforePistonActivateEvent) => void)[] = [];
+let pistonActivateCallbacks: Array<(arg: mc.BeforePistonActivateEvent) => void> = [];
 
 /**
  * A simple piston activate event
@@ -27,7 +27,4 @@ export function pistonEvent(log: (message: string, status?: number) => void, tar
       canceled = true;
     }
   });
-
-  // clean-up code
-  pistonActivateCallbacks.push(pistonCallback);
 }

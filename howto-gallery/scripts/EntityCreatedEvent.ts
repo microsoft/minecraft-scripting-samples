@@ -1,7 +1,5 @@
 import * as mc from "mojang-minecraft";
 
-let entityCreatedCallbacks: ((arg: mc.EntityCreateEvent) => void)[] = [];
-
 const overworld = mc.world.getDimension("overworld");
 
 /**
@@ -20,9 +18,6 @@ export function runEntityCreatedEvent(log: (message: string, status?: number) =>
       log("The entity event didn't work as expected.", -1);
     }
   });
-
-  // clean-up code
-  entityCreatedCallbacks.push(entityCreatedCallback);
 }
 
 /**
@@ -34,23 +29,4 @@ export function runEntityCreatedEvent(log: (message: string, status?: number) =>
 export function createOldHorse(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
   // create a horse and trigger the 'ageable_grow_up' event, ensuring the horse is created as an adult
   overworld.spawnEntity("minecraft:horse<minecraft:ageable_grow_up>", targetLocation);
-}
-
-/**
- * Clean up after ourselves and remove an event.
- * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.Location} location Location to center this sample code around.
- * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/entitycreateeventsignal#unsubscribe
- */
-export function unsubscribeEntityCreatedEvent(
-  log: (message: string, status?: number) => void,
-  targetLocation: mc.Location
-) {
-  if (entityCreatedCallbacks.length > 0) {
-    let callback = entityCreatedCallbacks.pop();
-
-    if (callback) {
-      mc.world.events.entityCreate.unsubscribe(callback);
-    }
-  }
 }

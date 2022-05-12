@@ -20,7 +20,7 @@ export function createExplosion(log: (message: string, status?: number) => void,
  * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/explosionOptions
  */
 export function createNoBlockExplosion(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
-  let explosionOptions = new mc.ExplosionOptions();
+  const explosionOptions = new mc.ExplosionOptions();
 
   // Start by exploding without breaking blocks
   explosionOptions.breaksBlocks = false;
@@ -47,19 +47,18 @@ export function createFireAndWaterExplosions(
 ) {
   const explosionLoc = new mc.Location(targetLocation.x + 0.5, targetLocation.y + 0.5, targetLocation.z + 0.5);
 
-  let explosionOptions = new mc.ExplosionOptions();
+  const fireExplosionOptions = new mc.ExplosionOptions();
 
   // Explode with fire
-  explosionOptions = new mc.ExplosionOptions();
-  explosionOptions.causesFire = true;
+  fireExplosionOptions.causesFire = true;
 
-  overworld.createExplosion(explosionLoc, 15, explosionOptions);
+  overworld.createExplosion(explosionLoc, 15, fireExplosionOptions);
+  const waterExplosionOptions = new mc.ExplosionOptions();
 
   // Explode in water
-  explosionOptions = new mc.ExplosionOptions();
-  explosionOptions.allowUnderwater = true;
+  waterExplosionOptions.allowUnderwater = true;
 
   const belowWaterLoc = new mc.Location(targetLocation.x + 3, targetLocation.y + 1, targetLocation.z + 3);
 
-  overworld.createExplosion(belowWaterLoc, 10, explosionOptions);
+  overworld.createExplosion(belowWaterLoc, 10, waterExplosionOptions);
 }
