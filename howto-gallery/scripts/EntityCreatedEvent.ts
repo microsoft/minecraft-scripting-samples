@@ -13,9 +13,9 @@ export function runEntityCreatedEvent(log: (message: string, status?: number) =>
   // register a new function that is called when a new entity is created.
   const entityCreatedCallback = mc.world.events.entityCreate.subscribe((entityEvent: mc.EntityCreateEvent) => {
     if (entityEvent && entityEvent.entity) {
-      log("New entity of type '" + +entityEvent.entity + "' created!", 1);
+      log(`New entity of type '${entityEvent.entity}' created!`, 1);
     } else {
-      log("The entity event didn't work as expected.", -1);
+      log(`The entity event didn't work as expected.`, -1);
     }
   });
 }

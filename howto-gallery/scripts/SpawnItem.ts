@@ -38,7 +38,7 @@ export function testThatEntityIsFeatherItem(
 
     if (itemComp) {
       if (itemComp.itemStack.id.endsWith("feather")) {
-        console.log("Success! Found a feather", 1);
+        log("Success! Found a feather", 1);
       }
     }
   }

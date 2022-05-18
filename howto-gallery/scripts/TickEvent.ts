@@ -6,8 +6,9 @@ const overworld = mc.world.getDimension("overworld");
  * A simple tick timer that runs a command every minute.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/dimension#spawnentity
- * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/entity#addEffect
+ * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/tickevent
+ * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/tickeventsignal
+ * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/events#tick
  */
 export function trapTick() {
   let ticks = 0;
