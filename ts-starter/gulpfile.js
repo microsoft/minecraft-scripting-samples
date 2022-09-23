@@ -144,7 +144,7 @@ function clean_localmc_world(callbackFunction) {
 function clean_localmc_config(callbackFunction) {
   console.log("Removing '" + getTargetConfigPath() + "'");
 
-  del([getTargetWorldPath()], {
+  del([getTargetConfigPath()], {
     force: true,
   }).then(
     (value) => {
