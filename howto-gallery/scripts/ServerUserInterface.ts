@@ -1,13 +1,14 @@
-import * as mc from "mojang-minecraft";
-import * as mcui from "mojang-minecraft-ui";
+import * as mc from "@minecraft/server";
+import * as mcui from "@minecraft/server-ui";
 
 /**
  * Shows a very basic action form.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft-ui/ActionFormData
- * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft-ui/ActionFormResponse
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-ui/ActionFormData
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-ui/ActionFormResponse
  */
+// @ts-ignore
 export async function showActionForm(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
   const players = mc.world.getPlayers();
 
@@ -25,7 +26,7 @@ export async function showActionForm(log: (message: string, status?: number) => 
 
     const result = await form.show(playerList[0]);
 
-    if (result.isCanceled) {
+    if (result.canceled) {
       log("Player exited out of the dialog.");
     } else {
       log("Your result was: " + result.selection);
@@ -37,9 +38,10 @@ export async function showActionForm(log: (message: string, status?: number) => 
  * Shows a dialog that lets a player pick their favorite month.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft-ui/ActionFormData
- * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft-ui/ActionFormResponse
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-ui/ActionFormData
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-ui/ActionFormResponse
  */
+// @ts-ignore
 export function showFavoriteMonth(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
   const players = mc.world.getPlayers();
 

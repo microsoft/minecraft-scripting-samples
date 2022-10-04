@@ -27,14 +27,7 @@ const mcdir = useMinecraftDedicatedServer
       : "/AppData/Local/Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/LocalState/games/com.mojang/");
 
 function clean_build(callbackFunction) {
-  del(["build/behavior_packs/", "build/resource_packs/"]).then(
-    (value) => {
-      callbackFunction(); // success
-    },
-    (reason) => {
-      callbackFunction(); // error
-    }
-  );
+  return del(["build/behavior_packs/", "build/resource_packs/"]);
 }
 
 function copy_behavior_packs() {
@@ -145,7 +138,7 @@ function clean_localmc_world(callbackFunction) {
 function clean_localmc_config(callbackFunction) {
   console.log("Removing '" + getTargetConfigPath() + "'");
 
-  del([getTargetWorldPath()], {
+  del([getTargetConfigPath()], {
     force: true,
   }).then(
     (value) => {
@@ -326,4 +319,4 @@ exports.updateworld = gulp.series(
 );
 exports.ingestworld = gulp.series(clean_dev_world_backup, backup_dev_world, clean_dev_world, ingest_localmc_world);
 exports.updateconfig = gulp.series(clean_localmc_config, deploy_localmc_config);
-exports.buildsnippets = gulp.series(buildSnippets);
+exports.buildsnippets = buildSnippets;

@@ -30,5 +30,6 @@
         "minecart",
         "shulker",
         "zoglin"
-    ]
+    ],
+    "editor.tabSize": 2
 }

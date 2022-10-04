@@ -1,4 +1,4 @@
-import * as mc from "mojang-minecraft";
+import * as mc from "@minecraft/server";
 
 export default class SampleManager {
   tickCount = 0;
