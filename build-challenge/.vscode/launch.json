@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "minecraft-js",
+        "request": "attach",
+        "name": "Debug with Minecraft",
+        "mode": "listen",
+        "localRoot": "${workspaceFolder}/scripts",
+        "sourceMapRoot": "${workspaceFolder}/build/behavior_packs/_starterbpDebug",
+        "remoteRoot": "${workspaceFolder}/build/behavior_packs/starterbp",
+        "port": 19144
+      }
+    ]
+  }
