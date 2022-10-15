@@ -14,7 +14,7 @@ import {
   MinecraftEntityTypes,
   DynamicPropertiesDefinition,
 } from "@minecraft/server";
-import ChallengePlayer from "./ChallengePlayer";
+import ChallengePlayer, { IPlayerData } from "./ChallengePlayer";
 import Log from "./Log";
 import {
   AIRSPACE_GAP,
@@ -39,6 +39,7 @@ import {
   TEAM_OPTIONS_Z,
   PAD_SURROUND_X,
   PAD_SURROUND_Z,
+  PLAYER_DATA_STORAGE_SIZE,
 } from "./Constants";
 import Utilities from "./Utilities";
 
@@ -139,6 +140,33 @@ export default class Challenge {
     let dataStr = JSON.stringify(data);
 
     world.setDynamicProperty("challenge:teamData", dataStr);
+
+    let playerData: { [name: string]: IPlayerData } = {};
+    let charLength = 10;
+
+    for (let challPlayerName in this.challengePlayers) {
+      let challPlayer = this.challengePlayers[challPlayerName];
+      challPlayer.save();
+
+      let playerDataObj = challPlayer.getSaveData();
+
+      // only store a player if they are on a team or have voted.
+      if (playerDataObj.t >= 0 || playerDataObj.v >= 0 || playerDataObj.x >= 0) {
+        charLength += challPlayerName.length + 30; // 22 chars of overhead assuming + 2 chars per number
+
+        if (charLength < PLAYER_DATA_STORAGE_SIZE) {
+          playerData[challPlayerName] = playerDataObj;
+        }
+      }
+    }
+
+    if (charLength > PLAYER_DATA_STORAGE_SIZE - 50) {
+      Log.debug("WARNING: Max number of players historically exceeded");
+    }
+
+    const playerDataStr = JSON.stringify(playerData);
+
+    world.setDynamicProperty("challenge:playerState", playerDataStr);
   }
 
   public getTeamIndexFromSlot(slotIndex: number) {
@@ -231,6 +259,26 @@ export default class Challenge {
     }
   }
 
+  loadPlayerState() {
+    let playerStr = world.getDynamicProperty("challenge:playerState") as string;
+
+    if (playerStr) {
+      try {
+        let playerObjs = JSON.parse(playerStr);
+
+        for (let playerName in playerObjs) {
+          let playerObj = playerObjs[playerName] as IPlayerData;
+
+          if (playerObj.t) {
+            this.ensurePlayerFromData(playerName, playerObj);
+          }
+        }
+      } catch (e) {
+        Log.debug("Could not parse player data '" + playerStr + "'");
+      }
+    }
+  }
+
   loadTeams() {
     let teamDataStr = world.getDynamicProperty("challenge:teamData") as string;
 
@@ -263,29 +311,30 @@ export default class Challenge {
       return;
     }
 
-    system.run(this.tick);
-
     let playerPropertyDefs = new DynamicPropertiesDefinition();
-    playerPropertyDefs.defineNumber("challenge:teamId");
-    playerPropertyDefs.defineNumber("challenge:voteA");
-    playerPropertyDefs.defineNumber("challenge:voteB");
-    playerPropertyDefs.defineNumber("challenge:role");
-
-    registry.registerEntityTypeDynamicProperties(playerPropertyDefs, MinecraftEntityTypes.player);
-
     let worldPropertyDefs = new DynamicPropertiesDefinition();
-    worldPropertyDefs.defineNumber("challenge:phase");
-    worldPropertyDefs.defineNumber("challenge:size");
-    worldPropertyDefs.defineNumber("challenge:nwbX");
-    worldPropertyDefs.defineNumber("challenge:nwbY");
-    worldPropertyDefs.defineNumber("challenge:nwbZ");
-    worldPropertyDefs.defineString("challenge:teamData", 1024);
-    worldPropertyDefs.defineString("challenge:playerStateA", 1024);
-    worldPropertyDefs.defineString("challenge:playerStateB", 1024);
-    worldPropertyDefs.defineString("challenge:playerStateC", 1024);
-    worldPropertyDefs.defineString("challenge:playerStateD", 1024);
+    try {
+      playerPropertyDefs.defineNumber("challenge:teamId");
+      playerPropertyDefs.defineNumber("challenge:voteA");
+      playerPropertyDefs.defineNumber("challenge:voteB");
+      playerPropertyDefs.defineNumber("challenge:role");
 
-    registry.registerWorldDynamicProperties(worldPropertyDefs);
+      registry.registerEntityTypeDynamicProperties(playerPropertyDefs, MinecraftEntityTypes.player);
+
+      worldPropertyDefs.defineNumber("challenge:phase");
+      worldPropertyDefs.defineNumber("challenge:size");
+      worldPropertyDefs.defineNumber("challenge:nwbX");
+      worldPropertyDefs.defineNumber("challenge:nwbY");
+      worldPropertyDefs.defineNumber("challenge:nwbZ");
+      worldPropertyDefs.defineString("challenge:teamData", 1536); // ~32 teams * 30 chars for team
+      worldPropertyDefs.defineString("challenge:playerState", PLAYER_DATA_STORAGE_SIZE); // should allow for up to ~170 players to be tracked at 48 chars per player (which may not be enough?)
+
+      registry.registerWorldDynamicProperties(worldPropertyDefs);
+    } catch (e: any) {
+      Log.debug(e.toString());
+    }
+
+    system.run(this.tick);
 
     let sizeVal = world.getDynamicProperty("challenge:size") as number;
 
@@ -316,6 +365,9 @@ export default class Challenge {
     let candNwbZ = world.getDynamicProperty("challenge:nwbZ") as number;
 
     this.loadTeams();
+
+    this.loadPlayerState();
+    this.ensureAllPlayers();
 
     this.applyPhase();
 
@@ -369,7 +421,6 @@ export default class Challenge {
         }
         let command = mess.substring(1, nextSpace);
 
-        Log.debug(command);
         if (nextSpace > 0) {
           switch (command) {
             case "setstart":
@@ -386,6 +437,13 @@ export default class Challenge {
                   this.setStart(x, y, z);
                 } catch (e) {}
               }
+              break;
+
+            case "debug":
+              this.save();
+
+              Log.debug("Team:" + world.getDynamicProperty("challenge:teamData"));
+              Log.debug("Player:" + world.getDynamicProperty("challenge:playerState"));
               break;
 
             case "setphase":
@@ -408,6 +466,8 @@ export default class Challenge {
                     break;
                 }
               }
+              break;
+
             case "setsize":
               if (this.#phase !== ChallengePhase.setup) {
                 Log.debug("Cannot run setsize outside of setup phase.");
@@ -515,6 +575,14 @@ export default class Challenge {
     }
   }
 
+  ensureAllPlayers() {
+    let players = world.getPlayers();
+
+    for (let player of players) {
+      let challPlayer = this.ensurePlayer(player);
+    }
+  }
+
   ensurePlayersInBounds() {
     let players = world.getPlayers();
 
@@ -564,7 +632,13 @@ export default class Challenge {
                   newZ = team.padNwbZ + AIRSPACE_GAP + PAD_SIZE_Z + 1;
                 }
 
-                Log.debug("Resetting to " + newX + " " + newY + " " + newZ);
+                //Log.debug("Resetting to " + newX + " " + newY + " " + newZ);
+                player.onScreenDisplay.setTitle(" ", {
+                  fadeInSeconds: 1,
+                  fadeOutSeconds: 1,
+                  staySeconds: 3,
+                  subtitle: "You cannot enter " + team.name + "'s area",
+                });
                 player.runCommandAsync("tp @s " + newX + " " + newY + " " + newZ);
               }
             }
@@ -594,8 +668,6 @@ export default class Challenge {
     let ow = world.getDimension("overworld");
 
     ow.runCommandAsync(`scoreboard objectives add main dummy "Team Score"`);
-
-    Log.debug("scoreboard objectives setdisplay sidebar main");
     ow.runCommandAsync("scoreboard objectives setdisplay sidebar main");
 
     for (let team of this.teams) {
@@ -754,9 +826,13 @@ export default class Challenge {
     }
 
     if (area === 7) {
-      team.score = this.activeTeamScore;
+      if (this.activeTeamScore !== team.score) {
+        team.score = this.activeTeamScore;
 
-      ow.runCommandAsync(`scoreboard players set "${team.name}" main ${this.activeTeamScore}`);
+        ow.runCommandAsync(`scoreboard players set "${team.name}" main ${this.activeTeamScore}`);
+
+        this.save();
+      }
     }
   }
 
@@ -780,17 +856,32 @@ export default class Challenge {
         if (challPlayer) {
           if (this.#phase === ChallengePhase.vote) {
             if (challPlayer.teamId === team.index) {
-              event.player.onScreenDisplay.setTitle(`Uhoh`, {
+              event.player.onScreenDisplay.setTitle(`Nope`, {
+                fadeInSeconds: 1,
+                fadeOutSeconds: 1,
+                staySeconds: 5,
                 subtitle: "You can't vote for your own team.",
-              } as TitleDisplayOptions);
-            } else if (challPlayer.voteA !== team.index && challPlayer.teamId !== team.index) {
-              challPlayer.voteB = challPlayer.voteA;
-              challPlayer.voteA = team.index;
+              });
+            } else {
+              if (challPlayer.voteA !== team.index && challPlayer.teamId !== team.index) {
+                challPlayer.voteB = challPlayer.voteA;
+                challPlayer.voteA = team.index;
+              }
 
               if (challPlayer.voteB >= 0) {
-                event.player.onScreenDisplay.setTitle(`Vote Status`, {
-                  subtitle: this.teams[challPlayer.voteA].name + " " + this.teams[challPlayer.voteB].name,
-                } as TitleDisplayOptions);
+                event.player.onScreenDisplay.setTitle(`Your votes`, {
+                  fadeInSeconds: 1,
+                  fadeOutSeconds: 1,
+                  staySeconds: 5,
+                  subtitle: this.teams[challPlayer.voteA].name + ", " + this.teams[challPlayer.voteB].name,
+                });
+              } else {
+                event.player.onScreenDisplay.setTitle(`Your vote:`, {
+                  fadeInSeconds: 1,
+                  fadeOutSeconds: 1,
+                  staySeconds: 5,
+                  subtitle: this.teams[challPlayer.voteA].name,
+                });
               }
             }
           } else {
@@ -807,6 +898,25 @@ export default class Challenge {
         team.showOptions(event.player);
       }
     }
+  }
+
+  ensurePlayerFromData(name: string, data: IPlayerData) {
+    if (!name || name.length < 2) {
+      Log.debug("Unexpected player without a name passed: " + name);
+      return;
+    }
+
+    let cp = this.challengePlayers[name];
+
+    if (!cp) {
+      cp = new ChallengePlayer(this, name, undefined);
+
+      cp.loadFromData(data);
+
+      this.challengePlayers[name] = cp;
+    }
+
+    return cp;
   }
 
   ensurePlayer(player: Player) {
@@ -829,7 +939,17 @@ export default class Challenge {
 
       this.challengePlayers[name] = cp;
     } else {
+      let wasPlayerDefined = true;
+
+      if (cp.player === undefined) {
+        wasPlayerDefined = false;
+      }
+
       cp.player = player;
+
+      if (!wasPlayerDefined) {
+        cp.load();
+      }
     }
 
     return cp;

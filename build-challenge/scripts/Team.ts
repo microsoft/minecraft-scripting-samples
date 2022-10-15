@@ -106,9 +106,11 @@ export default class Team {
 
     this.players.push(challPlayer);
 
-    challPlayer.player.runCommandAsync(
-      `spawnpoint @s ${this.nwbX + SPAWN_TEAM_X} ${this.nwbY + SPAWN_TEAM_Y} ${this.nwbZ + SPAWN_TEAM_Z}`
-    );
+    if (challPlayer.player) {
+      challPlayer.player.runCommandAsync(
+        `spawnpoint @s ${this.nwbX + SPAWN_TEAM_X} ${this.nwbY + SPAWN_TEAM_Y} ${this.nwbZ + SPAWN_TEAM_Z}`
+      );
+    }
   }
 
   updateLocation() {

@@ -20,6 +20,7 @@ export const JOIN_TEAM_Z = PAD_SIZE_Z + PAD_SURROUND_Z - 6;
 export const TEAM_OPTIONS_X = 5;
 export const TEAM_OPTIONS_Y = 1;
 export const TEAM_OPTIONS_Z = PAD_SIZE_Z + PAD_SURROUND_Z - 6;
+export const PLAYER_DATA_STORAGE_SIZE = 8192;
 
 export const OPTIONS_AREA_TEAM_X = 2;
 export const OPTIONS_AREA_TEAM_Y = 0;

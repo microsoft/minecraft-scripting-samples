@@ -9,9 +9,16 @@ export enum ChallengePlayerRole {
   spectator = 4,
 }
 
+export interface IPlayerData {
+  r: ChallengePlayerRole;
+  v: number;
+  x: number;
+  t: number;
+}
+
 export default class ChallengePlayer {
   #name: string;
-  #player: Player;
+  #player?: Player;
   #teamId: number = -1;
   #challenge: Challenge;
   #voteA: number = -1;
@@ -23,7 +30,13 @@ export default class ChallengePlayer {
   }
 
   set voteA(newVote: number) {
+    if (this.#voteA === newVote) {
+      return;
+    }
+
     this.#voteA = newVote;
+
+    this.save();
   }
 
   get voteB() {
@@ -31,14 +44,20 @@ export default class ChallengePlayer {
   }
 
   set voteB(newVote: number) {
+    if (this.#voteB === newVote) {
+      return;
+    }
+
     this.#voteB = newVote;
+
+    this.save();
   }
 
   get name() {
     return this.#name;
   }
 
-  constructor(challenge: Challenge, name: string, player: Player) {
+  constructor(challenge: Challenge, name: string, player?: Player) {
     this.#challenge = challenge;
     this.#player = player;
     this.#name = name;
@@ -48,7 +67,7 @@ export default class ChallengePlayer {
     return this.#player;
   }
 
-  set player(player: Player) {
+  set player(player: Player | undefined) {
     this.#player = player;
   }
 
@@ -61,7 +80,37 @@ export default class ChallengePlayer {
     this.save();
   }
 
+  getSaveData() {
+    let pd = {
+      r: this.#role,
+      t: this.#teamId,
+      v: this.#voteA,
+      x: this.#voteB,
+    };
+
+    return pd;
+  }
+
+  loadFromData(data: IPlayerData) {
+    if (data.v) {
+      this.#voteA = data.v;
+    }
+    if (data.x) {
+      this.#voteB = data.x;
+    }
+    if (data.t) {
+      this.#teamId = data.t;
+    }
+    if (data.r) {
+      this.#role = data.r;
+    }
+  }
+
   save() {
+    if (!this.#player) {
+      return;
+    }
+
     this.#player.setDynamicProperty("challenge:teamId", this.#teamId);
     this.#player.setDynamicProperty("challenge:voteA", this.#voteA);
     this.#player.setDynamicProperty("challenge:voteB", this.#voteB);
@@ -69,6 +118,10 @@ export default class ChallengePlayer {
   }
 
   load() {
+    if (!this.#player) {
+      return;
+    }
+
     this.#teamId = this.#player.getDynamicProperty("challenge:teamId") as number;
 
     if (this.#teamId === undefined) {

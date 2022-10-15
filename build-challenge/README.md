@@ -28,8 +28,51 @@ There are also other phases:
 1. Setup. Here, the gameplay operator can deploy the Build Pads in their desired area of the map.  You can also customize the center of the "donut" of pads as you see fit.
 1. Pre phase. Players can gather and hang out before the Build phase begins.
 
+## How to play this content
+
+You'll likely want to host this on a shared dedicated server that is up for hours or days at a time.
+
+First, start a survival world. Choose a world with a seed you like, or just find a nice spot in the world you start up with.
+
+Choose a relatively flat plain or desert area as your starting area.  Go to the north west corner of the starting area (minimal x/z), and go to the bottom floor of that location. Note the x/y/z coordinates. Go to chat and run this pseudo command: "!setstart x y z" with the location of your x/y/z contents. Over the next minute or so, you should see the pads pop in
+
+Use !setphase setup to enter your initial setup
 
 
+## Commands
+
+`!setstart x y z` - Sets the starting location of this map. This should be the north/west/bottom of your play area. 
+
+Team Pads are arranged like this:
+
+```dotnetcli
+16 17  8  9 18 19
+20 21  4  5 22 23
+14  0        2 10
+15  1        3 11
+24 25  6  7 26 27
+28 29 12 13 30 31
+```
+
+Each team pad is 32 blocks X by 32 blocks Z, and is 64 blocks tall (Y). Each pad has 32 blocks around it.  
+
+For this reason, the play area is a wide 384 blocks by 384 blocks tall, even if you only play with 4 teams (pads). See that there is a 128 block by 128 block "donut hole" in the middle, which you can use to creatively place your welcome center as you see fit.
+
+`!setsize [s/m/l/xl]` - Sets the relative size of the gameplay area, and the number of teams that can be accommodated. See the diagram above for how pads are provisioned - for example, in an 8 team/pad game, pads 0-7 are provisioned.
+
+`s` - (the default).  4 teams (pads)
+`m` - 8 teams/pads
+`l` - 16 teams/pads
+`xl` - 32 teams/pads
+
+Note that this can only be set while the phase is in setup. Also, it is only supported to upgrade your size (e.g, from s->m or s->l or s->xl)
+
+`!setphase [setup/pre/build/vote/post]` - Sets the current phase of the game.
+        
+setup - Places the mode generally in creative. As the game host, you can build and create and run other commands.
+pre - this is in the pre-phase of the game. The game is in Adventure mode so customizations cannot be made. This might be useful as a lobby to assembly players before the formal build event starts.
+build - This is the build phase of the game. Players are actively playing and can modify the world and are generally running in Survival mode
+vote - This is the voting phase of the game. Players can apply two votes to the pad of their choice (not including their own team pad)
 
 ## Manifest
 
