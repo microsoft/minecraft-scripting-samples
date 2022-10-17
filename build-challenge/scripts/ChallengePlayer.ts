@@ -25,6 +25,10 @@ export default class ChallengePlayer {
   #voteB: number = -1;
   #role: ChallengePlayerRole = ChallengePlayerRole.unknown;
 
+  tockX = -1;
+  tockY = -1;
+  tockZ = -1;
+
   get voteA() {
     return this.#voteA;
   }

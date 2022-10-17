@@ -23,12 +23,15 @@ import { ModalFormData, MessageFormData } from "@minecraft/server-ui";
 export interface ITeamData {
   n: string;
   s: number;
+  t: number;
 }
 
 export default class Team {
   index: number = -1;
   padX: number;
   padZ: number;
+
+  #playerTocks: number; // one player tock = one player was active for 20 secs
 
   #name: string | undefined = undefined;
 
@@ -41,6 +44,10 @@ export default class Team {
   padNwbX: number = 0;
   padNwbY: number = 0;
   padNwbZ: number = 0;
+
+  teamUsageQuartile: number = 0;
+  votes: number = 0;
+  rankByVote: number = -1;
 
   players: ChallengePlayer[] = [];
 
@@ -64,10 +71,20 @@ export default class Team {
         this.#name = newName;
 
         this.addTeamName();
-        this.challenge.cleanTeamScores();
+        this.challenge.refreshTeamScores();
 
         this.challenge.save();
       }
+    }
+  }
+
+  get playerTocks() {
+    return this.#playerTocks;
+  }
+
+  set playerTocks(newTock: number) {
+    if (this.#playerTocks !== newTock) {
+      this.#playerTocks = newTock;
     }
   }
 
@@ -86,9 +103,73 @@ export default class Team {
     this.padX = x;
     this.padZ = z;
 
+    this.#playerTocks = 0;
+
     this.updateLocation();
 
     this.index = index;
+  }
+
+  removePlayer(playerToRemove: ChallengePlayer) {
+    let newPlayerArr = [];
+
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.players[i] !== playerToRemove && this.players[i].name !== playerToRemove.name) {
+        newPlayerArr.push(this.players[i]);
+      }
+    }
+
+    this.players = newPlayerArr;
+  }
+
+  applyScore() {
+    let teamName = this.name;
+
+    let ow = world.getDimension("overworld");
+    let effectiveScore = this.score;
+
+    if (effectiveScore < 0) {
+      return;
+    }
+    if (this.challenge.teams.length >= 4) {
+      if (this.teamUsageQuartile == 0) {
+        teamName = "█ " + teamName;
+      } else if (this.teamUsageQuartile == 1) {
+        teamName = "▓ " + teamName;
+        effectiveScore += this.score / 4;
+      } else if (this.teamUsageQuartile == 2) {
+        teamName = "▒ " + teamName;
+
+        effectiveScore += this.score / 2;
+      } else if (this.teamUsageQuartile == 3) {
+        teamName = "░ " + teamName;
+
+        effectiveScore += this.score;
+      }
+    }
+
+    if (
+      (this.challenge.phase === ChallengePhase.vote || this.challenge.phase === ChallengePhase.post) &&
+      this.challenge.teams.length >= 3
+    ) {
+      if (this.rankByVote == 0) {
+        teamName = "§g" + teamName + " √√√";
+
+        effectiveScore += this.score * 2; // 3x bonus for first vote winner.
+      } else if (this.rankByVote == 1) {
+        teamName = "§s" + teamName + " √√";
+        effectiveScore += this.score;
+      } else if (this.rankByVote == 2) {
+        teamName = "§6" + teamName + " √";
+
+        effectiveScore += this.score / 2;
+      }
+    }
+
+    teamName += "  ";
+
+    effectiveScore = Math.floor(effectiveScore);
+    ow.runCommandAsync(`scoreboard players set "${teamName}" main ${effectiveScore}`);
   }
 
   ensurePlayerIsOnTeam(challPlayer: ChallengePlayer) {
@@ -107,6 +188,7 @@ export default class Team {
     this.players.push(challPlayer);
 
     if (challPlayer.player) {
+      //Log.debug(`spawnpoint @s ${this.nwbX + SPAWN_TEAM_X} ${this.nwbY + SPAWN_TEAM_Y} ${this.nwbZ + SPAWN_TEAM_Z}`);
       challPlayer.player.runCommandAsync(
         `spawnpoint @s ${this.nwbX + SPAWN_TEAM_X} ${this.nwbY + SPAWN_TEAM_Y} ${this.nwbZ + SPAWN_TEAM_Z}`
       );
@@ -167,7 +249,11 @@ export default class Team {
     let challPlayer = this.challenge.ensurePlayer(player);
 
     if (challPlayer) {
-      if (challPlayer.teamId === this.index) {
+      if (
+        challPlayer.teamId === this.index &&
+        this.challenge.phase !== ChallengePhase.post &&
+        this.challenge.phase !== ChallengePhase.vote
+      ) {
         let mdf = new ModalFormData();
 
         let name = this.name;
@@ -341,12 +427,10 @@ export default class Team {
 
     let consoleType = "options";
 
-    /*
-    
     if (this.challenge.phase === ChallengePhase.vote) {
       consoleType = "vote";
     }
-*/
+
     ow.runCommandAsync(
       `structure load challenge:${consoleType} ${this.nwbX + OPTIONS_AREA_TEAM_X} ${this.nwbY + OPTIONS_AREA_TEAM_Y} ${
         this.nwbZ + OPTIONS_AREA_TEAM_Z
@@ -374,6 +458,7 @@ export default class Team {
     let td = {
       n: this.name,
       s: this.score,
+      t: this.#playerTocks,
     };
 
     return td;
@@ -400,6 +485,10 @@ export default class Team {
 
     if (data.s) {
       this.#score = data.s;
+    }
+
+    if (data.t) {
+      this.#playerTocks = data.t;
     }
   }
 }

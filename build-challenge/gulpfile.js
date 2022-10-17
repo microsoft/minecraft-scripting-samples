@@ -13,6 +13,7 @@ const del = require("del");
 const os = require("os");
 const spawn = require("child_process").spawn;
 const sourcemaps = require("gulp-sourcemaps");
+const zip = require("gulp-zip");
 
 const worldsFolderName = useMinecraftDedicatedServer ? "worlds" : "minecraftWorlds";
 
@@ -42,6 +43,13 @@ function copy_behavior_packs() {
 
 function copy_resource_packs() {
   return gulp.src(["resource_packs/**/*"]).pipe(gulp.dest("build/resource_packs"));
+}
+
+function pack() {
+  return gulp
+    .src("build/behavior_packs/" + bpfoldername + "/**/*")
+    .pipe(zip(bpfoldername + ".mcpack"))
+    .pipe(gulp.dest("dist"));
 }
 
 const copy_content = gulp.parallel(copy_behavior_packs, copy_resource_packs);
@@ -307,6 +315,7 @@ exports.copy_resource_packs = copy_resource_packs;
 exports.compile_scripts = compile_scripts;
 exports.copy_content = copy_content;
 exports.build = build;
+exports.pack = gulp.series(build, pack);
 exports.clean_localmc = clean_localmc;
 exports.deploy_localmc = deploy_localmc;
 exports.default = gulp.series(build, deploy_localmc);

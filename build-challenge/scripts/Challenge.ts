@@ -13,6 +13,7 @@ import {
   MinecraftBlockTypes,
   MinecraftEntityTypes,
   DynamicPropertiesDefinition,
+  SoundOptions,
 } from "@minecraft/server";
 import ChallengePlayer, { IPlayerData } from "./ChallengePlayer";
 import Log from "./Log";
@@ -334,23 +335,13 @@ export default class Challenge {
       Log.debug(e.toString());
     }
 
-    system.run(this.tick);
+    let candNwbX = world.getDynamicProperty("challenge:nwbX") as number;
+    let candNwbY = world.getDynamicProperty("challenge:nwbY") as number;
+    let candNwbZ = world.getDynamicProperty("challenge:nwbZ") as number;
 
-    let sizeVal = world.getDynamicProperty("challenge:size") as number;
-
-    if (sizeVal) {
-      this.#size = sizeVal;
-    } else {
-      this.#size = ChallengeBoardSize.small;
+    if (candNwbX !== undefined && candNwbY !== undefined && candNwbZ !== undefined) {
+      this.nwbLocation = { x: candNwbX, y: candNwbY, z: candNwbZ };
     }
-
-    this.initTeams();
-
-    const overworld = world.getDimension("overworld");
-
-    world.events.playerJoin.subscribe(this.playerJoined);
-    world.events.beforeChat.subscribe(this.beforeChat);
-    world.events.leverActivate.subscribe(this.leverActivate);
 
     let val = world.getDynamicProperty("challenge:phase") as number;
 
@@ -360,9 +351,23 @@ export default class Challenge {
       this.#phase = ChallengePhase.pre;
     }
 
-    let candNwbX = world.getDynamicProperty("challenge:nwbX") as number;
-    let candNwbY = world.getDynamicProperty("challenge:nwbY") as number;
-    let candNwbZ = world.getDynamicProperty("challenge:nwbZ") as number;
+    let sizeVal = world.getDynamicProperty("challenge:size") as number;
+
+    if (sizeVal) {
+      this.#size = sizeVal;
+    } else {
+      this.#size = ChallengeBoardSize.small;
+    }
+
+    system.run(this.tick);
+
+    this.initTeams();
+
+    const overworld = world.getDimension("overworld");
+
+    world.events.playerJoin.subscribe(this.playerJoined);
+    world.events.beforeChat.subscribe(this.beforeChat);
+    world.events.leverActivate.subscribe(this.leverActivate);
 
     this.loadTeams();
 
@@ -370,34 +375,13 @@ export default class Challenge {
     this.ensureAllPlayers();
 
     this.applyPhase();
-
-    if (candNwbX !== undefined && candNwbY !== undefined && candNwbZ !== undefined) {
-      this.nwbLocation = { x: candNwbX, y: candNwbY, z: candNwbZ };
-    }
   }
 
-  cleanTeamScores() {
+  refreshTeamScores() {
     let obj = world.scoreboard.getObjective("main");
-
-    let ids = obj.getParticipants();
-
-    for (let identity of ids) {
-      let foundId = false;
-      for (let team of this.teams) {
-        if (team.name === identity.displayName) {
-          foundId = true;
-          break;
-        }
-      }
-
-      if (!foundId) {
-        let ow = world.getDimension("overworld");
-        ow.runCommandAsync("scoreboard objectives remove main");
-        this.setupScores();
-
-        return;
-      }
-    }
+    let ow = world.getDimension("overworld");
+    ow.runCommandAsync("scoreboard objectives remove main");
+    this.addScores();
   }
 
   beforeChat(event: BeforeChatEvent) {
@@ -442,6 +426,7 @@ export default class Challenge {
             case "debug":
               this.save();
 
+              Log.debug("State: Ph:" + this.#phase + " Size:" + this.#size + " ");
               Log.debug("Team:" + world.getDynamicProperty("challenge:teamData"));
               Log.debug("Player:" + world.getDynamicProperty("challenge:playerState"));
               break;
@@ -658,21 +643,22 @@ export default class Challenge {
     ow.runCommandAsync("gamerule commandblocksenabled false");
     ow.runCommandAsync("gamerule commandblockoutput false");
     ow.runCommandAsync("gamerule tntexplodes false");
+    ow.runCommandAsync("gamerule pvp false");
 
-    if (!world.scoreboard.getObjective("main")) {
-      this.setupScores();
-    }
+    this.updateMetaBonuses();
+
+    this.refreshTeamScores();
   }
 
-  setupScores() {
+  addScores() {
     let ow = world.getDimension("overworld");
 
     ow.runCommandAsync(`scoreboard objectives add main dummy "Team Score"`);
     ow.runCommandAsync("scoreboard objectives setdisplay sidebar main");
 
     for (let team of this.teams) {
-      if (team.active) {
-        ow.runCommandAsync(`scoreboard players set "${team.name}" main ${team.score}`);
+      if (team.active || team.score > 0) {
+        team.applyScore();
       }
     }
   }
@@ -682,13 +668,23 @@ export default class Challenge {
 
     switch (this.phase) {
       case ChallengePhase.setup:
-        this.sendToAllPlayers("Setup Phase");
+        this.sendToAllPlayers("Setup Phase", {
+          fadeInSeconds: 1,
+          fadeOutSeconds: 1,
+          staySeconds: 7,
+          subtitle: "Ops establish the challenge area",
+        });
         ow.runCommandAsync("gamemode c");
         this.setGamemodeToAllPlayers("c");
         break;
 
       case ChallengePhase.pre:
-        this.sendToAllPlayers("Preliminary Phase");
+        this.sendToAllPlayers("Preliminary Phase", {
+          fadeInSeconds: 1,
+          fadeOutSeconds: 1,
+          staySeconds: 7,
+          subtitle: "Pull lever near a pad to join a team",
+        });
         ow.runCommandAsync("gamemode a");
         this.setGamemodeToAllPlayers("a");
         break;
@@ -700,13 +696,23 @@ export default class Challenge {
         break;
 
       case ChallengePhase.vote:
-        this.sendToAllPlayers("Vote Phase");
+        this.sendToAllPlayers("Vote Phase", {
+          fadeInSeconds: 1,
+          fadeOutSeconds: 1,
+          staySeconds: 7,
+          subtitle: "Pull lever to vote for a team (2 votes)",
+        });
         ow.runCommandAsync("gamemode a");
         this.setGamemodeToAllPlayers("a");
         break;
 
       case ChallengePhase.post:
-        this.sendToAllPlayers("Post Phase");
+        this.sendToAllPlayers("Post Phase", {
+          fadeInSeconds: 1,
+          fadeOutSeconds: 1,
+          staySeconds: 7,
+          subtitle: "Congratulate the winners",
+        });
         ow.runCommandAsync("gamemode a");
         this.setGamemodeToAllPlayers("a");
         break;
@@ -744,6 +750,14 @@ export default class Challenge {
       }
 
       this.updateCount(this.tickIndex);
+
+      if (this.tickIndex % 400 === 0) {
+        this.updateTocks();
+      }
+
+      if (this.tickIndex % 800 === 0) {
+        this.updateMetaBonuses();
+      }
     } catch (e) {
       Log.debug("Challenge script error: " + e);
     }
@@ -751,11 +765,98 @@ export default class Challenge {
     system.run(this.tick);
   }
 
+  updateMetaBonuses() {
+    let teamsByVote = [];
+    let teamsByTocks = [];
+    let hasChanged = false;
+
+    for (let i = 0; i < this.teams.length; i++) {
+      this.teams[i].votes = 0;
+
+      teamsByVote.push(this.teams[i]);
+
+      if (this.teams[i].active || (this.teams[i].score > 0 && this.teams[i].playerTocks > 0)) {
+        teamsByTocks.push(this.teams[i]);
+      }
+    }
+
+    if (this.phase === ChallengePhase.post || this.phase === ChallengePhase.vote) {
+      for (let challengePlayerName in this.challengePlayers) {
+        let challPlayer = this.challengePlayers[challengePlayerName];
+
+        if (challPlayer) {
+          if (challPlayer.voteA >= 0 && challPlayer.voteA < this.teams.length) {
+            this.teams[challPlayer.voteA].votes++;
+          }
+
+          if (challPlayer.voteB >= 0 && challPlayer.voteB < this.teams.length) {
+            this.teams[challPlayer.voteB].votes++;
+          }
+        }
+      }
+
+      teamsByVote.sort(function (teamA: Team, teamB: Team) {
+        return teamB.votes - teamA.votes;
+      });
+
+      for (let i = 0; i < teamsByVote.length; i++) {
+        if (teamsByVote[i].rankByVote !== i) {
+          teamsByVote[i].rankByVote = i;
+          hasChanged = true;
+        }
+      }
+    }
+
+    teamsByTocks.sort(function (teamA: Team, teamB: Team) {
+      return teamB.playerTocks - teamA.playerTocks;
+    });
+
+    for (let i = 0; i < teamsByTocks.length; i++) {
+      let newQuartile = Math.floor((i * 4) / teamsByTocks.length);
+
+      if (teamsByTocks[i].teamUsageQuartile !== newQuartile) {
+        teamsByTocks[i].teamUsageQuartile = newQuartile;
+        hasChanged = true;
+      }
+    }
+
+    if (hasChanged) {
+      this.refreshTeamScores();
+    }
+  }
+
+  updateTocks() {
+    let isActive = false;
+
+    for (let player of world.getPlayers()) {
+      let collPlayer = this.ensurePlayer(player);
+
+      if (collPlayer && collPlayer.teamId >= 0 && collPlayer.teamId < this.teams.length) {
+        let team = this.teams[collPlayer.teamId];
+
+        let loc = player.location;
+
+        if (loc.x !== collPlayer.tockX || loc.y !== collPlayer.tockY || loc.z !== collPlayer.tockZ) {
+          collPlayer.tockX = loc.x;
+          collPlayer.tockY = loc.y;
+          collPlayer.tockZ = loc.z;
+
+          isActive = true;
+          team.playerTocks++;
+        }
+      }
+    }
+    if (isActive) {
+      this.save();
+    }
+  }
+
   updateCount(tick: number) {
     const teamIndex = Math.floor(tick / 8) % this.teams.length;
+
     let team = this.teams[teamIndex];
 
-    if (!team.active) {
+    if (team && !team.active) {
       return;
     }
 
@@ -767,6 +868,24 @@ export default class Challenge {
 
     let ow = world.getDimension("overworld");
     if (this.activeTeamScore >= 0) {
+      let canaryLoc = new BlockLocation(team.padNwbX, team.padNwbY, team.padNwbZ + (PAD_SIZE_Z / 8) * area);
+
+      let canaryBlock = ow.getBlock(canaryLoc);
+
+      // if we don't find blackstone at our canary location, assume the chunk is loaded and bail on calculating score.
+      if (canaryBlock.typeId !== "minecraft:blackstone") {
+        Log.debug(
+          "Did not find blackstone at " +
+            team.padNwbX +
+            " " +
+            team.padNwbY +
+            " " +
+            String(team.padNwbZ + (PAD_SIZE_Z / 8) * area)
+        );
+        this.activeTeamScore = -1;
+        return;
+      }
+
       for (let i = 0; i < PAD_SIZE_X; i++) {
         for (let j = 0; j < PAD_SIZE_Y; j++) {
           for (let k = (PAD_SIZE_Z / 8) * area; k < (PAD_SIZE_Z / 8) * (area + 1); k++) {
@@ -826,10 +945,17 @@ export default class Challenge {
     }
 
     if (area === 7) {
-      if (this.activeTeamScore !== team.score) {
+      if (this.activeTeamScore !== team.score && this.activeTeamScore >= 0) {
+        if (this.activeTeamScore > team.score && team.score > 0) {
+          for (let challPlayer of team.players) {
+            if (challPlayer.player) {
+              challPlayer.player.playSound("random.orb");
+            }
+          }
+        }
         team.score = this.activeTeamScore;
 
-        ow.runCommandAsync(`scoreboard players set "${team.name}" main ${this.activeTeamScore}`);
+        team.applyScore();
 
         this.save();
       }
@@ -866,6 +992,7 @@ export default class Challenge {
               if (challPlayer.voteA !== team.index && challPlayer.teamId !== team.index) {
                 challPlayer.voteB = challPlayer.voteA;
                 challPlayer.voteA = team.index;
+                this.updateMetaBonuses();
               }
 
               if (challPlayer.voteB >= 0) {
@@ -884,10 +1011,21 @@ export default class Challenge {
                 });
               }
             }
+          } else if (challPlayer.teamId === team.index) {
+            event.player.onScreenDisplay.setTitle(`Already joined ` + team.name);
           } else {
+            if (challPlayer.teamId >= 0 && challPlayer.teamId < this.teams.length) {
+              this.teams[challPlayer.teamId].removePlayer(challPlayer);
+            }
             challPlayer.teamId = team.index;
+            team.ensurePlayerIsOnTeam(challPlayer);
 
-            event.player.onScreenDisplay.setTitle(`You have joined ${team.name}`);
+            event.player.onScreenDisplay.setTitle(`Joined`, {
+              fadeInSeconds: 1,
+              fadeOutSeconds: 1,
+              staySeconds: 7,
+              subtitle: team.name,
+            });
           }
         }
       } else if (
