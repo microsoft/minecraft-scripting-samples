@@ -32,6 +32,8 @@ There are also other phases:
 
 You'll likely want to host this on a shared dedicated server that is up for hours or days at a time.
 
+[See the Scoresheet for how scoring is done.](ScoreSheet.md)
+
 First, start a survival world. Choose a world with a seed you like, or just find a nice spot in the world you start up with.
 
 Choose a relatively flat plain or desert area as your starting area.  Go to the north west corner of the starting area (minimal x/z), and go to the bottom floor of that location. Note the x/y/z coordinates. Go to chat and run this pseudo command: "!setstart x y z" with the location of your x/y/z contents. Over the next minute or so, you should see the pads pop in

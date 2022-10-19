@@ -1,5 +1,22 @@
 
-## Scoresheet
+## Build Challenge Score Sheet
+
+## Additional Bonuses
+
+### Voting
+
+The first place winner of the vote gets TRIPLE their score
+The second place winner of the vote gets DOUBLE their score
+The third place winner of the vote get a 50% bonus added to their score
+
+### Activity
+
+In an attempt to balance out team numbers and the number hours that a team puts in, we award bonuses based on overall activity.
+
+Teams that are the in the second most active group (as indicated by ▓) receive a 25% score bonus
+Teams that are the in the third most active group (as indicated by ▒) receive a 50% score bonus
+Teams that are the in the least active group (as indicated by ░) receive a double score bonus
+Teams that are the most active (as indicated by █) don't receive a bonus, beyond a virtual high five for their awesomeness
 
 ### Blocks (when stored as items in a chest | half points)
 
