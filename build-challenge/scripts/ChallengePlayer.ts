@@ -1,5 +1,5 @@
 import { Player } from "@minecraft/server";
-import Challenge from "./Challenge";
+import Challenge, { ChallengePhase } from "./Challenge";
 
 export enum ChallengePlayerRole {
   unknown = 0,
@@ -7,6 +7,7 @@ export enum ChallengePlayerRole {
   admin = 2,
   judge = 3,
   spectator = 4,
+  adminSpectator = 5,
 }
 
 export interface IPlayerData {
@@ -29,8 +30,32 @@ export default class ChallengePlayer {
   tockY = -1;
   tockZ = -1;
 
+  get isAdmin() {
+    return this.#role === ChallengePlayerRole.admin || this.#role === ChallengePlayerRole.adminSpectator;
+  }
+
+  get isSpectator() {
+    return this.#role === ChallengePlayerRole.spectator || this.#role === ChallengePlayerRole.adminSpectator;
+  }
+
   get voteA() {
     return this.#voteA;
+  }
+
+  get role() {
+    return this.#role;
+  }
+
+  set role(newRole: ChallengePlayerRole) {
+    if (this.#role === newRole) {
+      return;
+    }
+
+    this.#role = newRole;
+
+    this.applyRole();
+
+    this.save();
   }
 
   set voteA(newVote: number) {
@@ -108,6 +133,26 @@ export default class ChallengePlayer {
     if (data.r) {
       this.#role = data.r;
     }
+  }
+
+  applyRole() {
+    if (!this.player) {
+      return;
+    }
+
+    let mode = "a";
+
+    if (this.isSpectator) {
+      mode = "spectator";
+    } else if (this.isAdmin) {
+      mode = "c";
+    } else {
+      if (this.#challenge.phase === ChallengePhase.build) {
+        mode = "s";
+      }
+    }
+
+    this.player.runCommandAsync("gamemode " + mode + " @s");
   }
 
   save() {

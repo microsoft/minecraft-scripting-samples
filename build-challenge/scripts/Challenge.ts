@@ -14,8 +14,9 @@ import {
   MinecraftEntityTypes,
   DynamicPropertiesDefinition,
   SoundOptions,
+  Vector,
 } from "@minecraft/server";
-import ChallengePlayer, { IPlayerData } from "./ChallengePlayer";
+import ChallengePlayer, { ChallengePlayerRole, IPlayerData } from "./ChallengePlayer";
 import Log from "./Log";
 import {
   AIRSPACE_GAP,
@@ -41,8 +42,10 @@ import {
   PAD_SURROUND_X,
   PAD_SURROUND_Z,
   PLAYER_DATA_STORAGE_SIZE,
+  STANDARD_TRACK_TIME,
 } from "./Constants";
 import Utilities from "./Utilities";
+import Track from "./Track";
 
 export enum ChallengePhase {
   setup = 1,
@@ -62,6 +65,8 @@ export enum ChallengeBoardSize {
 export default class Challenge {
   nwbLocation = { x: 0, y: 0, z: 0 }; // nwb = north west bottom
   teams: Team[] = [];
+  tracks: Track[] = [];
+  totalTrackTime = 0;
   tickIndex = 0;
   challengePlayers: { [name: string]: ChallengePlayer } = {};
   #phase: ChallengePhase = ChallengePhase.pre;
@@ -123,6 +128,10 @@ export default class Challenge {
     this.beforeChat = this.beforeChat.bind(this);
     this.refreshTeam = this.refreshTeam.bind(this);
     this.clearTeamArea = this.clearTeamArea.bind(this);
+    this.postInit = this.postInit.bind(this);
+    this.continueInit = this.continueInit.bind(this);
+    this.continueInit2 = this.continueInit2.bind(this);
+    this.applyPhase = this.applyPhase.bind(this);
   }
 
   save() {
@@ -314,6 +323,7 @@ export default class Challenge {
 
     let playerPropertyDefs = new DynamicPropertiesDefinition();
     let worldPropertyDefs = new DynamicPropertiesDefinition();
+
     try {
       playerPropertyDefs.defineNumber("challenge:teamId");
       playerPropertyDefs.defineNumber("challenge:voteA");
@@ -359,9 +369,21 @@ export default class Challenge {
       this.#size = ChallengeBoardSize.small;
     }
 
-    system.run(this.tick);
+    system.run(this.continueInit);
+  }
+
+  continueInit() {
+    system.run(this.continueInit2);
 
     this.initTeams();
+    this.loadTeams();
+
+    this.setupTracks();
+  }
+
+  continueInit2() {
+    system.run(this.tick);
+    system.run(this.applyPhase);
 
     const overworld = world.getDimension("overworld");
 
@@ -369,12 +391,37 @@ export default class Challenge {
     world.events.beforeChat.subscribe(this.beforeChat);
     world.events.leverActivate.subscribe(this.leverActivate);
 
-    this.loadTeams();
-
     this.loadPlayerState();
     this.ensureAllPlayers();
+  }
 
-    this.applyPhase();
+  setupTracks() {
+    this.tracks = [];
+    let track = new Track(
+      new Vector(this.nwbLocation.x, this.nwbLocation.y + 10, this.nwbLocation.z),
+      new Vector(this.nwbLocation.x, this.nwbLocation.y + 10, this.nwbLocation.z + TOTAL_Z),
+      new Vector(20, -10, 0)
+    );
+
+    this.tracks.push(track);
+
+    track = new Track(
+      new Vector(this.nwbLocation.x + TOTAL_X / 2, this.nwbLocation.y + 10, this.nwbLocation.z - 20),
+      new Vector(this.nwbLocation.x + TOTAL_X / 2, this.nwbLocation.y + 10, this.nwbLocation.z + TOTAL_Z),
+      new Vector(0, -10, 20)
+    );
+
+    this.tracks.push(track);
+
+    track = new Track(
+      new Vector(this.nwbLocation.x + TOTAL_X, this.nwbLocation.y + 10, this.nwbLocation.z),
+      new Vector(this.nwbLocation.x + TOTAL_X, this.nwbLocation.y + 10, this.nwbLocation.z + TOTAL_Z),
+      new Vector(-20, -10, 0)
+    );
+
+    this.tracks.push(track);
+
+    this.totalTrackTime = this.tracks.length * STANDARD_TRACK_TIME;
   }
 
   refreshTeamScores() {
@@ -388,6 +435,12 @@ export default class Challenge {
     let mess = event.message;
 
     if (event.sender && event.sender.typeId === "minecraft:player" && mess) {
+      let messageSender = this.ensurePlayer(event.sender);
+
+      if (!messageSender) {
+        return;
+      }
+
       mess = mess.toLowerCase().trim();
 
       if (mess.startsWith("!")) {
@@ -410,6 +463,15 @@ export default class Challenge {
             case "setstart":
               if (this.#phase !== ChallengePhase.setup) {
                 Log.debug("Cannot run setstart outside of setup phase.");
+                return;
+              }
+
+              if (!messageSender.isAdmin) {
+                this.sendMessageToAdminsPlus(
+                  "Cannot run setstart, " + messageSender.name + " is not an admin.",
+                  event.sender
+                );
+                return;
               }
 
               if (contentSep.length === 3) {
@@ -426,12 +488,20 @@ export default class Challenge {
             case "debug":
               this.save();
 
-              Log.debug("State: Ph:" + this.#phase + " Size:" + this.#size + " ");
-              Log.debug("Team:" + world.getDynamicProperty("challenge:teamData"));
-              Log.debug("Player:" + world.getDynamicProperty("challenge:playerState"));
+              this.sendMessageToAdminsPlus("State: Ph:" + this.#phase + " Size:" + this.#size + " ");
+              this.sendMessageToAdminsPlus("Team:" + world.getDynamicProperty("challenge:teamData"));
+              this.sendMessageToAdminsPlus("Player:" + world.getDynamicProperty("challenge:playerState"));
               break;
 
             case "setphase":
+              if (!messageSender.isAdmin) {
+                this.sendMessageToAdminsPlus(
+                  "Cannot run setphase, " + messageSender.name + " is not an admin.",
+                  event.sender
+                );
+                return;
+              }
+
               if (contentSep.length === 1) {
                 switch (contentSep[0].toLowerCase()) {
                   case "pre":
@@ -453,10 +523,57 @@ export default class Challenge {
               }
               break;
 
+            case "setrole":
+              if (contentSep.length === 2) {
+                let name = contentSep[0];
+
+                let player = this.getPlayer(name);
+
+                if (!player) {
+                  this.sendMessageToAdminsPlus("Could not find player '" + name + "'", event.sender);
+                  return;
+                }
+
+                switch (contentSep[1].toLowerCase()) {
+                  case "spectator":
+                    if (player.role == ChallengePlayerRole.admin) {
+                      this.sendMessageToAdminsPlus("Setting player '" + name + "' to adminSpectator.", event.sender);
+                      player.role = ChallengePlayerRole.adminSpectator;
+                    } else {
+                      this.sendMessageToAdminsPlus("Setting player '" + name + "' to spectator.", event.sender);
+                      player.role = ChallengePlayerRole.spectator;
+                    }
+                    break;
+                  case "admin":
+                    this.sendMessageToAdminsPlus("Setting player '" + name + "' to admin.", event.sender);
+                    player.role = ChallengePlayerRole.admin;
+                    break;
+                  case "judge":
+                    this.sendMessageToAdminsPlus("Setting player '" + name + "' to judge.", event.sender);
+                    player.role = ChallengePlayerRole.judge;
+                    break;
+                  case "player":
+                    this.sendMessageToAdminsPlus("Setting player '" + name + "' to player.", event.sender);
+                    player.role = ChallengePlayerRole.admin;
+                    break;
+                }
+              }
+              break;
+
             case "setsize":
               if (this.#phase !== ChallengePhase.setup) {
                 Log.debug("Cannot run setsize outside of setup phase.");
+                return;
               }
+
+              if (!messageSender.isAdmin) {
+                this.sendMessageToAdminsPlus(
+                  "Cannot run setsize, " + messageSender.name + " is not an admin.",
+                  event.sender
+                );
+                return;
+              }
+
               if (contentSep.length === 1) {
                 switch (contentSep[0].toLowerCase()) {
                   case "s":
@@ -479,6 +596,15 @@ export default class Challenge {
             case "clearpads":
               if (this.#phase !== ChallengePhase.setup) {
                 Log.debug("Cannot run clearpads outside of setup phase.");
+                return;
+              }
+
+              if (!messageSender.isAdmin) {
+                this.sendMessageToAdminsPlus(
+                  "Cannot run clearpads, " + messageSender.name + " is not an admin.",
+                  event.sender
+                );
+                return;
               }
 
               this.clearPads();
@@ -487,6 +613,20 @@ export default class Challenge {
         }
       }
     }
+  }
+
+  getPlayer(name: string) {
+    name = name.toLowerCase();
+
+    for (let playerName in this.challengePlayers) {
+      let playerNameCand = playerName.toLowerCase();
+
+      if (name === playerNameCand) {
+        return this.challengePlayers[playerName];
+      }
+    }
+
+    return undefined;
   }
 
   setStart(x: number, y: number, z: number) {
@@ -568,63 +708,78 @@ export default class Challenge {
     }
   }
 
-  ensurePlayersInBounds() {
+  updatePlayers() {
     let players = world.getPlayers();
 
     for (let player of players) {
-      let loc = player.location;
+      let challPlayer = this.ensurePlayer(player);
 
-      if (
-        loc.x >= this.nwbLocation.x &&
-        loc.x < this.nwbLocation.x + TOTAL_X && // is this player in the village area?
-        loc.y >= this.nwbLocation.y &&
-        loc.y < this.nwbLocation.x + TOTAL_Y &&
-        loc.z >= this.nwbLocation.z &&
-        loc.z < this.nwbLocation.z + TOTAL_Z
-      ) {
-        let challPlayer = this.ensurePlayer(player);
+      if (challPlayer) {
+        if (challPlayer.isSpectator) {
+          let trackSequence = this.tickIndex % this.totalTrackTime;
 
-        if (challPlayer /*&& challPlayer.teamId >= 0*/) {
-          for (let team of this.teams) {
-            if (team.index != challPlayer.teamId) {
-              if (
-                loc.x >= team.padNwbX - AIRSPACE_GAP &&
-                loc.y >= team.padNwbY - AIRSPACE_GAP &&
-                loc.z >= team.padNwbZ - AIRSPACE_GAP &&
-                loc.x <= team.padNwbX + PAD_SIZE_X + AIRSPACE_GAP &&
-                loc.y <= team.padNwbY + PAD_SIZE_Y + AIRSPACE_GAP &&
-                loc.z <= team.padNwbZ + PAD_SIZE_Z + AIRSPACE_GAP
-              ) {
-                let westGap = loc.x - (team.padNwbX + AIRSPACE_GAP);
-                let eastGap = team.padNwbX + PAD_SIZE_X + AIRSPACE_GAP - loc.x;
-                let northGap = loc.z - (team.padNwbZ + +AIRSPACE_GAP);
-                let southGap = team.padNwbZ + PAD_SIZE_Z + AIRSPACE_GAP - loc.z;
-                let topGap = team.padNwbY + PAD_SIZE_Y + AIRSPACE_GAP - loc.y;
+          let trackIndex = Math.floor(trackSequence / STANDARD_TRACK_TIME);
 
-                let newX = loc.x,
-                  newY = loc.y,
-                  newZ = loc.z;
+          let track = this.tracks[trackIndex];
 
-                if (westGap < eastGap && westGap < northGap && westGap < southGap && westGap < topGap) {
-                  newX = team.padNwbX - AIRSPACE_GAP - 1;
-                } else if (eastGap < westGap && eastGap < northGap && eastGap < southGap && eastGap < topGap) {
-                  newX = team.padNwbX + AIRSPACE_GAP + PAD_SIZE_X + 1;
-                } else if (topGap < westGap && topGap < southGap && topGap < eastGap && topGap < northGap) {
-                  newY = team.padNwbY + AIRSPACE_GAP + PAD_SIZE_Y + 1;
-                } else if (northGap < westGap && northGap < southGap && northGap < eastGap && northGap < topGap) {
-                  newZ = team.padNwbZ - AIRSPACE_GAP - 1;
-                } else {
-                  newZ = team.padNwbZ + AIRSPACE_GAP + PAD_SIZE_Z + 1;
+          let vec = Vector.lerp(track.from, track.to, (trackSequence % STANDARD_TRACK_TIME) / STANDARD_TRACK_TIME);
+          player.teleportFacing(vec, world.getDimension("overworld"), {
+            x: vec.x + track.facingAdjust.x,
+            y: vec.y + track.facingAdjust.y,
+            z: vec.z + track.facingAdjust.z,
+          });
+        } else {
+          let loc = player.location;
+
+          if (
+            loc.x >= this.nwbLocation.x &&
+            loc.x < this.nwbLocation.x + TOTAL_X && // is this player in the village area?
+            loc.y >= this.nwbLocation.y &&
+            loc.y < this.nwbLocation.x + TOTAL_Y &&
+            loc.z >= this.nwbLocation.z &&
+            loc.z < this.nwbLocation.z + TOTAL_Z
+          ) {
+            for (let team of this.teams) {
+              if (team.index != challPlayer.teamId) {
+                if (
+                  loc.x >= team.padNwbX - AIRSPACE_GAP &&
+                  loc.y >= team.padNwbY - AIRSPACE_GAP &&
+                  loc.z >= team.padNwbZ - AIRSPACE_GAP &&
+                  loc.x <= team.padNwbX + PAD_SIZE_X + AIRSPACE_GAP &&
+                  loc.y <= team.padNwbY + PAD_SIZE_Y + AIRSPACE_GAP &&
+                  loc.z <= team.padNwbZ + PAD_SIZE_Z + AIRSPACE_GAP
+                ) {
+                  let westGap = loc.x - (team.padNwbX + AIRSPACE_GAP);
+                  let eastGap = team.padNwbX + PAD_SIZE_X + AIRSPACE_GAP - loc.x;
+                  let northGap = loc.z - (team.padNwbZ + +AIRSPACE_GAP);
+                  let southGap = team.padNwbZ + PAD_SIZE_Z + AIRSPACE_GAP - loc.z;
+                  let topGap = team.padNwbY + PAD_SIZE_Y + AIRSPACE_GAP - loc.y;
+
+                  let newX = loc.x,
+                    newY = loc.y,
+                    newZ = loc.z;
+
+                  if (westGap < eastGap && westGap < northGap && westGap < southGap && westGap < topGap) {
+                    newX = team.padNwbX - AIRSPACE_GAP - 1;
+                  } else if (eastGap < westGap && eastGap < northGap && eastGap < southGap && eastGap < topGap) {
+                    newX = team.padNwbX + AIRSPACE_GAP + PAD_SIZE_X + 1;
+                  } else if (topGap < westGap && topGap < southGap && topGap < eastGap && topGap < northGap) {
+                    newY = team.padNwbY + AIRSPACE_GAP + PAD_SIZE_Y + 1;
+                  } else if (northGap < westGap && northGap < southGap && northGap < eastGap && northGap < topGap) {
+                    newZ = team.padNwbZ - AIRSPACE_GAP - 1;
+                  } else {
+                    newZ = team.padNwbZ + AIRSPACE_GAP + PAD_SIZE_Z + 1;
+                  }
+
+                  //Log.debug("Resetting to " + newX + " " + newY + " " + newZ);
+                  player.onScreenDisplay.setTitle(" ", {
+                    fadeInSeconds: 1,
+                    fadeOutSeconds: 1,
+                    staySeconds: 3,
+                    subtitle: "You cannot enter " + team.name + "'s area",
+                  });
+                  player.runCommandAsync("tp @s " + newX + " " + newY + " " + newZ);
                 }
-
-                //Log.debug("Resetting to " + newX + " " + newY + " " + newZ);
-                player.onScreenDisplay.setTitle(" ", {
-                  fadeInSeconds: 1,
-                  fadeOutSeconds: 1,
-                  staySeconds: 3,
-                  subtitle: "You cannot enter " + team.name + "'s area",
-                });
-                player.runCommandAsync("tp @s " + newX + " " + newY + " " + newZ);
               }
             }
           }
@@ -675,7 +830,7 @@ export default class Challenge {
           subtitle: "Ops establish the challenge area",
         });
         ow.runCommandAsync("gamemode c");
-        this.setGamemodeToAllPlayers("c");
+        this.applyRoleToAllPlayers();
         break;
 
       case ChallengePhase.pre:
@@ -686,13 +841,18 @@ export default class Challenge {
           subtitle: "Pull lever near a pad to join a team",
         });
         ow.runCommandAsync("gamemode a");
-        this.setGamemodeToAllPlayers("a");
+        this.applyRoleToAllPlayers();
         break;
 
       case ChallengePhase.build:
-        this.sendToAllPlayers("Build Phase");
+        this.sendToAllPlayers("Build Phase", {
+          fadeInSeconds: 1,
+          fadeOutSeconds: 1,
+          staySeconds: 7,
+          subtitle: "Build things on your team pad",
+        });
         ow.runCommandAsync("gamemode s");
-        this.setGamemodeToAllPlayers("s");
+        this.applyRoleToAllPlayers();
         break;
 
       case ChallengePhase.vote:
@@ -703,7 +863,7 @@ export default class Challenge {
           subtitle: "Pull lever to vote for a team (2 votes)",
         });
         ow.runCommandAsync("gamemode a");
-        this.setGamemodeToAllPlayers("a");
+        this.applyRoleToAllPlayers();
         break;
 
       case ChallengePhase.post:
@@ -714,16 +874,38 @@ export default class Challenge {
           subtitle: "Congratulate the winners",
         });
         ow.runCommandAsync("gamemode a");
-        this.setGamemodeToAllPlayers("a");
+        this.applyRoleToAllPlayers();
         break;
     }
   }
 
-  setGamemodeToAllPlayers(gamemode: string) {
+  sendMessageToAdminsPlus(message: string, additionalPlayer?: Player) {
+    let ow = world.getDimension("overworld");
+    Log.debug(message);
+
+    for (let player of world.getPlayers()) {
+      let challPlayer = this.ensurePlayer(player);
+
+      if (
+        challPlayer &&
+        (challPlayer.isAdmin ||
+          player === additionalPlayer ||
+          (additionalPlayer && player.name === additionalPlayer.name))
+      ) {
+        player.runCommandAsync("say @s " + message);
+      }
+    }
+  }
+
+  applyRoleToAllPlayers() {
     let ow = world.getDimension("overworld");
 
     for (let player of world.getPlayers()) {
-      player.runCommandAsync("gamemode " + gamemode + " @s");
+      let challPlayer = this.ensurePlayer(player);
+
+      if (challPlayer) {
+        challPlayer.applyRole();
+      }
     }
   }
 
@@ -746,7 +928,7 @@ export default class Challenge {
       }
 
       if (this.phase === ChallengePhase.build) {
-        this.ensurePlayersInBounds();
+        this.updatePlayers();
       }
 
       this.updateCount(this.tickIndex);
@@ -931,6 +1113,8 @@ export default class Challenge {
 
                           if (ITEM_SCORESHEET[itemTypeId] > 0) {
                             this.activeTeamScore += ITEM_SCORESHEET[itemTypeId] * item.amount;
+                          } else if (BLOCK_SCORESHEET[itemTypeId] > 0) {
+                            this.activeTeamScore += Math.floor(BLOCK_SCORESHEET[itemTypeId] / 2) * item.amount;
                           }
                         }
                       }

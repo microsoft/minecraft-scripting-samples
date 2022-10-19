@@ -27,7 +27,7 @@ const mcdir = useMinecraftDedicatedServer
       : "/AppData/Local/Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/LocalState/games/com.mojang/");
 
 function clean_build(callbackFunction) {
-  del(["build/behavior_packs/", "build/resource_packs/"]).then(
+  del(["build/behavior_packs/", "build/resource_packs/", "build/worlds"]).then(
     (value) => {
       callbackFunction(); // success
     },
@@ -49,6 +49,13 @@ function pack() {
   return gulp
     .src("build/behavior_packs/" + bpfoldername + "/**/*")
     .pipe(zip(bpfoldername + ".mcpack"))
+    .pipe(gulp.dest("dist"));
+}
+
+function pack_world() {
+  return gulp
+    .src("build/worlds/default/**/*")
+    .pipe(zip(bpfoldername + ".mcworld"))
     .pipe(gulp.dest("dist"));
 }
 
@@ -77,6 +84,7 @@ function compile_scripts() {
 }
 
 const build = gulp.series(clean_build, copy_content, compile_scripts);
+const buildworld = gulp.series(build, copy_world_to_build, copy_bps_to_world_build);
 
 function clean_localmc(callbackFunction) {
   if (!bpfoldername || !bpfoldername.length || bpfoldername.length < 2) {
@@ -238,6 +246,16 @@ function backup_localmc_world() {
     .pipe(gulp.dest(getTargetWorldBackupPath() + "/" + activeWorldFolderName));
 }
 
+function copy_world_to_build() {
+  return gulp.src([getDevWorldPath() + "/**/*"]).pipe(gulp.dest("build/" + getDevWorldPath()));
+}
+
+function copy_bps_to_world_build() {
+  return gulp
+    .src(["build/behavior_packs/" + bpfoldername + "/**/*"])
+    .pipe(gulp.dest("build/" + getDevWorldPath() + "/behavior_packs/" + bpfoldername + "/"));
+}
+
 const deploy_localmc = gulp.series(
   clean_localmc,
   function (callbackFunction) {
@@ -315,7 +333,9 @@ exports.copy_resource_packs = copy_resource_packs;
 exports.compile_scripts = compile_scripts;
 exports.copy_content = copy_content;
 exports.build = build;
+exports.buildworld = buildworld;
 exports.pack = gulp.series(build, pack);
+exports.packworld = gulp.series(buildworld, pack_world);
 exports.clean_localmc = clean_localmc;
 exports.deploy_localmc = deploy_localmc;
 exports.default = gulp.series(build, deploy_localmc);
