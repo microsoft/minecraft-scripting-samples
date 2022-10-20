@@ -27,6 +27,7 @@ There are also other phases:
 
 1. Setup. Here, the gameplay operator can deploy the Build Pads in their desired area of the map.  You can also customize the center of the "donut" of pads as you see fit.
 1. Pre phase. Players can gather and hang out before the Build phase begins.
+1. Post phase. Voting is over, and the world is in adventure mode.
 
 ## How to play this content
 
@@ -36,14 +37,16 @@ You'll likely want to host this on a shared dedicated server that is up for hour
 
 First, start a survival world. Choose a world with a seed you like, or just find a nice spot in the world you start up with.
 
-Choose a relatively flat plain or desert area as your starting area.  Go to the north west corner of the starting area (minimal x/z), and go to the bottom floor of that location. Note the x/y/z coordinates. Go to chat and run this pseudo command: "!setstart x y z" with the location of your x/y/z contents. Over the next minute or so, you should see the pads pop in
+Choose a relatively flat plain or desert area as your starting area.  Go to the north west corner of the starting area (minimal x/z), and go to the bottom floor of that location. Note the x/y/z coordinates. Go to chat and run this pseudo command: "!setstart x y z" with the location of your x/y/z contents. Over the next couple of minutes or so, you should see the pads pop in. Please be patient.
 
-Use !setphase setup to enter your initial setup
+!NOTE: There may be some issues with the pads popping in, fully, so you may want to run the command a second time several minutes after the first one has started.
+
+Use !setphase setup to enter your initial setup. !setphase build to put the world into build mode. !setphase vote to put the world into vote mode.
 
 
 ## Commands
 
-`!setstart x y z` - Sets the starting location of this map. This should be the north/west/bottom of your play area. 
+`!setstart x y z` - Sets the starting location of this map. This should be the north/west/bottom of your play area.
 
 Team Pads are arranged like this:
 
@@ -67,14 +70,23 @@ For this reason, the play area is a wide 384 blocks by 384 blocks tall, even if 
 `l` - 16 teams/pads
 `xl` - 32 teams/pads
 
-Note that this can only be set while the phase is in setup. Also, it is only supported to upgrade your size (e.g, from s->m or s->l or s->xl)
+Note that this can only be set while the phase is in setup. Also, it is only supported to upgrade your size (e.g, from s->m or s->l or m->xl)
 
 `!setphase [setup/pre/build/vote/post]` - Sets the current phase of the game.
         
-setup - Places the mode generally in creative. As the game host, you can build and create and run other commands.
-pre - this is in the pre-phase of the game. The game is in Adventure mode so customizations cannot be made. This might be useful as a lobby to assembly players before the formal build event starts.
-build - This is the build phase of the game. Players are actively playing and can modify the world and are generally running in Survival mode
-vote - This is the voting phase of the game. Players can apply two votes to the pad of their choice (not including their own team pad)
+* setup - Places the mode generally in creative. As the game host, you can build and create and run other commands.
+* pre - this is in the pre-phase of the game. The game is in Adventure mode so customizations cannot be made. This might be useful as a lobby to assembly players before the formal build event starts.
+* build - This is the build phase of the game. Players are actively playing and can modify the world and are generally running in Survival mode
+* vote - This is the voting phase of the game. Players can apply two votes to the pad of their choice (not including their own team pad)
+
+`!setrole [player name] [role]` - Sets the role of the current player.
+
+* spectator - Places the player on a "camera track" above the play area
+* admin - Makes the player an administrator
+* player - Makes the player a regular contestant
+
+`!setmotdtitle <message>` - Sets the main message of the day header.
+`!setmotdsubtitle <message>` - Sets the subtitle message of the day header.
 
 ## Manifest
 

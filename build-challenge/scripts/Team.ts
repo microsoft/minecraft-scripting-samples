@@ -179,12 +179,6 @@ export default class Team {
       }
     }
 
-    let wasActive = this.active;
-
-    // is now active.
-    if (!wasActive) {
-    }
-
     this.players.push(challPlayer);
 
     if (challPlayer.player) {
@@ -267,7 +261,11 @@ export default class Team {
         let result = await mdf.show(player);
 
         if (result.formValues && result.formValues[0] !== undefined) {
-          this.name = result.formValues[0];
+          if (!this.isValidName(result.formValues[0])) {
+            player.runCommandAsync("say @s New team name can only be letters or numbers, and less than 11 characters.");
+          } else {
+            this.name = result.formValues[0];
+          }
         }
       }
 
@@ -289,7 +287,7 @@ export default class Team {
       mdf.title(name);
 
       if (this.players.length === 0) {
-        mdf.body("Nobody is on this team yet.");
+        mdf.body("Nobody is on " + this.name + " yet.");
       } else {
         let teamMembers = "";
 
@@ -300,7 +298,7 @@ export default class Team {
 
           teamMembers += this.players[0].name;
         }
-        mdf.body("Team members: " + teamMembers);
+        mdf.body("Team members: " + teamMembers + "\r\nScore (before bonuses): " + this.score);
       }
 
       mdf.button1("OK");
@@ -442,14 +440,14 @@ export default class Team {
     //block.setType(MinecraftBlockTypes.lever);
   }
 
-  clearPad() {
+  clearPad(index: number) {
     Utilities.fillBlock(
       MinecraftBlockTypes.air,
       this.nwbX - 4,
-      this.nwbY + 1,
+      this.nwbY + 1 + index * 4,
       this.nwbZ - 4,
       this.nwbX + PAD_SIZE_X + PAD_SURROUND_X,
-      this.nwbY + 50,
+      this.nwbY + 5 + index * 4,
       this.nwbZ + PAD_SIZE_Z + PAD_SURROUND_Z
     );
   }

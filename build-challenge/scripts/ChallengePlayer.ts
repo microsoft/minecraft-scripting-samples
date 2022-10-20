@@ -25,13 +25,18 @@ export default class ChallengePlayer {
   #voteA: number = -1;
   #voteB: number = -1;
   #role: ChallengePlayerRole = ChallengePlayerRole.unknown;
+  lastTeamSwitchTick = 0;
 
   tockX = -1;
   tockY = -1;
   tockZ = -1;
 
   get isAdmin() {
-    return this.#role === ChallengePlayerRole.admin || this.#role === ChallengePlayerRole.adminSpectator;
+    return (
+      this.#role === ChallengePlayerRole.admin ||
+      this.#role === ChallengePlayerRole.adminSpectator ||
+      (this.player && (this.player as any).isOp)
+    );
   }
 
   get isSpectator() {

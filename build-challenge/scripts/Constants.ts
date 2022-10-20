@@ -31,11 +31,14 @@ export const SPAWN_TEAM_Y = 1;
 export const SPAWN_TEAM_Z = PAD_SIZE_Z + PAD_SURROUND_Z - 1;
 
 export const MAX_SLOTS = 32;
+export const MAX_TIME_TO_SWITCH_TEAMS_TICK = 12000; // 10 minutes
+
+export const MAX_PLAYERS_TEAM = 8;
 
 export const STANDARD_TRACK_TIME = 1200;
 
 export const BLOCK_SCORESHEET: { [type: string]: number } = {
-  diamond_block: 200,
+  diamond_block: 8000,
   bedrock: 100,
   diamond_ore: 40,
   crafting_table: 30,

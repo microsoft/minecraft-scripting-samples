@@ -1,5 +1,5 @@
 
-## Build Challenge Score Sheet
+# Build Challenge Score Sheet
 
 ## Additional Bonuses
 
@@ -9,22 +9,23 @@ The first place winner of the vote gets TRIPLE their score
 The second place winner of the vote gets DOUBLE their score
 The third place winner of the vote get a 50% bonus added to their score
 
-### Activity
+### (Low) Activity
 
-In an attempt to balance out team numbers and the number hours that a team puts in, we award bonuses based on overall activity.
+In an attempt to balance out team numbers and the number of hours that a team puts in, we award bonuses based on lower activity (collective time spent running around) for teams that haven't spent as much time in-game as other teams (for example, a team with one player will have lower activity, typically, vs. a team with four players):
 
-Teams that are the in the second most active group (as indicated by ▓) receive a 25% score bonus
-Teams that are the in the third most active group (as indicated by ▒) receive a 50% score bonus
-Teams that are the in the least active group (as indicated by ░) receive a double score bonus
-Teams that are the most active (as indicated by █) don't receive a bonus, beyond a virtual high five for their awesomeness
+* Teams that are the in the second most active group (as indicated by ▓) receive a 25% score bonus
+* Teams that are the in the third most active group (as indicated by ▒) receive a 50% score bonus
+* Teams that are the in the least active group (as indicated by ░) receive a double score bonus
+* Teams that are the most active (as indicated by █) don't receive a bonus, beyond a virtual high five for their awesomeness
 
-### Blocks (when stored as items in a chest | half points)
 
-### All unlisted blocks should be 10 points
+### Blocks placed on pad
+
+### NOTE: All blocks not listed below are worth 10 points
 
 | Block        | Score           |
 | ------------- |:-------------:|
-| diamond block | 200 |
+| diamond block | 8000 |
 | bedrock | 100 |
 | diamond ore | 40 |
 | crafting table | 30 |
@@ -81,112 +82,115 @@ Teams that are the most active (as indicated by █) don't receive a bonus, beyo
 | dirt | 2 |
 | cobblestone | 2 |
 	
-### Items in Chests
-### All unlisted items should be 10 points
+
+## Items in Chests on your pad
+
+### In addition, all blocks listed above are worth half their point value when stored in chests in your pad, vs. being placed within your display.
+### NOTE: All other items not are worth 10 points.
 
 | Item        | Score           |
 | ------------- |:-------------:|
-| end_crystal | 1000 |
-| ender_eye | 800 |
+| end crystal | 1000 |
+| ender eye | 800 |
+| totem of undying | 800 |
 | diamond | 800 |
-| enchanted_golden_apple | 500 |
-| music_disc_13 | 400 |
-| music_disc_cat | 400 |
-| music_disc_blocks | 400 |
-| music_disc_chirp | 400 |
-| music_disc_far | 400 |
-| music_disc_mall | 400 |
-| music_disc_mellohi | 400 |
-| music_disc_stal | 400 |
-| music_disc_strad | 400 |
-| music_disc_ward | 400 |
-| music_disc_11 | 400 |
-| music_disc_pigstep | 400 |
-| music_disc_otherside | 400 |
-| music_disc_wait | 400 |
-| netherite_axe | 170 |
-| netherite_hoe | 170 |
-| netherite_helmet | 170 |
-| netherite_chestplate | 170 |
-| netherite_leggings | 170 |
-| netherite_boots | 170 |
-| netherite_ingot | 170 |
-| netherite_sword | 170 |
-| netherite_shovel | 170 |
-| netherite_pickaxe | 170 |
-| netherite_scrap | 170 |
+| enchanted golden apple | 500 |
+| music disc 13 | 400 |
+| music disc cat | 400 |
+| music disc blocks | 400 |
+| music disc chirp | 400 |
+| music disc far | 400 |
+| music disc mall | 400 |
+| music disc mellohi | 400 |
+| music disc stal | 400 |
+| music disc strad | 400 |
+| music disc ward | 400 |
+| music disc 11 | 400 |
+| music disc pigstep | 400 |
+| music disc otherside | 400 |
+| music disc wait | 400 |
+| netherite axe | 170 |
+| netherite hoe | 170 |
+| netherite helmet | 170 |
+| netherite chestplate | 170 |
+| netherite leggings | 170 |
+| netherite boots | 170 |
+| netherite ingot | 170 |
+| netherite sword | 170 |
+| netherite shovel | 170 |
+| netherite pickaxe | 170 |
+| netherite scrap | 170 |
 | emerald | 150 |
-| diamond_horse_armor | 120 |
-| diamond_sword | 120 |
-| diamond_shovel | 120 |
-| diamond_pickaxe | 120 |
-| diamond_axe | 120 |
-| diamond_hoe | 120 |
-| diamond_helmet | 120 |
-| diamond_chestplate | 120 |
-| diamond_leggings | 120 |
-| diamond_boots | 120 |
-| written_book | 50 |
-| writable_book | 40 |
-| goat_horn | 40 |
-| amethyst_shard | 40 |
+| diamond horse armor | 120 |
+| diamond sword | 120 |
+| diamond shovel | 120 |
+| diamond pickaxe | 120 |
+| diamond axe | 120 |
+| diamond hoe | 120 |
+| diamond helmet | 120 |
+| diamond chestplate | 120 |
+| diamond leggings | 120 |
+| diamond boots | 120 |
+| written book | 50 |
+| writable book | 40 |
+| goat horn | 40 |
+| amethyst shard | 40 |
 | spyglass | 40 |
-| soul_campfire | 40 |
-| raw_gold | 40 |
-| glow_frame | 40 |
-| golden_horse_armor | 40 |
-| golden_hoe | 30 |
-| golden_sword | 30 |
-| golden_shovel | 30 |
-| golden_pickaxe | 30 |
-| golden_axe | 30 |
-| golden_helmet | 30 |
-| golden_chestplate | 30 |
-| golden_leggings | 30 |
-| golden_boots | 30 |
-| empty_map | 30 |
-| raw_copper | 20 |
+| soul campfire | 40 |
+| raw gold | 40 |
+| glow frame | 40 |
+| golden horse armor | 40 |
+| golden hoe | 30 |
+| golden sword | 30 |
+| golden shovel | 30 |
+| golden pickaxe | 30 |
+| golden axe | 30 |
+| golden helmet | 30 |
+| golden chestplate | 30 |
+| golden leggings | 30 |
+| golden boots | 30 |
+| empty map | 30 |
+| raw copper | 20 |
 | netherbrick | 20 |
-| raw_iron | 20 |
-| gold_nugget | 20 |
-| chainmail_helmet | 20 |
-| chainmail_chestplate | 20 |
-| chainmail_leggings | 20 |
-| chainmail_boots | 20 |
-| gold_ingot | 14 |
-| leather_helmet | 16 |
-| leather_chestplate | 16 |
-| leather_leggings | 16 |
-| leather_horse_armor | 20 |
-| leather_boots | 16 |
-| iron_horse_armor | 12 |
-| iron_helmet | 10 |
-| iron_chestplate | 10 |
-| iron_leggings | 10 |
-| iron_sword | 10 |
-| iron_boots | 10 |
+| raw iron | 20 |
+| gold nugget | 20 |
+| chainmail helmet | 20 |
+| chainmail chestplate | 20 |
+| chainmail leggings | 20 |
+| chainmail boots | 20 |
+| gold ingot | 14 |
+| leather helmet | 16 |
+| leather chestplate | 16 |
+| leather leggings | 16 |
+| leather horse armor | 20 |
+| leather boots | 16 |
+| iron horse armor | 12 |
+| iron helmet | 10 |
+| iron chestplate | 10 |
+| iron leggings | 10 |
+| iron sword | 10 |
+| iron boots | 10 |
 | apple | 10 |
 | bow | 10 |
 | arrow | 10 |
 | coal | 10 |
-| iron_ingot | 8 |
-| flint_and_steel | 6 |
+| iron ingot | 8 |
+| flint and steel | 6 |
 | bowl | 6 |
-| stone_sword | 5 |
-| stone_shovel | 5 |
-| stone_pickaxe | 5 |
-| stone_axe | 5 |
-| iron_shovel | 4 |
-| iron_pickaxe | 4 |
-| iron_axe | 4 |
-| wooden_sword | 3 |
-| wooden_shovel | 3 |
-| wooden_pickaxe | 3 |
-| wooden_axe | 3 |
+| stone sword | 5 |
+| stone shovel | 5 |
+| stone pickaxe | 5 |
+| stone axe | 5 |
+| iron shovel | 4 |
+| iron pickaxe | 4 |
+| iron axe | 4 |
+| wooden sword | 3 |
+| wooden shovel | 3 |
+| wooden pickaxe | 3 |
+| wooden axe | 3 |
 | stick | 2 |
-| mushroom_stew | 20 |
+| mushroom stew | 20 |
 | string | 2 |
 | feather | 3 |
 | gunpowder | 12 |
-| wooden_hoe | 3 |
-| totem_of_undying | 800 |
+| wooden hoe | 3 |
