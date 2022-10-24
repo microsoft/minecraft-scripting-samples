@@ -163,6 +163,7 @@ export default class Challenge {
     this.applyPhase = this.applyPhase.bind(this);
     this.updateMetaBonuses = this.updateMetaBonuses.bind(this);
     this.refreshTeamScores = this.refreshTeamScores.bind(this);
+    this.clearPads = this.clearPads.bind(this);
   }
 
   save() {
@@ -545,7 +546,7 @@ export default class Challenge {
 
             case "setstart":
               if (this.#phase !== ChallengePhase.setup) {
-                Log.debug("Cannot run setstart outside of setup phase.");
+                this.sendMessageToAdminsPlus("Cannot run setstart outside of setup phase.", event.sender);
                 return;
               }
 
@@ -744,9 +745,9 @@ export default class Challenge {
 
     let ow = world.getDimension("overworld");
 
-    const centerX = x + (PAD_SIZE_X + PAD_SURROUND_X) * 3;
+    const centerX = x + Math.floor((PAD_SIZE_X + PAD_SURROUND_X) * 2.5);
     const centerY = y + 1;
-    const centerZ = z + (PAD_SIZE_Z + PAD_SURROUND_Z) * 3;
+    const centerZ = z + Math.floor((PAD_SIZE_Z + PAD_SURROUND_Z) * 2.5);
 
     Utilities.fillBlock(
       MinecraftBlockTypes.air,
@@ -767,13 +768,14 @@ export default class Challenge {
         } bc${i} true`
       );
     }
+
     ow.runCommandAsync(`setworldspawn ${centerX} ${centerY} ${centerZ}`);
 
     this.save();
+    this.setupTracks();
 
-    this.clearTeamIter = 0;
-
-    this.clearTeamArea();
+    //@ts-ignore
+    system.run(this.clearPads, 200); // add a delay so that tickingareas have a moment to get instated
   }
 
   clearPads() {
@@ -1026,7 +1028,7 @@ export default class Challenge {
           player === additionalPlayer ||
           (additionalPlayer && player.name === additionalPlayer.name))
       ) {
-        player.runCommandAsync("say @s " + message);
+        player.tell(message);
       }
     }
   }
@@ -1087,6 +1089,8 @@ export default class Challenge {
     for (let i = 0; i < this.teams.length; i++) {
       this.teams[i].votes = 0;
 
+      this.teams[i].rankByVote = -1;
+
       teamsByVote.push(this.teams[i]);
 
       if (this.teams[i].active || (this.teams[i].score > 0 && this.teams[i].playerTocks > 0)) {
@@ -1114,10 +1118,19 @@ export default class Challenge {
       });
 
       for (let i = 0; i < teamsByVote.length; i++) {
-        if (teamsByVote[i].rankByVote !== i) {
+        if (teamsByVote[i].rankByVote !== i && teamsByVote[i].votes > 0) {
           teamsByVote[i].rankByVote = i;
           hasChanged = true;
         }
+      }
+
+      // in case of tie, adjust rank by vote
+      if (teamsByVote[1].votes === teamsByVote[0].votes) {
+        teamsByVote[1].rankByVote = teamsByVote[0].rankByVote;
+      }
+
+      if (teamsByVote[2].votes === teamsByVote[1].votes) {
+        teamsByVote[2].rankByVote = teamsByVote[1].rankByVote;
       }
     }
 
@@ -1280,11 +1293,11 @@ export default class Challenge {
 
   showMotd(player: Player) {
     if (this.#motdTitle) {
-      player.runCommandAsync('tellraw @s { "rawtext": [{ "text": "§l' + this.#motdTitle + '" }]  }');
+      player.tell({ rawtext: [`§l${this.#motdTitle}`] });
     }
 
     if (this.#motdSubtitle) {
-      player.runCommandAsync('tellraw @s { "rawtext": [{ "text": "' + this.#motdSubtitle + '" }]  }');
+      player.tell({ rawtext: [this.#motdSubtitle] });
     }
   }
 
@@ -1371,6 +1384,7 @@ export default class Challenge {
               if (challPlayer.voteA !== team.index && challPlayer.teamId !== team.index) {
                 challPlayer.voteB = challPlayer.voteA;
                 challPlayer.voteA = team.index;
+
                 this.updateMetaBonuses();
               }
 
@@ -1407,6 +1421,7 @@ export default class Challenge {
 
             challPlayer.lastTeamSwitchTick = this.tickIndex;
             challPlayer.teamId = team.index;
+
             team.ensurePlayerIsOnTeam(challPlayer);
 
             event.player.onScreenDisplay.setTitle(`Joined`, {

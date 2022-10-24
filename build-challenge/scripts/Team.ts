@@ -78,6 +78,39 @@ export default class Team {
     }
   }
 
+  get effectiveScore() {
+    let effectiveScore = this.score;
+
+    if (effectiveScore < 0) {
+      return 0;
+    }
+
+    if (this.challenge.teams.length >= 4) {
+      if (this.teamUsageQuartile == 1) {
+        effectiveScore += this.score / 4;
+      } else if (this.teamUsageQuartile == 2) {
+        effectiveScore += this.score / 2;
+      } else if (this.teamUsageQuartile == 3) {
+        effectiveScore += this.score;
+      }
+    }
+
+    if (
+      (this.challenge.phase === ChallengePhase.vote || this.challenge.phase === ChallengePhase.post) &&
+      this.challenge.teams.length >= 3
+    ) {
+      if (this.rankByVote == 0) {
+        effectiveScore += this.score * 2; // 3x bonus for first vote winner.
+      } else if (this.rankByVote == 1) {
+        effectiveScore += this.score;
+      } else if (this.rankByVote == 2) {
+        effectiveScore += this.score / 2;
+      }
+    }
+
+    return Math.floor(effectiveScore);
+  }
+
   get playerTocks() {
     return this.#playerTocks;
   }
@@ -126,25 +159,16 @@ export default class Team {
     let teamName = this.name;
 
     let ow = world.getDimension("overworld");
-    let effectiveScore = this.score;
 
-    if (effectiveScore < 0) {
-      return;
-    }
     if (this.challenge.teams.length >= 4) {
       if (this.teamUsageQuartile == 0) {
         teamName = "█ " + teamName;
       } else if (this.teamUsageQuartile == 1) {
         teamName = "▓ " + teamName;
-        effectiveScore += this.score / 4;
       } else if (this.teamUsageQuartile == 2) {
         teamName = "▒ " + teamName;
-
-        effectiveScore += this.score / 2;
       } else if (this.teamUsageQuartile == 3) {
         teamName = "░ " + teamName;
-
-        effectiveScore += this.score;
       }
     }
 
@@ -153,23 +177,19 @@ export default class Team {
       this.challenge.teams.length >= 3
     ) {
       if (this.rankByVote == 0) {
-        teamName = "§g" + teamName + " √√√";
-
-        effectiveScore += this.score * 2; // 3x bonus for first vote winner.
+        teamName = "§g" + teamName + " √√√ (" + this.votes + ")";
       } else if (this.rankByVote == 1) {
-        teamName = "§s" + teamName + " √√";
-        effectiveScore += this.score;
+        teamName = "§s" + teamName + " √√ (" + this.votes + ")";
       } else if (this.rankByVote == 2) {
-        teamName = "§6" + teamName + " √";
-
-        effectiveScore += this.score / 2;
+        teamName = "§6" + teamName + " √ (" + this.votes + ")";
+      } else if (this.votes > 0) {
+        teamName += " (" + this.votes + ")";
       }
     }
 
     teamName += "  ";
 
-    effectiveScore = Math.floor(effectiveScore);
-    ow.runCommandAsync(`scoreboard players set "${teamName}" main ${effectiveScore}`);
+    ow.runCommandAsync(`scoreboard players set "${teamName}" main ${this.effectiveScore}`);
   }
 
   ensurePlayerIsOnTeam(challPlayer: ChallengePlayer) {
@@ -255,6 +275,7 @@ export default class Team {
         if (!name) {
           name = "Unknown team";
         }
+
         mdf.title(name);
         mdf.textField("Name", "team name", this.name);
 
@@ -262,7 +283,7 @@ export default class Team {
 
         if (result.formValues && result.formValues[0] !== undefined) {
           if (!this.isValidName(result.formValues[0])) {
-            player.runCommandAsync("say @s New team name can only be letters or numbers, and less than 11 characters.");
+            player.tell("New team name can only be letters or numbers, and less than 11 characters.");
           } else {
             this.name = result.formValues[0];
           }
@@ -296,9 +317,34 @@ export default class Team {
             teamMembers += ", ";
           }
 
-          teamMembers += this.players[0].name;
+          teamMembers += this.players[i].name;
         }
-        mdf.body("Team members: " + teamMembers + "\r\nScore (before bonuses): " + this.score);
+
+        let bodyStr = "Team members: " + teamMembers + "\r\nScore (before bonuses): " + this.score + "\r\n";
+
+        if (this.challenge.phase === ChallengePhase.vote || this.challenge.phase === ChallengePhase.post) {
+          if (this.rankByVote === 0) {
+            bodyStr += "1st place (" + this.votes + ")\r\n";
+          } else if (this.rankByVote === 0) {
+            bodyStr += "2st place (" + this.votes + ")\r\n";
+          } else if (this.rankByVote === 0) {
+            bodyStr += "3rd place (" + this.votes + ")\r\n";
+          } else {
+            bodyStr += this.votes + " votes\r\n";
+          }
+        }
+
+        if (this.teamUsageQuartile == 0) {
+          bodyStr += "Most active group (no bonus)\r\n";
+        } else if (this.teamUsageQuartile == 0) {
+          bodyStr += "2nd active group (25% bonus)\r\n";
+        } else if (this.teamUsageQuartile == 1) {
+          bodyStr += "3rd active group (50% bonus)\r\n";
+        } else if (this.teamUsageQuartile == 2) {
+          bodyStr += "Least active group (double bonus)\r\n";
+        }
+
+        mdf.body(bodyStr);
       }
 
       mdf.button1("OK");

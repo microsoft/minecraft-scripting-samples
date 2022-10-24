@@ -151,10 +151,8 @@ export default class ChallengePlayer {
       mode = "spectator";
     } else if (this.isAdmin) {
       mode = "c";
-    } else {
-      if (this.#challenge.phase === ChallengePhase.build) {
-        mode = "s";
-      }
+    } else if (this.#challenge.phase === ChallengePhase.build) {
+      mode = "s";
     }
 
     this.player.runCommandAsync("gamemode " + mode + " @s");
