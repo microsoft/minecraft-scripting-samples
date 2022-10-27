@@ -24,7 +24,7 @@ export default class SampleManager {
     console.warn(message);
   }
   say(message: string) {
-    mc.world.getDimension("overworld").runCommand("say " + message);
+    mc.world.getDimension("overworld").runCommandAsync("say " + message);
   }
 
   newChatMessage(chatEvent: mc.ChatEvent) {
