@@ -3,6 +3,7 @@ import {
   world,
   system,
   PlayerJoinEvent,
+  PlayerLeaveEvent,
   LeverActionEvent,
   TitleDisplayOptions,
   Player,
@@ -153,6 +154,7 @@ export default class Challenge {
   constructor() {
     this.tick = this.tick.bind(this);
     this.playerJoined = this.playerJoined.bind(this);
+    this.playerLeft = this.playerLeft.bind(this);
     this.leverActivate = this.leverActivate.bind(this);
     this.beforeChat = this.beforeChat.bind(this);
     this.refreshTeam = this.refreshTeam.bind(this);
@@ -436,6 +438,7 @@ export default class Challenge {
     const overworld = world.getDimension("overworld");
 
     world.events.playerJoin.subscribe(this.playerJoined);
+    world.events.playerLeave.subscribe(this.playerLeft);
     world.events.beforeChat.subscribe(this.beforeChat);
     world.events.leverActivate.subscribe(this.leverActivate);
 
@@ -1301,6 +1304,18 @@ export default class Challenge {
     }
   }
 
+  playerLeft(event: PlayerLeaveEvent) {
+    if (!event.playerName) {
+      return;
+    }
+
+    let cp = this.getPlayerFromName(event.playerName);
+
+    if (cp) {
+      cp.player = undefined;
+    }
+  }
+
   playerJoined(event: PlayerJoinEvent) {
     if (!event.player) {
       return;
@@ -1440,6 +1455,17 @@ export default class Challenge {
         team.showOptions(event.player);
       }
     }
+  }
+
+  getPlayerFromName(name: string) {
+    if (!name || name.length < 2) {
+      Log.debug("Unexpected player without a name passed: " + name);
+      return;
+    }
+
+    let cp = this.challengePlayers[name];
+
+    return cp;
   }
 
   ensurePlayerFromData(name: string, data: IPlayerData) {
