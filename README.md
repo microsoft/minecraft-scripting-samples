@@ -1,11 +1,14 @@
 # Project
 
-This project contains samples of [mojang-minecraft](https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft/mojang-minecraft) scripting APIs that are part of the GameTest Framework experimental capability of Minecraft. For more information, see the [Minecraft: Bedrock Edition Creator Documentation](https://docs.microsoft.com/minecraft/creator/)
+This project contains samples of [@minecraft/server](https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/minecraft-server) scripting APIs that are part of the Beta APIs experimental capability of Minecraft. For more information, see the [Minecraft: Bedrock Edition Creator Documentation](https://learn.microsoft.com/minecraft/creator/)
 
 ## Current Samples
 
- * [ts-starter](ts-starter/README.md) - A starter project that lets you use TypeScript, alongside a tutorial on how to use more `mojang-minecraft` APIs.
-
+ * [ts-starter](ts-starter/README.md) - A starter project that lets you use TypeScript, alongside a tutorial on how to use more `@minecraft/server` APIs.
+ * [ts-starter-complete-cotta](ts-starter-complete-cotta/README.md) - A completed version of the `ts-starter` tutorial, featuring the Break the Cotta simple arena game.
+ * [howto-gallery](howto-gallery/README.md) - A set of small code snippets that can be played back within the game.
+ * [build-challenge](build-challenge/README.md) - A more complex starter script map with the ability to form teams that build structures, that can then be voted on.
+ 
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a

@@ -1,7 +1,7 @@
 import SampleManager from "./SampleManager";
-import * as mcsl from "./MinecraftSampleLibrary";
-import * as mcgtsl from "./GameTestSampleLibrary";
-import * as mcuisl from "./Minecraft-UISampleLibrary";
+import * as mcsl from "./ServerSampleLibrary";
+import * as mcgtsl from "./Server-GameTestSampleLibrary";
+import * as mcuisl from "./Server-UISampleLibrary";
 
 const sm = new SampleManager();
 

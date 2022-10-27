@@ -1,4 +1,4 @@
-import * as mc from "mojang-minecraft";
+import * as mc from "@minecraft/server";
 
 export default class SampleManager {
   tickCount = 0;
@@ -24,7 +24,7 @@ export default class SampleManager {
     console.warn(message);
   }
   say(message: string) {
-    mc.world.getDimension("overworld").runCommand("say " + message);
+    mc.world.getDimension("overworld").runCommandAsync("say " + message);
   }
 
   newChatMessage(chatEvent: mc.ChatEvent) {

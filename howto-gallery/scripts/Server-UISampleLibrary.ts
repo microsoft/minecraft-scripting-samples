@@ -1,5 +1,6 @@
-import * as mc from "mojang-minecraft";
-import * as mcui from "mojang-minecraft-ui";
+import * as mc from "@minecraft/server";
+import * as mcui from "@minecraft/server-ui"; // keep in for ui samples
+
 import SampleManager from "./SampleManager";
 
 import * as sdf1 from "./ServerUserInterface";

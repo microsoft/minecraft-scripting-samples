@@ -1,7 +1,7 @@
 // === CONFIGURABLE VARIABLES
 
-const bpfoldername = "howto-gallery";
-const useMinecraftPreview = false; // Whether to target the "Minecraft Preview" version of Minecraft vs. the main store version of Minecraft
+const bpfoldername = "cotta";
+const useMinecraftPreview = true; // Whether to target the "Minecraft Preview" version of Minecraft vs. the main store version of Minecraft
 const useMinecraftDedicatedServer = false; // Whether to use Bedrock Dedicated Server - see https://www.minecraft.net/download/server/bedrock
 const dedicatedServerPath = "C:/mc/bds/1.19.0/"; // if using Bedrock Dedicated Server, where to find the extracted contents of the zip package
 
@@ -13,7 +13,6 @@ const del = require("del");
 const os = require("os");
 const spawn = require("child_process").spawn;
 const sourcemaps = require("gulp-sourcemaps");
-const snippetsBuilder = require("./tools/gulp-snippets");
 
 const worldsFolderName = useMinecraftDedicatedServer ? "worlds" : "minecraftWorlds";
 
@@ -27,7 +26,14 @@ const mcdir = useMinecraftDedicatedServer
       : "/AppData/Local/Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/LocalState/games/com.mojang/");
 
 function clean_build(callbackFunction) {
-  return del(["build/behavior_packs/", "build/resource_packs/"]);
+  del(["build/behavior_packs/", "build/resource_packs/"]).then(
+    (value) => {
+      callbackFunction(); // success
+    },
+    (reason) => {
+      callbackFunction(); // error
+    }
+  );
 }
 
 function copy_behavior_packs() {
@@ -295,10 +301,6 @@ function startServer(callbackFunction) {
   callbackFunction();
 }
 
-function buildSnippets() {
-  return gulp.src("scripts/**/*.ts").pipe(snippetsBuilder());
-}
-
 exports.clean_build = clean_build;
 exports.copy_behavior_packs = copy_behavior_packs;
 exports.copy_resource_packs = copy_resource_packs;
@@ -319,4 +321,3 @@ exports.updateworld = gulp.series(
 );
 exports.ingestworld = gulp.series(clean_dev_world_backup, backup_dev_world, clean_dev_world, ingest_localmc_world);
 exports.updateconfig = gulp.series(clean_localmc_config, deploy_localmc_config);
-exports.buildsnippets = buildSnippets;

@@ -1,14 +1,15 @@
-import * as mc from "mojang-minecraft";
-import * as mcsa from "mojang-minecraft-server-admin";
-import * as mcnet from "mojang-net";
+import * as mc from "@minecraft/server";
+import * as mcsa from "@minecraft/server-admin";
+import * as mcnet from "@minecraft/server-net";
 
 /**
  * Uses secrets and variables from dedicated server configuration files to further parameterize web requests.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft-server-admin/ServerSecrets
- * @see https://docs.microsoft.com/minecraft/creator/scriptapi/mojang-minecraft-server-admin/ServerVariables
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-admin/ServerSecrets
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-admin/ServerVariables
  */
+// @ts-ignore
 export async function getPlayerProfile(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
   const serverUrl = mcsa.variables.get("serverEndpoint");
 
@@ -24,5 +25,5 @@ export async function getPlayerProfile(log: (message: string, status?: number) =
     new mcnet.HttpHeader("auth", mcsa.secrets.get("authtoken")),
   ];
 
-  const response: any = await mcnet.http.request(req);
+  await mcnet.http.request(req);
 }

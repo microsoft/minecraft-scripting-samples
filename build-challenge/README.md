@@ -90,6 +90,6 @@ Note that this can only be set while the phase is in setup. Also, it is only sup
 
 ## Manifest
 
-- [gulpfile.js](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/gulpfile.js): This file contains build instructions for Gulp, for building out TypeScript code.
-- [scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/scripts): This contains all of your TypeScript files, that will be compiled and built into your projects.
-- [behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/behavior_packs): This contains resources and JSON files that define your behavior pack.
+- [gulpfile.js](https://github.com/microsoft/minecraft-scripting-samples/blob/main/build-challenge/gulpfile.js): This file contains build instructions for Gulp, for building out TypeScript code.
+- [scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/build-challenge/scripts): This contains all of the Build Challenge TypeScript files, that will be compiled and built into your projects.
+- [behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/build-challenge/behavior_packs): This contains resources and JSON files that define the Build Challenge behavior pack.

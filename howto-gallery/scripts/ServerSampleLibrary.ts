@@ -1,4 +1,4 @@
-import * as mc from "mojang-minecraft";
+import * as mc from "@minecraft/server";
 import SampleManager from "./SampleManager";
 
 import * as sdf1 from "./EntityCreatedEvent";

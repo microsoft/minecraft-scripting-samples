@@ -1,6 +1,7 @@
-import * as mc from "mojang-minecraft";
-import * as mcsa from "mojang-minecraft-server-admin";
-import * as mcnet from "mojang-net";
+import * as mc from "@minecraft/server";
+import * as mcsa from "@minecraft/server-admin";
+import * as mcnet from "@minecraft/server-net"; // keep in for net samples
+
 import SampleManager from "./SampleManager";
 
 import * as sdf1 from "./ServerAdmin";

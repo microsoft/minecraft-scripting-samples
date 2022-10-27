@@ -12,7 +12,7 @@ class SnippetsBuilder {
   _targetFolderPath;
   _snippets = [];
   _snippetsByModules = {};
-  _scriptLibaryMainCode = "";
+  _scriptLibraryMainCode = "";
   _libraryCode = {};
 
   constructor(targetFolderPath) {
@@ -31,8 +31,8 @@ class SnippetsBuilder {
     let filePathLower = filePath.toLowerCase();
 
     if (filePathLower.indexOf("samplemanager.") >= 0) {
-      this._scriptLibaryMainCode = this.stripLinesContaining(content, "import * as ");
-      this._scriptLibaryMainCode = this.stripLinesContaining(this._scriptLibaryMainCode, "console.");
+      this._scriptLibraryMainCode = this.stripLinesContaining(content, "import * as mc from ");
+      this._scriptLibraryMainCode = this.stripLinesContaining(this._scriptLibraryMainCode, "console.");
     } else if (filePathLower.endsWith("samplelibrary.ts")) {
       let lastSlash = Math.max(filePathLower.lastIndexOf("/"), filePathLower.lastIndexOf("\\"));
 
@@ -43,8 +43,9 @@ class SnippetsBuilder {
         libraryContent = this.stripLinesContaining(libraryContent, "import * as mc ");
         libraryContent = this.stripLinesContaining(libraryContent, "import SampleManager from ");
 
-        this._libraryCode["mojang-" + filePathLower.substring(lastSlash + 1, filePathLower.length - 16)] =
-          libraryContent;
+        let moduleName = filePathLower.substring(lastSlash + 1, filePathLower.length - 16);
+
+        this._libraryCode["@minecraft/" + moduleName] = libraryContent;
       }
     }
 
@@ -59,12 +60,12 @@ class SnippetsBuilder {
           .trim()
           .toLowerCase();
 
-        if (seeLinkContents.startsWith("https://docs.microsoft.com/minecraft/creator/scriptapi/")) {
-          let urlLink = seeLinkContents.substring(55, seeLinkContents.length).replace("#", "/");
+        if (seeLinkContents.startsWith("https://learn.microsoft.com/minecraft/creator/scriptapi/")) {
+          let urlLink = seeLinkContents.substring(56, seeLinkContents.length).replace("#", "/");
 
           let urlSegments = urlLink.split("/");
 
-          if (urlSegments.length >= 2 && urlSegments[0].startsWith("mojang-")) {
+          if (urlSegments.length >= 2 && urlSegments[0].startsWith("minecraft")) {
             let nextExport = content.indexOf("export ", endOfSeeLinkLine);
 
             if (nextExport >= 0) {
@@ -91,13 +92,15 @@ class SnippetsBuilder {
 
                     this._snippets.push(cs);
 
-                    if (!this._snippetsByModules[urlSegments[0]]) {
-                      this._snippetsByModules[urlSegments[0]] = [];
+                    let moduleKey = urlSegments[0] + "/" + urlSegments[1];
+
+                    if (!this._snippetsByModules[moduleKey]) {
+                      this._snippetsByModules[moduleKey] = [];
                     }
 
-                    this._snippetsByModules[urlSegments[0]].push(cs);
+                    this._snippetsByModules[moduleKey].push(cs);
 
-                    // console.log("Snippet '" + name + "' discovered for " + urlSegments.join("."));
+                    console.log("Snippet '" + name + "' discovered for " + urlSegments.join(".") + " in " + moduleKey);
 
                     let localUrlSegments = Array.from(urlSegments);
 
@@ -160,16 +163,23 @@ class SnippetsBuilder {
       this.writeFile("samplejson/" + moduleKey + "-samples.json", jsonMarkup);
 
       let tsTestFileMarkup =
-        'import * as mc from "mojang-minecraft";\r\n\r\nconst overworld = mc.world.getDimension("overworld");\r\n\r\n' +
+        "/* eslint-disable  @typescript-eslint/no-unused-vars */\r\n" +
+        'import * as mc from "@minecraft/server";\r\n\r\n' +
         moduleType.join("\r\n\r\n");
 
-      tsTestFileMarkup += "\r\n" + this._scriptLibaryMainCode + "\r\n";
+      tsTestFileMarkup += "\r\n" + this._scriptLibraryMainCode + "\r\n";
 
       if (this._libraryCode[moduleKey]) {
         tsTestFileMarkup += "\r\n" + this._libraryCode[moduleKey] + "\r\n";
       }
 
-      this.writeFile("typescript/" + moduleKey + "-tests.ts", tsTestFileMarkup);
+      let testFolder = "typescript/" + moduleKey + "/";
+
+      if (!fs.existsSync(testFolder)) {
+        fs.mkdirSync(testFolder, { recursive: true });
+      }
+
+      this.writeFile(testFolder + "tests.ts", tsTestFileMarkup);
     }
 
     return content;
