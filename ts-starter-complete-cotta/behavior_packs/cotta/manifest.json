@@ -1,9 +1,9 @@
 {
   "format_version": 2,
   "header": {
-    "name": "My script behavior pack",
-    "description": "My behavior pack description",
-    "uuid": "14e467b4-e3aa-49d3-8352-f8439fd7b2ee",
+    "name": "Cotta Behavior Pack",
+    "description": "My TypeScript Project",
+    "uuid": "79587552-f454-4cee-855e-652b7675c507",
     "version": [0, 0, 1],
     "min_engine_version": [1, 19, 40]
   },
@@ -12,7 +12,7 @@
       "description": "Script resources",
       "language": "javascript",
       "type": "script",
-      "uuid": "7c7e693f-99f4-41a9-95e0-1f57b37e1e12",
+      "uuid": "530a69a2-11cc-4e69-9b13-bb99535184f5",
       "version": [0, 0, 1],
       "entry": "scripts/main.js"
     }

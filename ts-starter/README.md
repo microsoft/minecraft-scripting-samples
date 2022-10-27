@@ -12,7 +12,7 @@ products:
 
 # Minecraft TypeScript Starter Project
 
-This sample demonstrates a simple build process and TypeScript compilation for Minecraft. This readme shows how you can use GameTest Framework experimental APIs to build out simple gameplay styles. You can use this project as a starter for your own scripting projects.
+This sample demonstrates a simple build process and TypeScript compilation for Minecraft. This readme shows how you can use Betas APIs experiment to build out simple gameplay styles. You can use this project as a starter for your own scripting projects.
 
 ## Prerequisites
 
@@ -70,7 +70,13 @@ Go back the Files tree view and open `behavior_packs\cotta\manifest.json`
 
 Update the name and description properties to something like "Cotta Behavior Pack" and "My TypeScript Project".
 
-Update the first (and only the first) UUID property to make it unique to your project. See [this article](https://docs.microsoft.com/minecraft/creator/documents/behaviorpack) for tips on working with behavior packs and creating your own unique UUIDs.
+Update the first and second UUID properties to make it unique to your project. See [this article](https://learn.microsoft.com/minecraft/creator/documents/behaviorpack) for tips on working with behavior packs and creating your own unique UUIDs.
+
+> IMPORTANT:
+> You may also need to update the version of Beta APIs in your `dependencies` section to match your version of Minecraft.
+> Versions 1.19.40 feature `1.0.0-beta` APIs
+> Versions 1.19.50 feature `1.1.0-beta` APIs
+> Future versions will likely require updated versions of Beta APIs.
 
 ### Chapter 2. Let's test the parts of our project
 
@@ -93,11 +99,11 @@ You may hear a little tone through your speakers when it has successfully comple
 
 Launch Minecraft and create a new world:
 
-1. Call it **Cotta**.
+1. Call it **Cotta Test**.
 1. Select a Creative game mode.
-1. Select a Flat world type.
-1. Enable the GameTest Framework experiment toggle.
-1. Under Behavior Packs, you should see your Cotta behavior pack. Select it and Activate it.
+1. Select a Flat world option, under the Advanced section of the Create New World screen.
+1. Under Behavior Packs, under Available, you should see your Cotta Behavior Pack. Select it and Activate it.
+1. Enable the Beta APIs experiment toggle, under the Experiments section of the Create New World screen.
 1. Create the world and go into it.
 
 Now you're in. Great!
@@ -119,7 +125,7 @@ Open up `scripts/main.ts` within Visual Studio Code.
 Remove all the existing script code in **main.ts**. Replace it with this to start:
 
 ```typescript
-import { world, BlockLocation, MinecraftBlockTypes } from "mojang-minecraft";
+import { world, system, BlockLocation, MinecraftBlockTypes } from "@minecraft/server";
 
 const START_TICK = 100;
 
@@ -131,36 +137,44 @@ function initializeBreakTheTerracotta() {
 
   // catch in case we've already added this score before.
   try {
-    overworld.runCommand('scoreboard objectives add score dummy "Level"');
+    overworld.runCommandAsync('scoreboard objectives add score dummy "Level"');
   } catch (e) {}
 
   // eliminate pesky nearby mobs
   try {
-    overworld.runCommand("kill @e[type=!player]");
+    overworld.runCommandAsync("kill @e[type=!player]");
   } catch (e) {}
 
-  overworld.runCommand("scoreboard objectives setdisplay sidebar score");
-  overworld.runCommand("give @p diamond_sword");
-  overworld.runCommand("give @p dirt 64");
+  overworld.runCommandAsync("scoreboard objectives setdisplay sidebar score");
 
-  overworld.runCommand("scoreboard players set @p score 0");
-  overworld.runCommand("say BREAK THE TERRACOTTA!");
+  overworld.runCommandAsync("give @p diamond_sword");
+  overworld.runCommandAsync("give @p dirt 64");
+
+  overworld.runCommandAsync("scoreboard players set @p score 0");
+
+  world.say("BREAK THE TERRACOTTA");
 }
 
 function gameTick() {
-  if (curTick === START_TICK) {
-    initializeBreakTheTerracotta();
+  try {
+    if (curTick === START_TICK) {
+      initializeBreakTheTerracotta();
+    }
+
+    curTick++;
+  } catch (e) {
+    console.warn("Tick error: " + e);
   }
 
-  curTick++;
+  system.run(gameTick);
 }
 
-world.events.tick.subscribe(gameTick);
+system.run(gameTick);
 ```
 
 This code does some work to initialize our gameplay for Minecraft by running several commands.
 
-First, we subscribe to the world's tick event. This will give us a callback that fires 20 times a second, and within this tick we can put all of our game logic. We want the game to initialize some code; namely, the `initializeBreakTheTerracotta` function.
+First, we queue up a run to our main tick function, gameTick. Note that at the end, we will requeue a game tick, which will run within the next tick frame. This will give us a callback that fires 20 times a second, and within this, we can put all of our game logic. We want the game to initialize some code; namely, the `initializeBreakTheTerracotta` function.
 
 Note that we wait until `START_TICK` (100 ticks in) before the world is actually initialized. This gives Minecraft time to fully load up and get ready.
 
@@ -185,7 +199,7 @@ When you are done coding for the day, either hit **ctrl-c** in the PowerShell Wi
 
 Now, let's go back to Minecraft.
 
-Save and Quit to exit out of the world. We'll want to reload the world from here - any time you make a script change, you need to exit out of the world and reload it to see changes.
+Save and Quit to exit out of the world. We'll want to reload the world from here - any time you make a script change, you need to exit out of the world and reload it to see changes. Or, you can run the `/reload` command to reload the JavaScript files that have been deployed.
 
 Now load the world. You should see your initialization changes: a new scoreboard, new items in your inventory, and a script message.
 
@@ -198,7 +212,7 @@ We're going to start by adding some handy helper utility code functions. This wi
 Add a new file to your `scripts` folder called `Utilities.ts`. Correct capitalization matters, so make sure the `U` is capitalized. Add the following code:
 
 ```typescript
-import { world, BlockLocation, BlockType } from "mojang-minecraft";
+import { world, BlockLocation, BlockType } from "@minecraft/server";
 
 export default class Utilities {
   static fillBlock(
@@ -210,7 +224,9 @@ export default class Utilities {
     yTo: number,
     zTo: number
   ) {
+
     let overworld = world.getDimension("overworld");
+
     for (let i = xFrom; i <= xTo; i++) {
       for (let j = yFrom; j <= yTo; j++) {
         for (let k = zFrom; k <= zTo; k++) {
@@ -271,7 +287,7 @@ const ARENA_Y_OFFSET = -60;
 const ARENA_Z_OFFSET = 0;
 ```
 
-Finally, within `initializeBreakTheTerracotta`, let's add our arena initialization beneath the `overworld.runCommand("say BREAK THE TERRACOTTA!");` line of code:
+Finally, within `initializeBreakTheTerracotta`, let's add our arena initialization beneath the `world.say("BREAK THE TERRACOTTA!");` line of code:
 
 ```typescript
 Utilities.fillBlock(
@@ -294,7 +310,7 @@ Utilities.fourWalls(
   ARENA_Z_OFFSET + ARENA_Z_SIZE / 2
 );
 
-overworld.runCommand("tp @p " + String(ARENA_X_OFFSET - 3) + " " + ARENA_Y_OFFSET + " " + String(ARENA_Z_OFFSET - 3));
+overworld.runCommandAsync("tp @p " + String(ARENA_X_OFFSET - 3) + " " + ARENA_Y_OFFSET + " " + String(ARENA_Z_OFFSET - 3));
 ```
 
 The first line just fills a cuboid with air - basically clearing out the arena of any previous items. The second line re-installs and adds four walls of cobblestone.
@@ -333,7 +349,7 @@ if (curTick > START_TICK && curTick % 20 === 0) {
 }
 ```
 
-Now add the `spawnNewTerracotta()` and `checkForTerracotta()` functions after the last function and before the `world.events.tick.subscribe(gameTick);` line of code:
+Now add the `spawnNewTerracotta()` and `checkForTerracotta()` functions after the last function and before the last `system.run(gameTick);` line of code:
 
 ```typescript
 function spawnNewTerracotta() {
@@ -343,7 +359,7 @@ function spawnNewTerracotta() {
   cottaX = Math.floor(Math.random() * (ARENA_X_SIZE - 1)) - (ARENA_X_SIZE / 2 - 1);
   cottaZ = Math.floor(Math.random() * (ARENA_Z_SIZE - 1)) - (ARENA_Z_SIZE / 2 - 1);
 
-  overworld.runCommand("say Creating new terracotta!");
+  world.say("Creating new terracotta!");
   overworld
     .getBlock(new BlockLocation(cottaX + ARENA_X_OFFSET, 1 + ARENA_Y_OFFSET, cottaZ + ARENA_Z_OFFSET))
     .setType(MinecraftBlockTypes.yellowGlazedTerracotta);
@@ -361,8 +377,8 @@ function checkForTerracotta() {
     score++;
     spawnCountdown = 2;
     cottaX = -1;
-    overworld.runCommand("scoreboard players set @p score " + score);
-    overworld.runCommand("say You broke the terracotta! Creating new terracotta in a few seconds.");
+    overworld.runCommandAsync("scoreboard players set @p score " + score);
+    world.say("You broke the terracotta! Creating new terracotta in a few seconds.");
     cottaZ = -1;
   }
 }

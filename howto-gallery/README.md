@@ -71,6 +71,6 @@ gulp updateworld
 
 ## Manifest
 
-- [gulpfile.js](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/gulpfile.js): This file contains build instructions for Gulp, for building out TypeScript code.
-- [scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/scripts): This contains all of your TypeScript files, that will be compiled and built into your projects.
-- [behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/behavior_packs): This contains resources and JSON files that define your behavior pack.
+- [gulpfile.js](https://github.com/microsoft/minecraft-scripting-samples/blob/main/howto-gallery/gulpfile.js): This file contains build instructions for Gulp, for building out TypeScript code.
+- [scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/howto-gallery/scripts): This contains How to Gallery TypeScript files, that will be compiled and built into your projects.
+- [behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/howto-gallery/behavior_packs): This contains resources and JSON files that define your behavior pack.
