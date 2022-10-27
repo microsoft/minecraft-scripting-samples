@@ -65,7 +65,7 @@ class SnippetsBuilder {
 
           let urlSegments = urlLink.split("/");
 
-          if (urlSegments.length >= 2 && urlSegments[0].startsWith("@minecraft")) {
+          if (urlSegments.length >= 2 && urlSegments[0].startsWith("minecraft")) {
             let nextExport = content.indexOf("export ", endOfSeeLinkLine);
 
             if (nextExport >= 0) {

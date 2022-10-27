@@ -6,8 +6,8 @@ const overworld = mc.world.getDimension("overworld");
  * Creates a free-floating feather item in the world.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server/itemStack
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server/dimension#spawnitem
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/itemStack
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#spawnitem
  */
 export function spawnItem(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
   const featherItem = new mc.ItemStack(mc.MinecraftItemTypes.feather, 1, 0);
@@ -20,9 +20,9 @@ export function spawnItem(log: (message: string, status?: number) => void, targe
  * Tests whether there is a feather nearby a spot.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server/entityitemcomponent
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server/entityqueryoptions
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server/dimension#getentities
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entityitemcomponent
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entityqueryoptions
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#getentities
  */
 export function testThatEntityIsFeatherItem(
   log: (message: string, status?: number) => void,

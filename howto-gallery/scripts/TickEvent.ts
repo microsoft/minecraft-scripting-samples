@@ -4,9 +4,9 @@ import * as mc from "@minecraft/server";
  * A simple tick timer that runs a command every minute.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server/tickevent
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server/tickeventsignal
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server/events#tick
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/tickevent
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/tickeventsignal
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/events#tick
  */
 let ticks = 0;
 

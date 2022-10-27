@@ -5,8 +5,8 @@ import * as mcnet from "@minecraft/server-net";
  * Updates score on a local server
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-net/HttpRequest
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-net/HttpHeader
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-net/HttpRequest
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-net/HttpHeader
  */
 // @ts-ignore
 export async function updateScore(log: (message: string, status?: number) => void, targetLocation: mc.Location) {

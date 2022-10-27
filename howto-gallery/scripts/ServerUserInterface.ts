@@ -5,8 +5,8 @@ import * as mcui from "@minecraft/server-ui";
  * Shows a very basic action form.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-ui/ActionFormData
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-ui/ActionFormResponse
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ActionFormData
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ActionFormResponse
  */
 // @ts-ignore
 export async function showActionForm(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
@@ -38,8 +38,8 @@ export async function showActionForm(log: (message: string, status?: number) => 
  * Shows a dialog that lets a player pick their favorite month.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-ui/ActionFormData
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-ui/ActionFormResponse
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ActionFormData
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ActionFormResponse
  */
 // @ts-ignore
 export function showFavoriteMonth(log: (message: string, status?: number) => void, targetLocation: mc.Location) {

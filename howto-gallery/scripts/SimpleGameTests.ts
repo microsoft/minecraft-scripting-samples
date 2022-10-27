@@ -5,10 +5,10 @@ import * as gt from "@minecraft/server-gametest";
  * A simple mob test - the fox should attack the chicken.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-gametest/mojang-gametest#register
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-gametest/test#spawn
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-gametest/test#succeedwhen
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-gametest/test#assertentitypresentinarea
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-gametest/mojang-gametest#register
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-gametest/test#spawn
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-gametest/test#succeedwhen
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-gametest/test#assertentitypresentinarea
  */
 // @ts-ignore
 export function simpleMobTest(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
@@ -33,11 +33,11 @@ export function simpleMobTest(log: (message: string, status?: number) => void, t
  * Tests a failure case - phantoms should fly away from cats, but get "captured" by them.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-gametest/mojang-gametest#register
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-gametest/registrationbuilder#structurename
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-gametest/registrationbuilder#tag
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-gametest/test#spawn
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-gametest/test#succeedwhenentitypresent
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-gametest/mojang-gametest#register
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-gametest/registrationbuilder#structurename
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-gametest/registrationbuilder#tag
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-gametest/test#spawn
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-gametest/test#succeedwhenentitypresent
  */
 function phantomsShouldFlyFromCats(test: gt.Test) {
   const catEntityType = "cat";
@@ -56,11 +56,11 @@ gt.register("MobBehaviorTests", "phantoms_should_fly_from_cats", phantomsShouldF
  * Tests a roller coater obstacle course.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-gametest/mojang-gametest#register
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-gametest/test#spawn
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server-gametest/test#succeedwhenentitypresent
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server/entityrideablecomponent
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/@minecraft/server/entityrideablecomponent#addrider
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-gametest/mojang-gametest#register
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-gametest/test#spawn
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-gametest/test#succeedwhenentitypresent
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entityrideablecomponent
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entityrideablecomponent#addrider
  */
 function minibiomes(test: gt.Test) {
   const minecartEntityType = "minecart";
