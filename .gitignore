@@ -23,6 +23,7 @@ mono_crash.*
 [Bb]uild/
 [Rr]elease/
 [Rr]eleases/
+dist/
 x64/
 x86/
 [Aa][Rr][Mm]/
