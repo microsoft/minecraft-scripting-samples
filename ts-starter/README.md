@@ -18,7 +18,7 @@ This sample demonstrates a simple build process and TypeScript compilation for M
 
 **Install Node.js tools, if you haven't already**
 
-We're going to use the Node Package Manager (or NPM) to get more tools to make the process of building our project easier.
+We're going to use the package manager [npm](https://www.npmjs.com/package/npm) to get more tools to make the process of building our project easier.
 
 Visit [https://nodejs.org/](https://nodejs.org).
 
@@ -40,7 +40,7 @@ Visit the [Visual Studio Code website](https://code.visualstudio.com) and instal
    cd c:\projects\cotta\
    ```
 
-1. Use NPM to install our tools:
+1. Use npm to install our tools:
 
    ```powershell
    npm i

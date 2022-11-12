@@ -18,7 +18,7 @@ This sample contains many code snippets that show how you can manipulate basic M
 
 **Install Node.js tools, if you haven't already**
 
-We're going to use the Node Package Manager (or NPM) to get more tools to make the process of building our project easier.
+We're going to use the package manager [npm](https://www.npmjs.com/package/npm) to get more tools to make the process of building our project easier.
 
 Visit [https://nodejs.org/](https://nodejs.org).
 
@@ -30,7 +30,7 @@ Visit the [Visual Studio Code website](https://code.visualstudio.com) and instal
 
 ## Getting Started
 
-1. Use NPM to install dependent modules:
+1. Use npm to install dependent modules:
 
    ```powershell
    npm i
