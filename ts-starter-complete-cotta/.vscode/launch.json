@@ -6,9 +6,9 @@
         "request": "attach",
         "name": "Debug with Minecraft",
         "mode": "listen",
-        "localRoot": "${workspaceFolder}/scripts",
-        "sourceMapRoot": "${workspaceFolder}/build/behavior_packs/_cottaDebug",
-        "remoteRoot": "${workspaceFolder}/build/behavior_packs/cotta",
+        "localRoot": "${workspaceFolder}/scripts/",
+        "sourceMapRoot": "${workspaceFolder}/build/behavior_packs/_cottaDebug/",
+        "generatedSourceRoot": "${workspaceFolder}/build/behavior_packs/cotta/",
         "port": 19144
       }
     ]

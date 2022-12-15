@@ -63,6 +63,7 @@ function compile_scripts() {
     .pipe(
       sourcemaps.write("../../_" + bpfoldername + "Debug", {
         destPath: bpfoldername + "/scripts/",
+        sourceRoot: "./../../../scripts/",
       })
     )
     .pipe(gulp.dest("build/behavior_packs/" + bpfoldername + "/scripts"));

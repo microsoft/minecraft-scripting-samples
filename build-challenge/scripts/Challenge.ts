@@ -1,4 +1,4 @@
-import Team from "./Team";
+import Team from "./Team.js";
 import {
   world,
   system,
@@ -17,8 +17,8 @@ import {
   SoundOptions,
   Vector,
 } from "@minecraft/server";
-import ChallengePlayer, { ChallengePlayerRole, IPlayerData } from "./ChallengePlayer";
-import Log from "./Log";
+import ChallengePlayer, { ChallengePlayerRole, IPlayerData } from "./ChallengePlayer.js";
+import Log from "./Log.js";
 import {
   AIRSPACE_GAP,
   JOIN_TEAM_X,
@@ -46,9 +46,9 @@ import {
   STANDARD_TRACK_TIME,
   MAX_PLAYERS_TEAM,
   MAX_TIME_TO_SWITCH_TEAMS_TICK,
-} from "./Constants";
-import Utilities from "./Utilities";
-import Track from "./Track";
+} from "./Constants.js";
+import Utilities from "./Utilities.js";
+import Track from "./Track.js";
 
 export enum ChallengePhase {
   setup = 1,

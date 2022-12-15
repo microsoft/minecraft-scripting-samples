@@ -1,5 +1,5 @@
 import { Player } from "@minecraft/server";
-import Challenge, { ChallengePhase } from "./Challenge";
+import Challenge, { ChallengePhase } from "./Challenge.js";
 
 export enum ChallengePlayerRole {
   unknown = 0,
