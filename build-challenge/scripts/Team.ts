@@ -1,6 +1,6 @@
 import { world, BlockLocation, MinecraftBlockTypes, Player } from "@minecraft/server";
-import Challenge, { ChallengePhase } from "./Challenge";
-import ChallengePlayer from "./ChallengePlayer";
+import Challenge, { ChallengePhase } from "./Challenge.js";
+import ChallengePlayer from "./ChallengePlayer.js";
 import {
   PAD_SURROUND_X as PAD_SURROUND_X,
   PAD_SURROUND_Z as PAD_SURROUND_Z,
@@ -15,9 +15,9 @@ import {
   SPAWN_TEAM_X,
   SPAWN_TEAM_Y,
   SPAWN_TEAM_Z,
-} from "./Constants";
-import Log from "./Log";
-import Utilities from "./Utilities";
+} from "./Constants.js";
+import Log from "./Log.js";
+import Utilities from "./Utilities.js";
 import { ModalFormData, MessageFormData } from "@minecraft/server-ui";
 
 export interface ITeamData {

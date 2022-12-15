@@ -1,5 +1,5 @@
 import { world, WorldInitializeEvent } from "@minecraft/server";
-import Challenge from "./Challenge";
+import Challenge from "./Challenge.js";
 
 const cv = new Challenge();
 

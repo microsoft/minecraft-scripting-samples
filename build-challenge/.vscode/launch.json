@@ -1,14 +1,14 @@
 {
-    "version": "0.2.0",
+    "version": "0.5.0",
     "configurations": [
       {
         "type": "minecraft-js",
         "request": "attach",
         "name": "Debug with Minecraft",
         "mode": "listen",
-        "localRoot": "${workspaceFolder}/scripts",
-        "sourceMapRoot": "${workspaceFolder}/build/behavior_packs/_buildchallengeDebug",
-        "remoteRoot": "${workspaceFolder}/build/behavior_packs/buildchallenge",
+        "localRoot": "${workspaceFolder}/scripts/",
+        "sourceMapRoot": "${workspaceFolder}/build/behavior_packs/_buildchallengeDebug/",
+        "generatedSourceRoot": "${workspaceFolder}/build/behavior_packs/buildchallenge/scripts/",        
         "port": 19144
       }
     ]

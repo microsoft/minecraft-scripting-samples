@@ -8,7 +8,7 @@
         "mode": "listen",
         "localRoot": "${workspaceFolder}/scripts",
         "sourceMapRoot": "${workspaceFolder}/build/behavior_packs/_starterbpDebug",
-        "remoteRoot": "${workspaceFolder}/build/behavior_packs/starterbp",
+        "generatedSourceRoot": "${workspaceFolder}/build/behavior_packs/starterbp",
         "port": 19144
       }
     ]

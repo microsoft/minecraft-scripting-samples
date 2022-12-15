@@ -8,7 +8,7 @@
         "mode": "listen",
         "localRoot": "${workspaceFolder}/scripts",
         "sourceMapRoot": "${workspaceFolder}/build/behavior_packs/_howto-galleryDebug",
-        "remoteRoot": "${workspaceFolder}/build/behavior_packs/howto-gallery",
+        "generatedSourceRoot": "${workspaceFolder}/build/behavior_packs/howto-gallery",
         "port": 19144
       }
     ]
