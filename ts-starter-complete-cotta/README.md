@@ -18,7 +18,7 @@ This is a completed version of the [../ts-starter/README.md](ts-starter) project
 
 **Install Node.js tools, if you haven't already**
 
-We're going to use the Node Package Manager (or NPM) to get more tools to make the process of building our project easier.
+We're going to use the package manager [npm](https://www.npmjs.com/package/npm) to get more tools to make the process of building our project easier.
 
 Visit [https://nodejs.org/](https://nodejs.org).
 
