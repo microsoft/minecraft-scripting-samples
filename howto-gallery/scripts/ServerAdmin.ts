@@ -19,11 +19,14 @@ export async function getPlayerProfile(log: (message: string, status?: number) =
     playerId: "johndoe",
   });
 
+  const authTokenSec = mcsa.secrets.get("authtoken");
+
+  if (!authTokenSec) {
+    throw new Error("authtoken secret not defined.");
+  }
+
   req.method = mcnet.HttpRequestMethod.POST;
-  req.headers = [
-    new mcnet.HttpHeader("Content-Type", "application/json"),
-    new mcnet.HttpHeader("auth", mcsa.secrets.get("authtoken")),
-  ];
+  req.headers = [new mcnet.HttpHeader("Content-Type", "application/json"), new mcnet.HttpHeader("auth", authTokenSec)];
 
   await mcnet.http.request(req);
 }
