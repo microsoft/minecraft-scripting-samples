@@ -23,6 +23,7 @@ export default class SampleManager {
     this.say(message);
     console.warn(message);
   }
+
   say(message: string) {
     mc.world.getDimension("overworld").runCommandAsync("say " + message);
   }
@@ -30,8 +31,8 @@ export default class SampleManager {
   newChatMessage(chatEvent: mc.ChatEvent) {
     const message = chatEvent.message.toLowerCase();
 
-    if (message.startsWith("howto") && chatEvent.sender) {
-      const nearbyBlock = chatEvent.sender.getBlockFromViewVector();
+    if ((message.startsWith("howto") || message.startsWith("help")) && chatEvent.sender) {
+      const nearbyBlock = chatEvent.sender.getBlockFromViewDirection();
       if (!nearbyBlock) {
         this.gameplayLogger("Please look at the block where you want me to run this.");
         return;
@@ -39,10 +40,15 @@ export default class SampleManager {
 
       const nearbyBlockLoc = nearbyBlock.location;
       const nearbyLoc = new mc.Location(nearbyBlockLoc.x, nearbyBlockLoc.y + 1, nearbyBlockLoc.z);
+      let sampleId: string | undefined = undefined;
 
-      const sampleId = message.substring(5).trim();
+      let firstSpace = message.indexOf(" ");
 
-      if (sampleId.length < 2) {
+      if (firstSpace > 0) {
+        sampleId = message.substring(firstSpace + 1).trim();
+      }
+
+      if (!sampleId || sampleId.length < 2) {
         let availableFuncStr = "Here is my list of available samples:";
 
         for (const sampleFuncKey in this._availableFuncs) {

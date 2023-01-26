@@ -3,6 +3,7 @@ import {
   world,
   system,
   PlayerJoinEvent,
+  PlayerSpawnEvent,
   PlayerLeaveEvent,
   LeverActionEvent,
   TitleDisplayOptions,
@@ -153,7 +154,7 @@ export default class Challenge {
 
   constructor() {
     this.tick = this.tick.bind(this);
-    this.playerJoined = this.playerJoined.bind(this);
+    this.playerSpawnedFirstTime = this.playerSpawnedFirstTime.bind(this);
     this.playerLeft = this.playerLeft.bind(this);
     this.leverActivate = this.leverActivate.bind(this);
     this.beforeChat = this.beforeChat.bind(this);
@@ -427,7 +428,6 @@ export default class Challenge {
 
     this.initTeams();
     this.loadTeams();
-
     this.setupTracks();
   }
 
@@ -437,7 +437,7 @@ export default class Challenge {
 
     const overworld = world.getDimension("overworld");
 
-    world.events.playerJoin.subscribe(this.playerJoined);
+    world.events.playerSpawn.subscribe(this.playerSpawnedFirstTime);
     world.events.playerLeave.subscribe(this.playerLeft);
     world.events.beforeChat.subscribe(this.beforeChat);
     world.events.leverActivate.subscribe(this.leverActivate);
@@ -777,8 +777,7 @@ export default class Challenge {
     this.save();
     this.setupTracks();
 
-    //@ts-ignore
-    system.run(this.clearPads, 200); // add a delay so that tickingareas have a moment to get instated
+    system.run(this.clearPads); // add a delay so that tickingareas have a moment to get instated
   }
 
   clearPads() {
@@ -937,11 +936,8 @@ export default class Challenge {
     ow.runCommandAsync("gamerule tntexplodes false");
     ow.runCommandAsync("gamerule pvp false");
 
-    //@ts-ignore
-    system.run(this.updateMetaBonuses, 2);
-
-    //@ts-ignore
-    system.run(this.refreshTeamScores, 3);
+    system.run(this.updateMetaBonuses);
+    system.run(this.refreshTeamScores);
   }
 
   addScores() {
@@ -1055,31 +1051,31 @@ export default class Challenge {
   }
 
   tick() {
-    try {
-      this.tickIndex++;
+    //    try {
+    this.tickIndex++;
 
-      if (this.tickIndex === POST_INIT_TICK) {
-        this.postInit();
-      }
-
-      if (this.tickIndex >= TEAM_INIT_TICK && this.tickIndex < TEAM_INIT_TICK + this.teams.length) {
-        this.teams[this.tickIndex - TEAM_INIT_TICK].initPad();
-      }
-
-      this.updatePlayers();
-
-      this.updateCount(this.tickIndex);
-
-      if (this.tickIndex % 400 === 0) {
-        this.updateTocks();
-      }
-
-      if (this.tickIndex % 800 === 0) {
-        this.updateMetaBonuses();
-      }
-    } catch (e) {
-      Log.debug("Challenge script error: " + e);
+    if (this.tickIndex === POST_INIT_TICK) {
+      this.postInit();
     }
+
+    if (this.tickIndex >= TEAM_INIT_TICK && this.tickIndex < TEAM_INIT_TICK + this.teams.length) {
+      this.teams[this.tickIndex - TEAM_INIT_TICK].initPad();
+    }
+
+    this.updatePlayers();
+
+    this.updateCount(this.tickIndex);
+
+    if (this.tickIndex % 400 === 0) {
+      this.updateTocks();
+    }
+
+    if (this.tickIndex % 800 === 0) {
+      this.updateMetaBonuses();
+    }
+    /*    } catch (e) {
+      Log.debug("Challenge script error: " + e);
+    }*/
 
     system.run(this.tick);
   }
@@ -1316,8 +1312,8 @@ export default class Challenge {
     }
   }
 
-  playerJoined(event: PlayerJoinEvent) {
-    if (!event.player) {
+  playerSpawnedFirstTime(event: PlayerSpawnEvent) {
+    if (!event.player || !event.initialSpawn) {
       return;
     }
 

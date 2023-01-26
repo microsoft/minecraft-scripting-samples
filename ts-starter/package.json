@@ -9,8 +9,8 @@
     "gulp": "^4.0.2",
     "gulp-cli": "^2.3.0",
     "gulp-sourcemaps": "^3.0.0",
-    "source-map": "^0.7.4",
     "gulp-typescript": "^6.0.0-alpha.1",
+    "source-map": "^0.7.4",
     "typescript": "^4.4.3"
   },
   "scripts": {
@@ -18,7 +18,7 @@
     "enablemcpreviewloopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-424268864-5579737-879501358-346833251-474568803-887069379-4040235476"
   },
   "dependencies": {
-    "@minecraft/server": "^1.1.0-beta.preview.1.19.50.22",
+    "@minecraft/server": "^1.1.0-beta.1.19.60-preview.26",
     "decode-uri-component": "^0.2.2"
   }
 }
