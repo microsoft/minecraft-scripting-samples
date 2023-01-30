@@ -9,6 +9,10 @@ This project contains samples of [@minecraft/server](https://learn.microsoft.com
  * [howto-gallery](howto-gallery/README.md) - A set of small code snippets that can be played back within the game.
  * [build-challenge](build-challenge/README.md) - A more complex starter script map with the ability to form teams that build structures, that can then be voted on.
  
+## Useful Tools
+ 
+ * [Serein](https://github.com/LoveCouple/serein) - An open source project management tool to quickly create and maintain projects, with useful features such as automatic packaging and automatic deploying.
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
