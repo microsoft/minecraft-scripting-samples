@@ -9,15 +9,16 @@ const overworld = mc.world.getDimension("overworld");
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/pistonactivateeventsignal#subscribe
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/pistonactivateevent
  */
-export function pistonEvent(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
-  const pistonLoc = new mc.BlockLocation(
-    Math.floor(targetLocation.x) + 1,
-    Math.floor(targetLocation.y) + 2,
-    Math.floor(targetLocation.z) + 1
-  );
+export function pistonEvent(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
+  const pistonLoc = {
+    x: Math.floor(targetLocation.x) + 1,
+    y: Math.floor(targetLocation.y) + 2,
+    z: Math.floor(targetLocation.z) + 1
+  };
 
   mc.world.events.beforePistonActivate.subscribe((pistonEvent: mc.BeforePistonActivateEvent) => {
-    if (pistonEvent.piston.location.equals(pistonLoc)) {
+    let eventLoc =pistonEvent.piston.block.location 
+    if (eventLoc.x === pistonLoc.x && eventLoc.y === pistonLoc.y && eventLoc.z === pistonLoc.z) {
       log("Cancelling piston event");
       pistonEvent.cancel = true;
     }

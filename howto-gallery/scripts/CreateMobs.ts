@@ -9,19 +9,19 @@ const overworld = mc.world.getDimension("overworld");
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#spawnentity
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#addeffect
  */
-export function quickFoxLazyDog(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
+export function quickFoxLazyDog(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   const overworld = mc.world.getDimension("overworld");
 
   const fox = overworld.spawnEntity(
     "minecraft:fox",
-    new mc.BlockLocation(targetLocation.x + 1, targetLocation.y + 2, targetLocation.z + 3)
+    { x: targetLocation.x + 1, y: targetLocation.y + 2, z: targetLocation.z + 3}
   );
   fox.addEffect(mc.MinecraftEffectTypes.speed, 10, 20);
   log("Created a fox.");
 
   const wolf = overworld.spawnEntity(
     "minecraft:wolf",
-    new mc.BlockLocation(targetLocation.x + 4, targetLocation.y + 2, targetLocation.z + 3)
+    { x: targetLocation.x + 4, y: targetLocation.y + 2, z: targetLocation.z + 3}
   );
   wolf.addEffect(mc.MinecraftEffectTypes.slowness, 10, 20);
   wolf.isSneaking = true;

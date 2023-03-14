@@ -10,7 +10,7 @@ import * as sdf6 from "./PistonActivateEvent";
 import * as sdf7 from "./TickEvent";
 
 const mojangMinecraftFuncs: {
-  [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Location) => void>;
+  [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>;
 } = {
   runEntitySpawnEvent: [sdf1.runEntitySpawnEvent, sdf1.createOldHorse],
   createOldHorse: [sdf1.createOldHorse],

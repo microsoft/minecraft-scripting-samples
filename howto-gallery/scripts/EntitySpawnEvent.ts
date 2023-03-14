@@ -8,7 +8,7 @@ import * as mc from "@minecraft/server";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entityspawnevent
  */
 // @ts-ignore
-export function runEntitySpawnEvent(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
+export function runEntitySpawnEvent(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   // register a new function that is called when a new entity is created.
   mc.world.events.entitySpawn.subscribe((entityEvent: mc.EntitySpawnEvent) => {
     if (entityEvent && entityEvent.entity) {
@@ -25,7 +25,7 @@ export function runEntitySpawnEvent(log: (message: string, status?: number) => v
  * @param {mc.Location} location Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#spawnentity
  */
-export function createOldHorse(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
+export function createOldHorse(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   const overworld = mc.world.getDimension("overworld");
 
   log("Create a horse and triggering the 'ageable_grow_up' event, ensuring the horse is created as an adult");

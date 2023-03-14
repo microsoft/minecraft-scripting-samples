@@ -9,7 +9,6 @@ import {
   TitleDisplayOptions,
   Player,
   BlockInventoryComponent,
-  BlockLocation,
   BeforeChatEvent,
   PropertyRegistry,
   MinecraftBlockTypes,
@@ -1027,7 +1026,7 @@ export default class Challenge {
           player === additionalPlayer ||
           (additionalPlayer && player.name === additionalPlayer.name))
       ) {
-        player.tell(message);
+        player.sendMessage(message);
       }
     }
   }
@@ -1194,7 +1193,7 @@ export default class Challenge {
 
     let ow = world.getDimension("overworld");
     if (this.activeTeamScore >= 0) {
-      let canaryLoc = new BlockLocation(team.padNwbX, team.padNwbY, team.padNwbZ + (PAD_SIZE_Z / 16) * area);
+      let canaryLoc = { x:team.padNwbX, y: team.padNwbY, z: team.padNwbZ + (PAD_SIZE_Z / 16) * area};
 
       let canaryBlock = ow.getBlock(canaryLoc);
 
@@ -1215,7 +1214,7 @@ export default class Challenge {
       for (let i = 0; i < PAD_SIZE_X; i++) {
         for (let j = 0; j < PAD_SIZE_Y; j++) {
           for (let k = (PAD_SIZE_Z / 16) * area; k < (PAD_SIZE_Z / 16) * (area + 1); k++) {
-            let loc = new BlockLocation(team.padNwbX + i, team.padNwbY + j + 1, team.padNwbZ + k);
+            let loc = { x: team.padNwbX + i, y: team.padNwbY + j + 1, z:team.padNwbZ + k};
             let block = ow.getBlock(loc);
 
             if (block) {
@@ -1231,8 +1230,8 @@ export default class Challenge {
                 }
 
                 if (typeId === "chest") {
-                  let leftLoc = new BlockLocation(loc.x - 1, loc.y, loc.z);
-                  let northLoc = new BlockLocation(loc.x, loc.y, loc.z - 1);
+                  let leftLoc = { x: loc.x - 1, y: loc.y, z: loc.z};
+                  let northLoc = { x: loc.x, y: loc.y, z: loc.z - 1};
 
                   let leftBlock = ow.getBlock(leftLoc);
                   let northBlock = ow.getBlock(northLoc);
@@ -1292,11 +1291,11 @@ export default class Challenge {
 
   showMotd(player: Player) {
     if (this.#motdTitle) {
-      player.tell({ rawtext: [`§l${this.#motdTitle}`] });
+      player.sendMessage([`§l${this.#motdTitle}`]);
     }
 
     if (this.#motdSubtitle) {
-      player.tell({ rawtext: [this.#motdSubtitle] });
+      player.sendMessage([this.#motdSubtitle]);
     }
   }
 
