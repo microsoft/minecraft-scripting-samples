@@ -75,7 +75,8 @@ Update the first and second UUID properties to make it unique to your project. S
 > IMPORTANT:
 > You may also need to update the version of Beta APIs in your `dependencies` section to match your version of Minecraft.
 > Versions 1.19.40 feature `1.0.0-beta` APIs
-> Versions 1.19.50 feature `1.1.0-beta` APIs
+> Versions 1.19.50, 1.19.60, and 1.19.70 feature `1.1.0-beta` APIs
+> Versions 1.19.80 features `1.2.0-beta` APIs
 > Future versions will likely require updated versions of Beta APIs.
 
 ### Chapter 2. Let's test the parts of our project
