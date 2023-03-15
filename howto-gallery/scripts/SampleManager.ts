@@ -4,13 +4,13 @@ export default class SampleManager {
   tickCount = 0;
 
   _availableFuncs: {
-    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Location) => void>;
+    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>;
   };
 
   pendingFuncs: Array<{
     name: string;
-    func: (log: (message: string, status?: number) => void, location: mc.Location) => void;
-    location: mc.Location;
+    func: (log: (message: string, status?: number) => void, location: mc.Vector3) => void;
+    location: mc.Vector3;
   }> = [];
 
   gameplayLogger(message: string, status?: number) {
@@ -20,12 +20,8 @@ export default class SampleManager {
       message = "FAIL: " + message;
     }
 
-    this.say(message);
+    mc.world.sendMessage(message);
     console.warn(message);
-  }
-
-  say(message: string) {
-    mc.world.getDimension("overworld").runCommandAsync("say " + message);
   }
 
   newChatMessage(chatEvent: mc.ChatEvent) {
@@ -39,7 +35,7 @@ export default class SampleManager {
       }
 
       const nearbyBlockLoc = nearbyBlock.location;
-      const nearbyLoc = new mc.Location(nearbyBlockLoc.x, nearbyBlockLoc.y + 1, nearbyBlockLoc.z);
+      const nearbyLoc = { x: nearbyBlockLoc.x, y: nearbyBlockLoc.y + 1,z: nearbyBlockLoc.z};
       let sampleId: string | undefined = undefined;
 
       let firstSpace = message.indexOf(" ");
@@ -55,7 +51,7 @@ export default class SampleManager {
           availableFuncStr += " " + sampleFuncKey;
         }
 
-        this.say(availableFuncStr);
+        mc.world.sendMessage(availableFuncStr);
       } else {
         for (const sampleFuncKey in this._availableFuncs) {
           if (sampleFuncKey.toLowerCase() === sampleId) {
@@ -67,15 +63,15 @@ export default class SampleManager {
           }
         }
 
-        this.say(`I couldn't find the sample '${sampleId}"'`);
+        mc.world.sendMessage(`I couldn't find the sample '${sampleId}"'`);
       }
     }
   }
 
   runSample(
     sampleId: string,
-    snippetFunctions: Array<(log: (message: string, status?: number) => void, location: mc.Location) => void>,
-    targetLocation: mc.Location
+    snippetFunctions: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>,
+    targetLocation: mc.Vector3
   ) {
     for (let i = snippetFunctions.length - 1; i >= 0; i--) {
       this.pendingFuncs.push({ name: sampleId, func: snippetFunctions[i], location: targetLocation });
@@ -94,6 +90,8 @@ export default class SampleManager {
     }
 
     this.tickCount++;
+
+    mc.system.run(this.worldTick);
   }
 
   constructor() {
@@ -101,12 +99,15 @@ export default class SampleManager {
 
     this.gameplayLogger = this.gameplayLogger.bind(this);
 
-    mc.world.events.tick.subscribe(this.worldTick.bind(this));
+    this.worldTick = this.worldTick.bind(this);
+
     mc.world.events.chat.subscribe(this.newChatMessage.bind(this));
+
+    mc.system.run(this.worldTick);
   }
 
   registerSamples(sampleSet: {
-    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Location) => void>;
+    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>;
   }) {
     for (const sampleKey in sampleSet) {
       if (sampleKey.length > 1 && sampleSet[sampleKey]) {

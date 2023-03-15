@@ -1,4 +1,4 @@
-import { world, BlockLocation, MinecraftBlockTypes, Player } from "@minecraft/server";
+import { world, MinecraftBlockTypes, Player } from "@minecraft/server";
 import Challenge, { ChallengePhase } from "./Challenge.js";
 import ChallengePlayer from "./ChallengePlayer.js";
 import {
@@ -283,7 +283,7 @@ export default class Team {
 
         if (result.formValues && result.formValues[0] !== undefined) {
           if (!this.isValidName(result.formValues[0])) {
-            player.tell("New team name can only be letters or numbers, and less than 11 characters.");
+            player.sendMessage("New team name can only be letters or numbers, and less than 11 characters.");
           } else {
             this.name = result.formValues[0];
           }
@@ -466,7 +466,7 @@ export default class Team {
 
     let ow = world.getDimension("overworld");
     let block = ow.getBlock(
-      new BlockLocation(this.nwbX + JOIN_TEAM_X, this.nwbY + JOIN_TEAM_Y, this.nwbZ + JOIN_TEAM_Z)
+      { x: this.nwbX + JOIN_TEAM_X, y: this.nwbY + JOIN_TEAM_Y, z: this.nwbZ + JOIN_TEAM_Z}
     );
 
     let consoleType = "options";
@@ -482,8 +482,6 @@ export default class Team {
     );
 
     this.addTeamName();
-
-    //block.setType(MinecraftBlockTypes.lever);
   }
 
   clearPad(index: number) {

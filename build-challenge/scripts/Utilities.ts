@@ -1,4 +1,4 @@
-import { world, BlockLocation, BlockType } from "@minecraft/server";
+import { world, BlockType, BlockPermutation } from "@minecraft/server";
 
 export const CHARFONT: { [index: string]: string[][] } = {
   a: [
@@ -283,14 +283,14 @@ export default class Utilities {
           let line = fontChar[i];
 
           for (let j = 0; j < line.length; j++) {
-            let bl = new BlockLocation(xStart + j, nwb.y, nwb.z + i);
+            let bl = { x: xStart + j, y: nwb.y, z: nwb.z + i};
             let block = ow.getBlock(bl);
 
             if (block) {
               if (line[j] === "x") {
-                block.setType(letterPixelBlockType);
+                block.setPermutation(BlockPermutation.resolve(letterPixelBlockType.id));
               } else {
-                block.setType(emptyPixelBlockType);
+                block.setPermutation(BlockPermutation.resolve(emptyPixelBlockType.id));
               }
             }
           }
@@ -298,11 +298,11 @@ export default class Utilities {
 
         xStart += fontChar[0].length;
         for (let i = 0; i < fontChar.length; i++) {
-          let bl = new BlockLocation(xStart, nwb.y, nwb.z + i);
+          let bl = { x: xStart, y: nwb.y, z: nwb.z + i};
           let block = ow.getBlock(bl);
 
           if (block) {
-            block.setType(emptyPixelBlockType);
+            block.setPermutation(BlockPermutation.resolve(emptyPixelBlockType.id));
           }
         }
         xStart++;
@@ -320,15 +320,16 @@ export default class Utilities {
     toZ: number
   ) {
     let overworld = world.getDimension("overworld");
+    let perm = BlockPermutation.resolve(type.id);
 
     for (let i = fromX; i <= toX; i++) {
       for (let j = fromY; j <= toY; j++) {
         for (let k = fromZ; k <= toZ; k++) {
-          let bl = new BlockLocation(i, j, k);
+          let bl = { x: i, y: j, z: k };
           let block = overworld.getBlock(bl);
 
           if (block) {
-            block.setType(type);
+            block.setPermutation(perm);
           }
         }
       }

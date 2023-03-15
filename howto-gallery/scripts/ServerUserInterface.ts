@@ -9,10 +9,8 @@ import * as mcui from "@minecraft/server-ui";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ActionFormResponse
  */
 // @ts-ignore
-export async function showActionForm(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
-  const players = mc.world.getPlayers();
-
-  const playerList = Array.from(players);
+export async function showActionForm(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
+  const playerList = mc.world.getPlayers();
 
   if (playerList.length >= 1) {
     const form = new mcui.ActionFormData()

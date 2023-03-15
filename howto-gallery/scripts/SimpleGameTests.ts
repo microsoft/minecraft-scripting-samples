@@ -11,13 +11,13 @@ import * as gt from "@minecraft/server-gametest";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-gametest/test#assertentitypresentinarea
  */
 // @ts-ignore
-export function simpleMobTest(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
+export function simpleMobTest(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   gt.register("StarterTests", "simpleMobTest", (test: gt.Test) => {
     const attackerId = "fox";
     const victimId = "chicken";
 
-    test.spawn(attackerId, new mc.BlockLocation(5, 2, 5));
-    test.spawn(victimId, new mc.BlockLocation(2, 2, 2));
+    test.spawn(attackerId, { x: 5, y: 2, z: 5});
+    test.spawn(victimId, { x: 2, y: 2, z: 2});
 
     test.assertEntityPresentInArea(victimId, true);
 
@@ -43,10 +43,10 @@ function phantomsShouldFlyFromCats(test: gt.Test) {
   const catEntityType = "cat";
   const phantomEntityType = "phantom";
 
-  test.spawn(catEntityType, new mc.BlockLocation(4, 3, 3));
-  test.spawn(phantomEntityType, new mc.BlockLocation(4, 3, 3));
+  test.spawn(catEntityType, { x: 4, y: 3,  z: 3});
+  test.spawn(phantomEntityType, { x: 4, y: 3, z: 3});
 
-  test.succeedWhenEntityPresent(phantomEntityType, new mc.BlockLocation(4, 6, 3), true);
+  test.succeedWhenEntityPresent(phantomEntityType, { x: 4, y: 6, z: 3}, true);
 }
 gt.register("MobBehaviorTests", "phantoms_should_fly_from_cats", phantomsShouldFlyFromCats)
   .structureName("gametests:glass_cells")
@@ -66,15 +66,15 @@ function minibiomes(test: gt.Test) {
   const minecartEntityType = "minecart";
   const pigEntityType = "pig";
 
-  const minecart = test.spawn(minecartEntityType, new mc.BlockLocation(9, 7, 7));
-  const pig = test.spawn(pigEntityType, new mc.BlockLocation(9, 7, 7));
+  const minecart = test.spawn(minecartEntityType, { x: 9, y: 7, z: 7});
+  const pig = test.spawn(pigEntityType, { x: 9, y: 7, z: 7});
 
-  test.setBlockType(mc.MinecraftBlockTypes.cobblestone, new mc.BlockLocation(10, 7, 7));
+  test.setBlockType(mc.MinecraftBlockTypes.cobblestone, { x: 10, y: 7, z: 7});
 
   const minecartRideableComp = minecart.getComponent("minecraft:rideable") as mc.EntityRideableComponent;
 
   minecartRideableComp.addRider(pig);
 
-  test.succeedWhenEntityPresent(pigEntityType, new mc.BlockLocation(8, 3, 1), true);
+  test.succeedWhenEntityPresent(pigEntityType, { x: 8, y: 3, z: 1}, true);
 }
 gt.register("ChallengeTests", "minibiomes", minibiomes).structureName("gametests:minibiomes").maxTicks(160);

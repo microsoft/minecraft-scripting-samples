@@ -1,4 +1,4 @@
-import { world, system, BlockLocation, MinecraftBlockTypes } from "@minecraft/server";
+import { world, system, MinecraftBlockTypes, BlockPermutation } from "@minecraft/server";
 import Utilities from "./Utilities.js";
 
 const START_TICK = 100;
@@ -35,7 +35,7 @@ function initializeBreakTheTerracotta() {
 
   overworld.runCommandAsync("scoreboard players set @p score 0");
 
-  world.say("BREAK THE TERRACOTTA");
+  world.sendMessage("BREAK THE TERRACOTTA");
   Utilities.fillBlock(
     MinecraftBlockTypes.air,
     ARENA_X_OFFSET - ARENA_X_SIZE / 2 + 1,
@@ -105,17 +105,17 @@ function spawnNewTerracotta() {
   cottaX = Math.floor(Math.random() * (ARENA_X_SIZE - 1)) - (ARENA_X_SIZE / 2 - 1);
   cottaZ = Math.floor(Math.random() * (ARENA_Z_SIZE - 1)) - (ARENA_Z_SIZE / 2 - 1);
 
-  world.say("Creating new terracotta!");
+  world.sendMessage("Creating new terracotta!");
   overworld
-    .getBlock(new BlockLocation(cottaX + ARENA_X_OFFSET, 1 + ARENA_Y_OFFSET, cottaZ + ARENA_Z_OFFSET))
-    .setType(MinecraftBlockTypes.yellowGlazedTerracotta);
+    .getBlock({ x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET})
+    .setPermutation(BlockPermutation.resolve("minecraft:yellow_glazed_terracotta"));
 }
 
 function checkForTerracotta() {
   let overworld = world.getDimension("overworld");
 
   let block = overworld.getBlock(
-    new BlockLocation(cottaX + ARENA_X_OFFSET, 1 + ARENA_Y_OFFSET, cottaZ + ARENA_Z_OFFSET)
+    { x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET}
   );
 
   if (block.type !== MinecraftBlockTypes.yellowGlazedTerracotta) {
@@ -124,7 +124,7 @@ function checkForTerracotta() {
     spawnCountdown = 2;
     cottaX = -1;
     overworld.runCommandAsync("scoreboard players set @p score " + score);
-    world.say("You broke the terracotta! Creating new terracotta in a few seconds.");
+    world.sendMessage("You broke the terracotta! Creating new terracotta in a few seconds.");
     cottaZ = -1;
   }
 }
@@ -141,7 +141,7 @@ function spawnMobs() {
 
     overworld.spawnEntity(
       "minecraft:zombie",
-      new BlockLocation(zombieX + ARENA_X_OFFSET, 1 + ARENA_Y_OFFSET, zombieZ + ARENA_Z_OFFSET)
+      { x: zombieX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: zombieZ + ARENA_Z_OFFSET}
     );
   }
 }
@@ -154,8 +154,8 @@ function addFuzzyLeaves() {
     const leafZ = Math.floor(Math.random() * (ARENA_Z_SIZE - 1)) - (ARENA_Z_SIZE / 2 - 1);
 
     overworld
-      .getBlock(new BlockLocation(leafX + ARENA_X_OFFSET, leafY + ARENA_Y_OFFSET, leafZ + ARENA_Z_OFFSET))
-      .setType(MinecraftBlockTypes.leaves);
+      .getBlock({ x: leafX + ARENA_X_OFFSET,  y: leafY + ARENA_Y_OFFSET, z: leafZ + ARENA_Z_OFFSET})
+      .setPermutation(BlockPermutation.resolve("minecraft:leaves"));
   }
 }
 system.run(gameTick);

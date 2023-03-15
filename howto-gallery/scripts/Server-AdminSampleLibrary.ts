@@ -7,7 +7,7 @@ import SampleManager from "./SampleManager";
 import * as sdf1 from "./ServerAdmin";
 
 const mojangServerAdminTestFuncs: {
-  [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Location) => void>;
+  [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>;
 } = {
   getPlayerProfile: [sdf1.getPlayerProfile],
 };

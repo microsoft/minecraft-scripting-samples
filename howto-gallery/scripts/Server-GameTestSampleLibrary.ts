@@ -6,7 +6,7 @@ import SampleManager from "./SampleManager";
 import * as sdf1 from "./SimpleGameTests";
 
 const mojangGameTestFuncs: {
-  [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Location) => void>;
+  [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>;
 } = {
   simpleMobTest: [sdf1.simpleMobTest],
 };

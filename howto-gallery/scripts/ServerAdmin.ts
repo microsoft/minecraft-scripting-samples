@@ -10,7 +10,7 @@ import * as mcnet from "@minecraft/server-net";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-admin/ServerVariables
  */
 // @ts-ignore
-export async function getPlayerProfile(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
+export async function getPlayerProfile(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   const serverUrl = mcsa.variables.get("serverEndpoint");
 
   const req = new mcnet.HttpRequest(serverUrl + "getPlayerProfile");

@@ -6,7 +6,7 @@ import * as mc from "@minecraft/server";
  * @param {mc.Location} location Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#createexplosion
  */
-export function createExplosion(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
+export function createExplosion(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   const overworld = mc.world.getDimension("overworld");
 
   log("Creating an explosion of radius 10.");
@@ -20,14 +20,14 @@ export function createExplosion(log: (message: string, status?: number) => void,
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#createexplosion
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/explosionOptions
  */
-export function createNoBlockExplosion(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
+export function createNoBlockExplosion(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   const overworld = mc.world.getDimension("overworld");
 
-  const explodeNoBlocksLoc = new mc.Location(
-    Math.floor(targetLocation.x + 1),
-    Math.floor(targetLocation.y + 2),
-    Math.floor(targetLocation.z + 1)
-  );
+  const explodeNoBlocksLoc = {
+    x: Math.floor(targetLocation.x + 1),
+    y: Math.floor(targetLocation.y + 2),
+    z: Math.floor(targetLocation.z + 1)
+  };
 
   log("Creating an explosion of radius 15 that does not break blocks.");
   overworld.createExplosion(explodeNoBlocksLoc, 15, { breaksBlocks: false });
@@ -42,16 +42,16 @@ export function createNoBlockExplosion(log: (message: string, status?: number) =
  */
 export function createFireAndWaterExplosions(
   log: (message: string, status?: number) => void,
-  targetLocation: mc.Location
+  targetLocation: mc.Vector3
 ) {
   const overworld = mc.world.getDimension("overworld");
 
-  const explosionLoc = new mc.Location(targetLocation.x + 0.5, targetLocation.y + 0.5, targetLocation.z + 0.5);
+  const explosionLoc = { x: targetLocation.x + 0.5, y: targetLocation.y + 0.5, z: targetLocation.z + 0.5};
 
   log("Creating an explosion of radius 15 that causes fire.");
   overworld.createExplosion(explosionLoc, 15, { causesFire: true });
 
-  const belowWaterLoc = new mc.Location(targetLocation.x + 3, targetLocation.y + 1, targetLocation.z + 3);
+  const belowWaterLoc = { x: targetLocation.x + 3, y: targetLocation.y + 1,z: targetLocation.z + 3};
 
   log("Creating an explosion of radius 10 that can go underwater.");
   overworld.createExplosion(belowWaterLoc, 10, { allowUnderwater: true });
