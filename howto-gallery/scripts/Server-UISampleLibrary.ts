@@ -10,6 +10,8 @@ const mojangMinecraftUIFuncs: {
 } = {
   showActionForm: [sdf1.showActionForm],
   showFavoriteMonth: [sdf1.showFavoriteMonth],
+  showBasicMessageForm: [sdf1.showBasicMessageForm],
+  showBasicModalForm: [sdf1.showBasicModalForm],
 };
 
 export function register(sampleManager: SampleManager) {

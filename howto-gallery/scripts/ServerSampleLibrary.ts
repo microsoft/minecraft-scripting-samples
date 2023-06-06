@@ -8,6 +8,7 @@ import * as sdf4 from "./CreateItemStacks";
 import * as sdf5 from "./CreateMobs";
 import * as sdf6 from "./PistonActivateEvent";
 import * as sdf7 from "./TickEvent";
+import * as sdf8 from "./Signs";
 
 const mojangMinecraftFuncs: {
   [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>;
@@ -22,6 +23,7 @@ const mojangMinecraftFuncs: {
   quickFoxLazyDog: [sdf5.quickFoxLazyDog],
   pistonEvent: [sdf6.pistonEvent],
   trapTick: [sdf7.trapTick],
+  addTwoSidedSign: [sdf8.addTwoSidedSign],
 };
 
 export function register(sampleManager: SampleManager) {

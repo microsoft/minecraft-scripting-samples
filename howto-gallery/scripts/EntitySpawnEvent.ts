@@ -7,7 +7,6 @@ import * as mc from "@minecraft/server";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entityspawnaftereventsignal#subscribe
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entityspawnafterevent
  */
-// @ts-ignore
 export function runEntitySpawnEvent(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   // register a new function that is called when a new entity is created.
   mc.world.afterEvents.entitySpawn.subscribe((entityEvent: mc.EntitySpawnAfterEvent) => {

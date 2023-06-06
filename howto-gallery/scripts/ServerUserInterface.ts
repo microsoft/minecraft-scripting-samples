@@ -8,7 +8,6 @@ import * as mcui from "@minecraft/server-ui";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ActionFormData
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ActionFormResponse
  */
-// @ts-ignore
 export async function showActionForm(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   const playerList = mc.world.getPlayers();
 
@@ -26,6 +25,7 @@ export async function showActionForm(log: (message: string, status?: number) => 
 
     if (result.canceled) {
       log("Player exited out of the dialog. Note that if the chat window is up, dialogs are automatically canceled.");
+      return -1;
     } else {
       log("Your result was: " + result.selection);
     }
@@ -39,13 +39,10 @@ export async function showActionForm(log: (message: string, status?: number) => 
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ActionFormData
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ActionFormResponse
  */
-// @ts-ignore
-export function showFavoriteMonth(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
+export function showFavoriteMonth(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   const players = mc.world.getPlayers();
 
-  const playerList = Array.from(players);
-
-  if (playerList.length >= 1) {
+  if (players.length >= 1) {
     const form = new mcui.ActionFormData()
       .title("Months")
       .body("Choose your favorite month!")
@@ -55,10 +52,78 @@ export function showFavoriteMonth(log: (message: string, status?: number) => voi
       .button("April")
       .button("May");
 
-    form.show(playerList[0]).then((response: mcui.ActionFormResponse) => {
+    form.show(players[0]).then((response: mcui.ActionFormResponse) => {
       if (response.selection === 3) {
         log("I like April too!");
+        return -1;
       }
     });
   }
+}
+
+/**
+ * Shows an example two-button dialog.
+ * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
+ * @param {mc.Location} location Location to center this sample code around.
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/MessageFormData
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/MessageFormResponse
+ */
+export function showBasicMessageForm(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
+  const players = mc.world.getPlayers();
+
+  const messageForm = new mcui.MessageFormData()
+    .title("Message Form Example")
+    .body("This shows a simple example using §o§7MessageFormData§r.")
+    .button1("Button 1")
+    .button2("Button 2");
+
+  messageForm
+    .show(players[0])
+    .then((formData: mcui.MessageFormResponse) => {
+      // player canceled the form, or another dialog was up and open.
+      if (formData.canceled || formData.selection === undefined) {
+        return;
+      }
+
+      log(`You selected ${formData.selection === 0 ? "Button 1" : "Button 2"}`);
+    })
+    .catch((error: Error) => {
+      log("Failed to show form: " + error);
+      return -1;
+    });
+}
+
+/**
+ * Shows an example multiple-control modal dialog.
+ * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
+ * @param {mc.Location} location Location to center this sample code around.
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/MessageFormData
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/MessageFormResponse
+ */
+export function showBasicModalForm(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
+  const players = mc.world.getPlayers();
+
+  const modalForm = new mcui.ModalFormData().title("Example Modal Controls for §o§7ModalFormData§r");
+
+  modalForm.toggle("Toggle w/o default");
+  modalForm.toggle("Toggle w/ default", true);
+
+  modalForm.slider("Slider w/o default", 0, 50, 5);
+  modalForm.slider("Slider w/ default", 0, 50, 5, 30);
+
+  modalForm.dropdown("Dropdown w/o default", ["option 1", "option 2", "option 3"]);
+  modalForm.dropdown("Dropdown w/ default", ["option 1", "option 2", "option 3"], 2);
+
+  modalForm.textField("Input w/o default", "type text here");
+  modalForm.textField("Input w/ default", "type text here", "foo bar");
+
+  modalForm
+    .show(players[0])
+    .then((formData) => {
+      players[0].sendMessage(`Modal form results: ${JSON.stringify(formData.formValues, undefined, 2)}`);
+    })
+    .catch((error: Error) => {
+      log("Failed to show form: " + error);
+      return -1;
+    });
 }
