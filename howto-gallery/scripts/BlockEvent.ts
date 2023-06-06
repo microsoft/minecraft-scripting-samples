@@ -69,8 +69,8 @@ export function leverActivateEvent(log: (message: string, status?: number) => vo
  * A basic tripwire event
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/leveractionaftereventsignal
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/leveractionafterevent
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/tripwiretripaftereventsignal
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/tripwiretripafterevent
  */
 export function tripWireTripEvent(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   // set up a tripwire

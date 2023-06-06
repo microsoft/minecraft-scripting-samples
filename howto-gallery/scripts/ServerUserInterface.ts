@@ -99,6 +99,7 @@ export function showBasicMessageForm(log: (message: string, status?: number) => 
  * @param {mc.Location} location Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/MessageFormData
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/MessageFormResponse
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/RawMessage
  */
 export function showTranslatedMessageForm(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   const players = mc.world.getPlayers();
@@ -129,8 +130,8 @@ export function showTranslatedMessageForm(log: (message: string, status?: number
  * Shows an example multiple-control modal dialog.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/MessageFormData
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/MessageFormResponse
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ModalFormData
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ModalFormResponse
  */
 export function showBasicModalForm(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   const players = mc.world.getPlayers();

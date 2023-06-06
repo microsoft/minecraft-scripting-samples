@@ -114,9 +114,8 @@ export function teleport(log: (message: string, status?: number) => void, target
  * Does a basic movements with frequent teleport actions.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#setOnFire
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#extinguishFire
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/EntityOnFireComponent
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#teleport
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/TeleportOptions
  */
 export function teleportMovement(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   const pig = overworld.spawnEntity("minecraft:pig", targetLocation);
