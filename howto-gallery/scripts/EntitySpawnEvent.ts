@@ -16,6 +16,10 @@ export function runEntitySpawnEvent(log: (message: string, status?: number) => v
       log(`The entity event didn't work as expected.`, -1);
     }
   });
+
+  mc.system.runTimeout(() => {
+    createOldHorse(log, targetLocation);
+  }, 20);
 }
 
 /**

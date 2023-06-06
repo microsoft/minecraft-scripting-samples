@@ -18,8 +18,8 @@ export function quickFoxLazyDog(log: (message: string, status?: number) => void,
     z: targetLocation.z + 3,
   });
 
-  fox.addEffect(mc.MinecraftEffectTypes.speed, 10, {
-    amplifier: 20,
+  fox.addEffect("speed", 10, {
+    amplifier: 2,
   });
   log("Created a fox.");
 
@@ -28,8 +28,8 @@ export function quickFoxLazyDog(log: (message: string, status?: number) => void,
     y: targetLocation.y + 2,
     z: targetLocation.z + 3,
   });
-  wolf.addEffect(mc.MinecraftEffectTypes.slowness, 10, {
-    amplifier: 20,
+  wolf.addEffect("slowness", 10, {
+    amplifier: 2,
   });
   wolf.isSneaking = true;
   log("Created a sneaking wolf.", 1);

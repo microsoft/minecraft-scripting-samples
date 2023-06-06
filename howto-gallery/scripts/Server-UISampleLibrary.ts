@@ -12,6 +12,7 @@ const mojangMinecraftUIFuncs: {
   showFavoriteMonth: [sdf1.showFavoriteMonth],
   showBasicMessageForm: [sdf1.showBasicMessageForm],
   showBasicModalForm: [sdf1.showBasicModalForm],
+  showTranslatedMessageForm: [sdf1.showTranslatedMessageForm],
 };
 
 export function register(sampleManager: SampleManager) {

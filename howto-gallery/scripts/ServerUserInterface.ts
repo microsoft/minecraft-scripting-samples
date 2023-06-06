@@ -94,6 +94,38 @@ export function showBasicMessageForm(log: (message: string, status?: number) => 
 }
 
 /**
+ * Shows an example translated two-button dialog dialog.
+ * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
+ * @param {mc.Location} location Location to center this sample code around.
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/MessageFormData
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/MessageFormResponse
+ */
+export function showTranslatedMessageForm(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
+  const players = mc.world.getPlayers();
+
+  const messageForm = new mcui.MessageFormData()
+    .title({ translate: "permissions.removeplayer" })
+    .body({ translate: "accessibility.list.or.two", with: ["Player 1", "Player 2"] })
+    .button1("Player 1")
+    .button2("Player 2");
+
+  messageForm
+    .show(players[0])
+    .then((formData: mcui.MessageFormResponse) => {
+      // player canceled the form, or another dialog was up and open.
+      if (formData.canceled || formData.selection === undefined) {
+        return;
+      }
+
+      log(`You selected ${formData.selection === 0 ? "Player 1" : "Player 2"}`);
+    })
+    .catch((error: Error) => {
+      log("Failed to show form: " + error);
+      return -1;
+    });
+}
+
+/**
  * Shows an example multiple-control modal dialog.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
@@ -115,7 +147,7 @@ export function showBasicModalForm(log: (message: string, status?: number) => vo
   modalForm.dropdown("Dropdown w/ default", ["option 1", "option 2", "option 3"], 2);
 
   modalForm.textField("Input w/o default", "type text here");
-  modalForm.textField("Input w/ default", "type text here", "foo bar");
+  modalForm.textField("Input w/ default", "type text here", "this is default");
 
   modalForm
     .show(players[0])

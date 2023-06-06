@@ -28,8 +28,13 @@
         "Elytra",
         "gametest",
         "gametests",
+        "knockback",
         "minecart",
+        "molang",
+        "onfire",
+        "samplelibrary",
         "shulker",
+        "skelly",
         "zoglin"
     ],
     "editor.tabSize": 2
