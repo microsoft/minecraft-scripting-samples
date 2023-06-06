@@ -281,7 +281,7 @@ export default class Team {
 
         let result = await mdf.show(player);
 
-        if (result.formValues && result.formValues[0] !== undefined) {
+        if (result.formValues && result.formValues[0] !== undefined && typeof(result.formValues) === "string") {
           if (!this.isValidName(result.formValues[0])) {
             player.sendMessage("New team name can only be letters or numbers, and less than 11 characters.");
           } else {

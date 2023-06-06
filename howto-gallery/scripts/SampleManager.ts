@@ -24,10 +24,10 @@ export default class SampleManager {
     console.warn(message);
   }
 
-  newChatMessage(chatEvent: mc.ChatEvent) {
+  newChatMessage(chatEvent: mc.ChatSendAfterEvent) {
     const message = chatEvent.message.toLowerCase();
 
-    if ((message.startsWith("howto") || message.startsWith("help")) && chatEvent.sender) {
+    if ((message.startsWith("howto") || message.startsWith("help") || message.startsWith("run")) && chatEvent.sender) {
       const nearbyBlock = chatEvent.sender.getBlockFromViewDirection();
       if (!nearbyBlock) {
         this.gameplayLogger("Please look at the block where you want me to run this.");
@@ -35,7 +35,7 @@ export default class SampleManager {
       }
 
       const nearbyBlockLoc = nearbyBlock.location;
-      const nearbyLoc = { x: nearbyBlockLoc.x, y: nearbyBlockLoc.y + 1,z: nearbyBlockLoc.z};
+      const nearbyLoc = { x: nearbyBlockLoc.x, y: nearbyBlockLoc.y + 1, z: nearbyBlockLoc.z };
       let sampleId: string | undefined = undefined;
 
       let firstSpace = message.indexOf(" ");
@@ -63,7 +63,7 @@ export default class SampleManager {
           }
         }
 
-        mc.world.sendMessage(`I couldn't find the sample '${sampleId}"'`);
+        mc.world.sendMessage(`I couldn't find the sample '${sampleId}'`);
       }
     }
   }
@@ -101,7 +101,7 @@ export default class SampleManager {
 
     this.worldTick = this.worldTick.bind(this);
 
-    mc.world.events.chat.subscribe(this.newChatMessage.bind(this));
+    mc.world.afterEvents.chatSend.subscribe(this.newChatMessage.bind(this));
 
     mc.system.run(this.worldTick);
   }

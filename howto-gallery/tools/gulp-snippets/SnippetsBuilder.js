@@ -3,9 +3,11 @@ var fs = require("fs");
 
 class CodeSnippet {
   name;
+  description;
   segments;
   function;
   codeSampleCore;
+  codeSampleNoLog;
 }
 
 class SnippetsBuilder {
@@ -61,6 +63,27 @@ class SnippetsBuilder {
           .toLowerCase();
 
         if (seeLinkContents.startsWith("https://learn.microsoft.com/minecraft/creator/scriptapi/")) {
+          let description = undefined;
+
+          let thisCommentAreaStart = content.lastIndexOf("/**", seeLinkStart);
+
+          if (thisCommentAreaStart >= 0) {
+            let firstAsterisk = content.indexOf("* ", thisCommentAreaStart + 5);
+
+            if (firstAsterisk > thisCommentAreaStart) {
+              let endOfFirstCommentLine = content.indexOf("\n", firstAsterisk);
+
+              if (endOfFirstCommentLine > firstAsterisk) {
+                endOfFirstCommentLine--;
+                if (content[endOfFirstCommentLine] === "\r") {
+                  endOfFirstCommentLine--;
+                }
+
+                description = content.substring(firstAsterisk + 2, endOfFirstCommentLine);
+              }
+            }
+          }
+
           let urlLink = seeLinkContents.substring(56, seeLinkContents.length).replace("#", "/");
 
           let urlSegments = urlLink.split("/");
@@ -83,12 +106,15 @@ class SnippetsBuilder {
 
                   if (firstBrace >= 0) {
                     let codeSampleCore = functionCode.substring(firstBrace + 3, functionCode.length - 3);
+                    let codeSampleNoLog = this.stripLinesContaining(codeSampleCore, "log(");
 
                     let cs = new CodeSnippet();
                     cs.name = name;
+                    cs.description = description;
                     cs.segments = urlSegments;
                     cs.function = functionCode;
                     cs.codeSampleCore = codeSampleCore;
+                    cs.codeSampleNoLog = codeSampleNoLog;
 
                     this._snippets.push(cs);
 
@@ -137,28 +163,30 @@ class SnippetsBuilder {
         }
       }
 
-      let jsonMarkup = "[";
+      let jsonMarkup = "{" + "\r\n";
 
       for (let snippetKey in samplesWritten) {
         let snippet = samplesWritten[snippetKey];
 
-        if (jsonMarkup.length > 2) {
+        if (jsonMarkup.length > 10) {
           jsonMarkup += ",\r\n";
         }
 
-        let sample = '["' + this.getQuoteSafeContent(snippet.codeSampleCore).replace(/\r\n/g, '",\r\n"') + '"\r\n]';
+        let sample = '["' + this.getQuoteSafeContent(snippet.codeSampleNoLog).replace(/\r\n/g, '",\r\n"') + '"\r\n]';
 
         jsonMarkup +=
-          '{\r\n  "name": "' +
+          '"' +
           snippet.name +
-          '",\r\n  "path": "' +
+          '": {\r\n  "description": "' +
+          (snippet.description ? snippet.description + " " : "") +
+          "See https://learn.microsoft.com/minecraft/creator/scriptapi/" +
           snippet.segments.join("/") +
-          '",\r\n  "snippet": ' +
+          '",\r\n  "prefix": ["mc"],\r\n  "body": ' +
           sample +
           "}";
       }
 
-      jsonMarkup += "\r\n]";
+      jsonMarkup += "\r\n}";
 
       this.writeFile("samplejson/" + moduleKey + "-samples.json", jsonMarkup);
 
@@ -196,18 +224,23 @@ class SnippetsBuilder {
 
     while (i >= 0) {
       let previousNewLine = content.lastIndexOf("\n", i);
+
       let nextNewLine = content.indexOf("\n", i);
 
-      if (nextNewLine >= 0) {
-        if (previousNewLine < 0) {
-          previousNewLine = 0;
-        }
-
-        content = content.substring(0, previousNewLine) + content.substring(nextNewLine + 1, content.length);
-        i = content.indexOf(containing, previousNewLine);
-      } else {
-        i++;
+      if (previousNewLine < 0) {
+        previousNewLine = 0;
       }
+
+      if (previousNewLine > 0 && content[previousNewLine - 1] === "\r") {
+        previousNewLine--;
+      }
+
+      if (nextNewLine < 0) {
+        nextNewLine = content.length - 1;
+      }
+
+      content = content.substring(0, previousNewLine) + content.substring(nextNewLine + 1, content.length);
+      i = content.indexOf(containing, previousNewLine);
     }
 
     return content;

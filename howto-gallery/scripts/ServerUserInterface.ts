@@ -25,7 +25,7 @@ export async function showActionForm(log: (message: string, status?: number) => 
     const result = await form.show(playerList[0]);
 
     if (result.canceled) {
-      log("Player exited out of the dialog.");
+      log("Player exited out of the dialog. Note that if the chat window is up, dialogs are automatically canceled.");
     } else {
       log("Your result was: " + result.selection);
     }
