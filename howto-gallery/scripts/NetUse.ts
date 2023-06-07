@@ -8,8 +8,7 @@ import * as mcnet from "@minecraft/server-net";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-net/HttpRequest
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-net/HttpHeader
  */
-// @ts-ignore
-export async function updateScore(log: (message: string, status?: number) => void, targetLocation: mc.Location) {
+export async function updateScore(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   const req = new mcnet.HttpRequest("http://localhost:3000/updateScore");
 
   req.body = JSON.stringify({

@@ -2,19 +2,19 @@ import Team from "./Team.js";
 import {
   world,
   system,
-  PlayerJoinEvent,
-  PlayerSpawnEvent,
-  PlayerLeaveEvent,
-  LeverActionEvent,
+  PlayerJoinAfterEvent,
+  PlayerSpawnAfterEvent,
+  PlayerLeaveAfterEvent,
+  LeverActionAfterEvent,
   TitleDisplayOptions,
   Player,
   BlockInventoryComponent,
-  BeforeChatEvent,
+  ChatSendBeforeEvent,
   PropertyRegistry,
   MinecraftBlockTypes,
   MinecraftEntityTypes,
   DynamicPropertiesDefinition,
-  SoundOptions,
+  WorldSoundOptions,
   Vector,
 } from "@minecraft/server";
 import ChallengePlayer, { ChallengePlayerRole, IPlayerData } from "./ChallengePlayer.js";
@@ -436,10 +436,10 @@ export default class Challenge {
 
     const overworld = world.getDimension("overworld");
 
-    world.events.playerSpawn.subscribe(this.playerSpawnedFirstTime);
-    world.events.playerLeave.subscribe(this.playerLeft);
-    world.events.beforeChat.subscribe(this.beforeChat);
-    world.events.leverActivate.subscribe(this.leverActivate);
+    world.afterEvents.playerSpawn.subscribe(this.playerSpawnedFirstTime);
+    world.afterEvents.playerLeave.subscribe(this.playerLeft);
+    world.beforeEvents.chatSend.subscribe(this.beforeChat);
+    world.afterEvents.leverActivate.subscribe(this.leverActivate);
 
     this.loadPlayerState();
     this.ensureAllPlayers();
@@ -481,7 +481,7 @@ export default class Challenge {
     this.addScores();
   }
 
-  beforeChat(event: BeforeChatEvent) {
+  beforeChat(event: ChatSendBeforeEvent) {
     let mess = event.message;
 
     if (event.sender && event.sender.typeId === "minecraft:player" && mess) {
@@ -844,17 +844,19 @@ export default class Challenge {
           let track = this.tracks[trackIndex];
 
           let vec = Vector.lerp(track.from, track.to, (trackSequence % STANDARD_TRACK_TIME) / STANDARD_TRACK_TIME);
-          player.teleportFacing(vec, world.getDimension("overworld"), {
+          player.teleport(vec, {
+            dimension: world.getDimension("overworld"),
+            facingLocation: {
             x: vec.x + track.facingAdjust.x,
             y: vec.y + track.facingAdjust.y,
             z: vec.z + track.facingAdjust.z,
-          });
+          }});
 
           if (this.tickIndex % 1200 === 500 && this.#motdSubtitle && this.motdTitle) {
             player.onScreenDisplay.setTitle(this.motdTitle, {
-              fadeInSeconds: 1,
-              fadeOutSeconds: 1,
-              staySeconds: 6,
+              fadeInDuration: 1,
+              fadeOutDuration: 1,
+              stayDuration: 6,
               subtitle: this.#motdSubtitle,
             });
           }
@@ -902,9 +904,9 @@ export default class Challenge {
                   }
 
                   player.onScreenDisplay.setTitle(" ", {
-                    fadeInSeconds: 1,
-                    fadeOutSeconds: 1,
-                    staySeconds: 3,
+                    fadeInDuration: 1,
+                    fadeOutDuration: 1,
+                    stayDuration: 3,
                     subtitle: "You cannot enter " + team.name + "'s area",
                   });
                   player.runCommandAsync("tp @s " + newX + " " + newY + " " + newZ);
@@ -958,9 +960,9 @@ export default class Challenge {
     switch (this.phase) {
       case ChallengePhase.setup:
         this.sendToAllPlayers("Setup Phase", {
-          fadeInSeconds: 1,
-          fadeOutSeconds: 1,
-          staySeconds: 7,
+          fadeInDuration: 1,
+          fadeOutDuration: 1,
+          stayDuration: 7,
           subtitle: "OPs are getting the game ready, hold on",
         });
         ow.runCommandAsync("gamemode c");
@@ -969,9 +971,9 @@ export default class Challenge {
 
       case ChallengePhase.pre:
         this.sendToAllPlayers("Preliminary Phase", {
-          fadeInSeconds: 1,
-          fadeOutSeconds: 1,
-          staySeconds: 7,
+          fadeInDuration: 1,
+          fadeOutDuration: 1,
+          stayDuration: 7,
           subtitle: "Pull lever near a pad to join a team",
         });
         ow.runCommandAsync("gamemode a");
@@ -980,9 +982,9 @@ export default class Challenge {
 
       case ChallengePhase.build:
         this.sendToAllPlayers("Build Phase", {
-          fadeInSeconds: 1,
-          fadeOutSeconds: 1,
-          staySeconds: 7,
+          fadeInDuration: 1,
+          fadeOutDuration: 1,
+          stayDuration: 7,
           subtitle: "Build things on your team pad",
         });
         ow.runCommandAsync("gamemode s");
@@ -991,9 +993,9 @@ export default class Challenge {
 
       case ChallengePhase.vote:
         this.sendToAllPlayers("Vote Phase", {
-          fadeInSeconds: 1,
-          fadeOutSeconds: 1,
-          staySeconds: 7,
+          fadeInDuration: 1,
+          fadeOutDuration: 1,
+          stayDuration: 7,
           subtitle: "Pull lever to vote for a team (2 votes)",
         });
         ow.runCommandAsync("gamemode a");
@@ -1002,9 +1004,9 @@ export default class Challenge {
 
       case ChallengePhase.post:
         this.sendToAllPlayers("Post Phase", {
-          fadeInSeconds: 1,
-          fadeOutSeconds: 1,
-          staySeconds: 7,
+          fadeInDuration: 1,
+          fadeOutDuration: 1,
+          stayDuration: 7,
           subtitle: "Congratulate the winners",
         });
         ow.runCommandAsync("gamemode a");
@@ -1198,7 +1200,7 @@ export default class Challenge {
       let canaryBlock = ow.getBlock(canaryLoc);
 
       // if we don't find blackstone at our canary location, assume the chunk is loaded and bail on calculating score.
-      if (canaryBlock.typeId !== "minecraft:blackstone") {
+      if (canaryBlock && canaryBlock.typeId !== "minecraft:blackstone") {
         Log.debug(
           "Did not find blackstone at " +
             team.padNwbX +
@@ -1238,7 +1240,7 @@ export default class Challenge {
 
                   // if this is a double chest, only calc inventory from the west or northern side of the chest
                   // todo: improve to accommodate double chests placed right next to each other
-                  if (leftBlock.typeId.indexOf("chest") < 0 && northBlock.typeId.indexOf("chest") < 0) {
+                  if (leftBlock && leftBlock.typeId.indexOf("chest") < 0 && northBlock && northBlock.typeId.indexOf("chest") < 0) {
                     let invComp = block.getComponent("inventory") as BlockInventoryComponent;
 
                     if (invComp) {
@@ -1299,7 +1301,7 @@ export default class Challenge {
     }
   }
 
-  playerLeft(event: PlayerLeaveEvent) {
+  playerLeft(event: PlayerLeaveAfterEvent) {
     if (!event.playerName) {
       return;
     }
@@ -1311,7 +1313,7 @@ export default class Challenge {
     }
   }
 
-  playerSpawnedFirstTime(event: PlayerSpawnEvent) {
+  playerSpawnedFirstTime(event: PlayerSpawnAfterEvent) {
     if (!event.player || !event.initialSpawn) {
       return;
     }
@@ -1323,9 +1325,9 @@ export default class Challenge {
     switch (this.phase) {
       case ChallengePhase.setup:
         event.player.onScreenDisplay.setTitle("Setup Phase", {
-          fadeInSeconds: 1,
-          fadeOutSeconds: 1,
-          staySeconds: 7,
+          fadeInDuration: 1,
+          fadeOutDuration: 1,
+          stayDuration: 7,
           subtitle: "OPs are getting the game ready, hold on",
         });
 
@@ -1333,42 +1335,42 @@ export default class Challenge {
 
       case ChallengePhase.pre:
         event.player.onScreenDisplay.setTitle("Preliminary Phase", {
-          fadeInSeconds: 1,
-          fadeOutSeconds: 1,
-          staySeconds: 7,
+          fadeInDuration: 1,
+          fadeOutDuration: 1,
+          stayDuration: 7,
           subtitle: "Pull lever near a pad to join a team",
         });
         break;
 
       case ChallengePhase.build:
         event.player.onScreenDisplay.setTitle("Build Phase", {
-          fadeInSeconds: 1,
-          fadeOutSeconds: 1,
-          staySeconds: 7,
+          fadeInDuration: 1,
+          fadeOutDuration: 1,
+          stayDuration: 7,
           subtitle: "Build things on your team pad",
         });
         break;
 
       case ChallengePhase.vote:
         event.player.onScreenDisplay.setTitle("Vote Phase", {
-          fadeInSeconds: 1,
-          fadeOutSeconds: 1,
-          staySeconds: 7,
+          fadeInDuration: 1,
+          fadeOutDuration: 1,
+          stayDuration: 7,
           subtitle: "Pull lever to vote for a team (2 votes)",
         });
         break;
 
       case ChallengePhase.post:
         event.player.onScreenDisplay.setTitle("Post Phase", {
-          fadeInSeconds: 1,
-          fadeOutSeconds: 1,
-          staySeconds: 7,
+          fadeInDuration: 1,
+          fadeOutDuration: 1,
+          stayDuration: 7,
           subtitle: "Congratulate the winners",
         });
     }
   }
 
-  leverActivate(event: LeverActionEvent) {
+  leverActivate(event: LeverActionAfterEvent) {
     if (!event.player) {
       return;
     }
@@ -1385,9 +1387,9 @@ export default class Challenge {
           if (this.#phase === ChallengePhase.vote) {
             if (challPlayer.teamId === team.index) {
               event.player.onScreenDisplay.setTitle(`Nope`, {
-                fadeInSeconds: 1,
-                fadeOutSeconds: 1,
-                staySeconds: 5,
+                fadeInDuration: 1,
+                fadeOutDuration: 1,
+                stayDuration: 5,
                 subtitle: "You can't vote for your own team.",
               });
             } else {
@@ -1400,16 +1402,16 @@ export default class Challenge {
 
               if (challPlayer.voteB >= 0) {
                 event.player.onScreenDisplay.setTitle(`Your votes`, {
-                  fadeInSeconds: 1,
-                  fadeOutSeconds: 1,
-                  staySeconds: 5,
+                  fadeInDuration: 1,
+                  fadeOutDuration: 1,
+                  stayDuration: 5,
                   subtitle: this.teams[challPlayer.voteA].name + ", " + this.teams[challPlayer.voteB].name,
                 });
               } else {
                 event.player.onScreenDisplay.setTitle(`Your vote:`, {
-                  fadeInSeconds: 1,
-                  fadeOutSeconds: 1,
-                  staySeconds: 5,
+                  fadeInDuration: 1,
+                  fadeOutDuration: 1,
+                  stayDuration: 5,
                   subtitle: this.teams[challPlayer.voteA].name,
                 });
               }
@@ -1435,9 +1437,9 @@ export default class Challenge {
             team.ensurePlayerIsOnTeam(challPlayer);
 
             event.player.onScreenDisplay.setTitle(`Joined`, {
-              fadeInSeconds: 1,
-              fadeOutSeconds: 1,
-              staySeconds: 7,
+              fadeInDuration: 1,
+              fadeOutDuration: 1,
+              stayDuration: 7,
               subtitle: team.name,
             });
           }

@@ -5,7 +5,7 @@
     "description": "A gallery and GameTest of many code snippets",
     "uuid": "7de074b8-9052-4b1c-9342-b5c4280269fa",
     "version": [0, 0, 1],
-    "min_engine_version": [1, 16, 210]
+    "min_engine_version": [1, 20, 0]
   },
   "modules": [
     {
@@ -20,11 +20,11 @@
   "dependencies": [
     {
       "module_name": "@minecraft/server",
-      "version": "1.2.0-beta"
+      "version": "1.4.0-beta"
     },
     {
       "module_name": "@minecraft/server-ui",
-      "version": "1.0.0-beta"
+      "version": "1.1.0-beta"
     },
     {
       "module_name": "@minecraft/server-gametest",

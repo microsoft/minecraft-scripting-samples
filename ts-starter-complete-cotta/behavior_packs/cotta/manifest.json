@@ -5,7 +5,7 @@
     "description": "My TypeScript Project",
     "uuid": "79587552-f454-4cee-855e-652b7675c507",
     "version": [0, 0, 1],
-    "min_engine_version": [1, 19, 40]
+    "min_engine_version": [1, 20, 0]
   },
   "modules": [
     {

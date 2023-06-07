@@ -62,9 +62,10 @@ function initializeBreakTheTerracotta() {
         y: ARENA_Y_OFFSET,
         z: ARENA_Z_OFFSET - 3,
       },
-      overworld,
-      0,
-      0
+      {
+        dimension: overworld,
+        rotation: { x: 0, y: 0 } 
+      }
     );
   }
 
@@ -136,9 +137,12 @@ function spawnNewTerracotta() {
   cottaZ = Math.floor(Math.random() * (ARENA_Z_SIZE - 1)) - (ARENA_Z_SIZE / 2 - 1);
 
   world.sendMessage("Creating new terracotta!");
-  overworld
-    .getBlock({ x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET })
-    .setPermutation(BlockPermutation.resolve("minecraft:yellow_glazed_terracotta"));
+  let block = overworld
+    .getBlock({ x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET });
+
+  if (block) {
+    block.setPermutation(BlockPermutation.resolve("minecraft:yellow_glazed_terracotta"));
+  }
 }
 
 function checkForTerracotta() {
@@ -146,7 +150,7 @@ function checkForTerracotta() {
 
   let block = overworld.getBlock({ x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET });
 
-  if (block.type !== MinecraftBlockTypes.yellowGlazedTerracotta) {
+  if (block && block.type !== MinecraftBlockTypes.yellowGlazedTerracotta) {
     // we didn't find the terracotta! set a new spawn countdown
     score++;
     spawnCountdown = 2;
@@ -180,6 +184,7 @@ function spawnMobs() {
     });
   }
 }
+
 function addFuzzyLeaves() {
   let overworld = world.getDimension("overworld");
 
@@ -188,9 +193,13 @@ function addFuzzyLeaves() {
     const leafY = Math.floor(Math.random() * 10);
     const leafZ = Math.floor(Math.random() * (ARENA_Z_SIZE - 1)) - (ARENA_Z_SIZE / 2 - 1);
 
-    overworld
-      .getBlock({ x: leafX + ARENA_X_OFFSET, y: leafY + ARENA_Y_OFFSET, z: leafZ + ARENA_Z_OFFSET })
-      .setPermutation(BlockPermutation.resolve("minecraft:leaves"));
+    let block =overworld
+      .getBlock({ x: leafX + ARENA_X_OFFSET, y: leafY + ARENA_Y_OFFSET, z: leafZ + ARENA_Z_OFFSET });
+
+    if (block) {
+      block.setPermutation(BlockPermutation.resolve("minecraft:leaves"));
+    }
   }
 }
+
 system.run(gameTick);
