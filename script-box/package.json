@@ -1,8 +1,8 @@
 {
-  "name": "howto-gallery",
+  "name": "script-box",
   "version": "0.1.0",
-  "productName": "Minecraft TypeScript How-to Gallery",
-  "description": "Minecraft TypeScript How-to Gallery",
+  "productName": "Minecraft Script Box Playground",
+  "description": "Minecraft Script Box Playground",
   "private": true,
   "devDependencies": {
     "del": "^6.0.0",
