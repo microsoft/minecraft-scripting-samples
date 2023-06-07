@@ -1,0 +1,34 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Script Box",
+    "description": "A simple sample where you can add code in a framework",
+    "uuid": "7de074b8-9052-4b1c-9342-b5c4280269fb",
+    "version": [0, 0, 1],
+    "min_engine_version": [1, 20, 0]
+  },
+  "modules": [
+    {
+      "description": "Script resources",
+      "type": "script",
+      "language": "javascript",
+      "uuid": "df6523d1-4442-45c2-b33a-1c882d388684",
+      "version": [0, 0, 1],
+      "entry": "scripts/main.js"
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "1.4.0-beta"
+    },
+    {
+      "module_name": "@minecraft/server-ui",
+      "version": "1.1.0-beta"
+    },
+    {
+      "module_name": "@minecraft/server-gametest",
+      "version": "1.0.0-beta"
+    }
+  ]
+}
