@@ -19,8 +19,8 @@ export function pistonBeforeEvent(log: (message: string, status?: number) => voi
     return -1;
   }
 
-  piston.setPermutation(mc.BlockPermutation.resolve("piston").withState("facing_direction", 3 /* south */));
-  button.setPermutation(mc.BlockPermutation.resolve("acacia_button").withState("facing_direction", 1 /* up */));
+  piston.setPermutation(mc.BlockPermutation.resolve("piston").withState("facing_direction", 3));
+  button.setPermutation(mc.BlockPermutation.resolve("acacia_button").withState("facing_direction", 1));
 
   const uncanceledPistonLoc = {
     x: Math.floor(targetLocation.x) + 2,
@@ -41,9 +41,9 @@ export function pistonBeforeEvent(log: (message: string, status?: number) => voi
     return -1;
   }
 
-  uncanceledPiston.setPermutation(mc.BlockPermutation.resolve("piston").withState("facing_direction", 3 /* south */));
+  uncanceledPiston.setPermutation(mc.BlockPermutation.resolve("piston").withState("facing_direction", 3));
   uncanceledButton.setPermutation(
-    mc.BlockPermutation.resolve("acacia_button").withState("facing_direction", 1 /* up */)
+    mc.BlockPermutation.resolve("acacia_button").withState("facing_direction", 1)
   );
 
   mc.world.beforeEvents.pistonActivate.subscribe((pistonEvent: mc.PistonActivateBeforeEvent) => {
@@ -72,8 +72,8 @@ export function pistonAfterEvent(log: (message: string, status?: number) => void
     return -1;
   }
 
-  piston.setPermutation(mc.BlockPermutation.resolve("piston").withState("facing_direction", 3 /* south */));
-  button.setPermutation(mc.BlockPermutation.resolve("acacia_button").withState("facing_direction", 1 /* up */));
+  piston.setPermutation(mc.BlockPermutation.resolve("piston").withState("facing_direction", 3));
+  button.setPermutation(mc.BlockPermutation.resolve("acacia_button").withState("facing_direction", 1));
 
   mc.world.afterEvents.pistonActivate.subscribe((pistonEvent: mc.PistonActivateAfterEvent) => {
     let eventLoc = pistonEvent.piston.block.location;
