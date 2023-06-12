@@ -39,21 +39,21 @@ export function itemStacks(log: (message: string, status?: number) => void, targ
  */
 export function diamondAwesomeSword(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   const diamondAwesomeSword = new mc.ItemStack(mc.MinecraftItemTypes.diamondSword, 1);
-  let players = mc.world.getAllPlayers();
-
-  diamondAwesomeSword.setLore(["§c§lDiamond Sword of Awesome§r", "+10 coolness", "§p+4 shiny§r"]);
+  const players = mc.world.getAllPlayers();
 
   // hover over/select the item in your inventory to see the lore.
+  diamondAwesomeSword.setLore(["§c§lDiamond Sword of Awesome§r", "+10 coolness", "§p+4 shiny§r"]);
+  
+  const enchants = diamondAwesomeSword.getComponent("minecraft:enchantments") as mc.ItemEnchantsComponent;
+  const enchantments = enchants.enchantments;
+
+  const knockbackEnchant = new mc.Enchantment("knockback", 3);
+  enchantments.addEnchantment(knockbackEnchant);
+
+  enchants.enchantments = enchantments;
+
   const inventory = players[0].getComponent("inventory") as mc.EntityInventoryComponent;
   inventory.container.setItem(0, diamondAwesomeSword);
-
-  let item = inventory.container.getItem(0);
-
-  if (item) {
-    let enchants = item.getComponent("minecraft:enchantments") as mc.ItemEnchantsComponent;
-    let knockbackEnchant = new mc.Enchantment("knockback", 3);
-    enchants.enchantments.addEnchantment(knockbackEnchant);
-  }
 }
 
 /**
@@ -65,12 +65,16 @@ export function diamondAwesomeSword(log: (message: string, status?: number) => v
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/ItemEnchantsComponent
  */
 export function ironFireSword(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const ironFireSword = new mc.ItemStack(mc.MinecraftItemTypes.diamondSword, 1);
-  let players = mc.world.getAllPlayers();
+  const ironFireSword = new mc.ItemStack(mc.MinecraftItemTypes.ironSword, 1);
+  const players = mc.world.getAllPlayers();
 
-  let fireAspectEnchant = new mc.Enchantment("fire_aspect", 3);
-  let enchants = ironFireSword.getComponent("minecraft:enchantments") as mc.ItemEnchantsComponent;
-  let addedFire = enchants.enchantments.addEnchantment(fireAspectEnchant);
+  const fireAspectEnchant = new mc.Enchantment("fire_aspect", 3);
+  const enchants = ironFireSword.getComponent("minecraft:enchantments") as mc.ItemEnchantsComponent;
+  const enchantments = enchants.enchantments;
+
+  const addedFire = enchantments.addEnchantment(fireAspectEnchant);
+
+  enchants.enchantments = enchantments;
 
   if (!addedFire) {
     log("Could not add fire aspect.");
@@ -79,6 +83,4 @@ export function ironFireSword(log: (message: string, status?: number) => void, t
 
   const inventory = players[0].getComponent("inventory") as mc.EntityInventoryComponent;
   inventory.container.setItem(0, ironFireSword);
-
-  // hover over/select the item in your inventory to see the lore.
 }

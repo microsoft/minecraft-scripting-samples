@@ -78,7 +78,7 @@ export function applyDamageThenHeal(log: (message: string, status?: number) => v
 export function setOnFire(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   const skelly = overworld.spawnEntity("minecraft:skeleton", targetLocation);
 
-  skelly.setOnFire(20 /* seconds */, true);
+  skelly.setOnFire(20, true);
 
   mc.system.runTimeout(() => {
     let onfire = skelly.getComponent("onfire") as mc.EntityOnFireComponent;
@@ -93,9 +93,8 @@ export function setOnFire(log: (message: string, status?: number) => void, targe
  * Does a basic teleport action.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {mc.Location} location Location to center this sample code around.
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#setOnFire
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#extinguishFire
- * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/EntityOnFireComponent
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#teleport
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/TeleportOptions
  */
 export function teleport(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   const cow = overworld.spawnEntity("minecraft:cow", targetLocation);
