@@ -1,4 +1,5 @@
 import * as mc from "@minecraft/server";
+import * as mcui from "@minecraft/server-ui";
 
 export default class SampleManager {
   tickCount = 0;
@@ -36,6 +37,7 @@ export default class SampleManager {
 
       const nearbyBlockLoc = nearbyBlock.location;
       const nearbyLoc = { x: nearbyBlockLoc.x, y: nearbyBlockLoc.y + 1, z: nearbyBlockLoc.z };
+
       let sampleId: string | undefined = undefined;
 
       let firstSpace = message.indexOf(" ");
@@ -68,6 +70,66 @@ export default class SampleManager {
     }
   }
 
+  playerSpawn(playerSpawnEvent: mc.PlayerSpawnAfterEvent) {
+    // @ts-ignore
+    let locToProvision = playerSpawnEvent.player.getSpawnPoint()?.location;
+
+    if (locToProvision === undefined) {
+      // @ts-ignore
+      locToProvision = mc.world.getDefaultSpawnLocation();
+    }
+
+    if (locToProvision.y > 32000) {
+      locToProvision.y = playerSpawnEvent.player.location.y;
+    }
+
+    locToProvision = this.getGroundLocation({
+      x: locToProvision.x - 10,
+      y: locToProvision.y,
+      z: locToProvision.z - 10,
+    });
+
+    this.runSample("provisionSampleBox", [this.provisionSampleBox], locToProvision);
+  }
+
+  getGroundLocation(seedLocation: mc.Vector3) {
+    let dim = mc.world.getDimension("overworld");
+
+    let curBlock = dim.getBlock(seedLocation);
+    let curBlockAbove = dim.getBlock({ x: seedLocation.x, y: seedLocation.y + 1, z: seedLocation.z });
+
+    if (curBlock === undefined || curBlockAbove === undefined) {
+      return seedLocation;
+    }
+    // default is to look up.
+    let adjuster = 1;
+
+    // we're above ground, go down
+    if (curBlock.isAir()) {
+      adjuster = -1;
+    }
+
+    let blockSteps = 0;
+
+    // keep looking until we're on the first ground block
+    while (curBlock?.isAir() || (!curBlock.isAir() && !curBlockAbove.isAir() && blockSteps < 10)) {
+      blockSteps++;
+
+      seedLocation = { x: seedLocation.x, y: seedLocation.y + adjuster, z: seedLocation.z };
+
+      curBlock = dim.getBlock(seedLocation);
+      curBlockAbove = dim.getBlock({ x: seedLocation.x, y: seedLocation.y + 1, z: seedLocation.z });
+
+      if (curBlock === undefined || curBlockAbove === undefined) {
+        return seedLocation;
+      }
+    }
+
+    seedLocation = { x: seedLocation.x, y: seedLocation.y + 1, z: seedLocation.z };
+
+    return seedLocation;
+  }
+
   runSample(
     sampleId: string,
     snippetFunctions: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>,
@@ -76,6 +138,21 @@ export default class SampleManager {
     for (let i = snippetFunctions.length - 1; i >= 0; i--) {
       this.pendingFuncs.push({ name: sampleId, func: snippetFunctions[i], location: targetLocation });
     }
+  }
+
+  provisionSampleBox(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
+    let overworld = mc.world.getDimension("overworld");
+    // set up a button on cobblestone
+    let cobblestone = overworld.getBlock(targetLocation);
+    let button = overworld.getBlock({ x: targetLocation.x, y: targetLocation.y + 1, z: targetLocation.z });
+
+    if (cobblestone === undefined || button === undefined) {
+      log("Could not find block at location.");
+      return -1;
+    }
+
+    cobblestone.setPermutation(mc.BlockPermutation.resolve("minecraft:quartz_block"));
+    button.setPermutation(mc.BlockPermutation.resolve("acacia_button").withState("facing_direction", 1 /* up */));
   }
 
   worldTick() {
@@ -102,8 +179,42 @@ export default class SampleManager {
     this.worldTick = this.worldTick.bind(this);
 
     mc.world.afterEvents.chatSend.subscribe(this.newChatMessage.bind(this));
+    mc.world.afterEvents.playerSpawn.subscribe(this.playerSpawn.bind(this));
 
     mc.system.run(this.worldTick);
+
+    mc.world.afterEvents.buttonPush.subscribe((buttonPushEvent: mc.ButtonPushAfterEvent) => {
+      const players = mc.world.getPlayers();
+
+      let blockBelow = mc.world.getDimension("overworld").getBlock({
+        x: buttonPushEvent.block.location.x,
+        y: buttonPushEvent.block.location.y - 1,
+        z: buttonPushEvent.block.location.z,
+      });
+
+      if (blockBelow !== undefined && blockBelow.typeId === "minecraft:quartz_block" && players.length >= 1) {
+        const form = new mcui.ActionFormData()
+          .title("Samples")
+          .body("Choose a sample!\n(or enter §orun <samplename>§r in chat)");
+
+        for (const sampleName in this._availableFuncs) {
+          form.button(sampleName);
+        }
+
+        form.show(players[0]).then((response: mcui.ActionFormResponse) => {
+          let funcCount = 0;
+
+          for (const sampleName in this._availableFuncs) {
+            if (funcCount === response.selection) {
+              this.runSample(sampleName, this._availableFuncs[sampleName], players[0].location);
+              return;
+            }
+
+            funcCount++;
+          }
+        });
+      }
+    });
   }
 
   registerSamples(sampleSet: {

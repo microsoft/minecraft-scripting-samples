@@ -67,11 +67,24 @@ export function addTwoSidedSign(log: (message: string, status?: number) => void,
 
   const signBlock = dim.getBlock(targetLocation);
 
+  let support = dim.getBlock({ x: targetLocation.x, y: targetLocation.y + 1, z: targetLocation.z });
+
+  if (support === undefined) {
+    log("Could not find block at location.");
+    return -1;
+  }
+
+  support.setPermutation(mc.BlockPermutation.resolve("cobblestone"));
+
   if (!signBlock) {
     log("Could not find a block at specified location.");
     return -1;
   }
-  let signPerm = mc.BlockPermutation.resolve("minecraft:standing_sign", { ground_sign_direction: 8 });
+
+  let signPerm = mc.BlockPermutation.resolve("minecraft:acacia_hanging_sign", {
+    ground_sign_direction: 8,
+    hanging: true,
+  });
 
   signBlock.setPermutation(signPerm);
 
