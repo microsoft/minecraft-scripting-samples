@@ -1,0 +1,29 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Custom Mobs",
+    "description": "Custom Mobs Resource Pack",
+    "uuid": "7cee9cd6-6ce6-a8da-da8c-f06d93c3ea12",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 16, 0]
+  },
+  "metadata": {
+    "generated_with": {
+      "blockbench_entity_wizard": ["1.0.9"]
+    }
+  },
+  "modules": [
+    {
+      "description": "Custom Mobs Resources",
+      "type": "resources",
+      "uuid": "9c92ab91-325c-262b-2bae-f12515125c3b",
+      "version": [1, 0, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "24e467b5-e3aa-49d3-8352-f8439fd7b2ee",
+      "version": [1, 0, 0]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+entity.mcl:butterfly.name=Butterfly
+item.spawn_egg.entity.mcl:butterfly.name=Spawn Butterfly
+entity.mcl:biceson.name=Biceson
+entity.mcl:black_bear.name=Black Bear
+item.spawn_egg.entity.mcl:black_bear.name=Spawn Black Bear

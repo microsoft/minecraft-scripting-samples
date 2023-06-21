@@ -1,0 +1,66 @@
+{
+  "entity_sounds": {
+    "entities": {
+      "mcl:black_bear": {
+        "events": {
+          "ambient": "mob.polarbear.idle",
+          "ambient.baby": "mob.polarbear_baby.idle",
+          "death": "mob.polarbear.death",
+          "hurt": {
+            "sound": "mob.polarbear.hurt",
+            "volume": 0.7
+          },
+          "mob.warning": {
+            "pitch": 1,
+            "sound": "mob.polarbear.warning",
+            "volume": 1.2
+          },
+          "step": {
+            "pitch": 1,
+            "sound": "mob.polarbear.step",
+            "volume": 0.7
+          }
+        },
+        "pitch": [0.8, 1.2],
+        "volume": 1
+      },
+      "mcl:biceson": {
+        "events": {
+          "ambient": "mob.polarbear.idle",
+          "ambient.baby": "mob.polarbear_baby.idle",
+          "death": "mob.polarbear.death",
+          "hurt": {
+            "sound": "mob.polarbear.hurt",
+            "volume": 0.7
+          },
+          "mob.warning": {
+            "pitch": 1,
+            "sound": "mob.polarbear.warning",
+            "volume": 1.2
+          },
+          "step": {
+            "pitch": 1,
+            "sound": "mob.polarbear.step",
+            "volume": 0.7
+          }
+        },
+        "pitch": [0.8, 1.2],
+        "volume": 1
+      },
+      "mcl:butterfly": {
+        "events": {
+          "ambient": "mob.bat.idle",
+          "death": "mob.bat.death",
+          "hurt": "mob.bat.hurt",
+          "takeoff": {
+            "pitch": [0.8, 1.2],
+            "sound": "mob.bat.takeoff",
+            "volume": 0.05
+          }
+        },
+        "pitch": [0.76, 1.14],
+        "volume": 0.1
+      }
+    }
+  }
+}
