@@ -1,12 +1,11 @@
 import {
   world,
   system,
-  MinecraftBlockTypes,
   BlockPermutation,
-  ScoreboardObjectiveDisplayOptions,
-  EntityQueryOptions,
   EntityInventoryComponent,
   ItemStack,
+  DisplaySlotId,
+  BlockTypes,
 } from "@minecraft/server";
 import Utilities from "./Utilities.js";
 
@@ -43,7 +42,7 @@ function initializeBreakTheTerracotta() {
   }
 
   // set up scoreboard
-  world.scoreboard.setObjectiveAtDisplaySlot("sidebar", {
+  world.scoreboard.setObjectiveAtDisplaySlot(DisplaySlotId.Sidebar, {
     objective: scoreObjective,
   });
 
@@ -71,25 +70,32 @@ function initializeBreakTheTerracotta() {
 
   world.sendMessage("BREAK THE TERRACOTTA");
 
-  Utilities.fillBlock(
-    MinecraftBlockTypes.air,
-    ARENA_X_OFFSET - ARENA_X_SIZE / 2 + 1,
-    ARENA_Y_OFFSET,
-    ARENA_Z_OFFSET - ARENA_Z_SIZE / 2 + 1,
-    ARENA_X_OFFSET + ARENA_X_SIZE / 2 - 1,
-    ARENA_Y_OFFSET + 10,
-    ARENA_Z_OFFSET + ARENA_Z_SIZE / 2 - 1
-  );
+  let airBlockType = BlockTypes.get("minecraft:air");
+  let cobblestoneBlockType = BlockTypes.get("minecraft:cobblestone");
 
-  Utilities.fourWalls(
-    MinecraftBlockTypes.cobblestone,
-    ARENA_X_OFFSET - ARENA_X_SIZE / 2,
-    ARENA_Y_OFFSET,
-    ARENA_Z_OFFSET - ARENA_Z_SIZE / 2,
-    ARENA_X_OFFSET + ARENA_X_SIZE / 2,
-    ARENA_Y_OFFSET + 10,
-    ARENA_Z_OFFSET + ARENA_Z_SIZE / 2
-  );
+  if (airBlockType) {
+    Utilities.fillBlock(
+      airBlockType,
+      ARENA_X_OFFSET - ARENA_X_SIZE / 2 + 1,
+      ARENA_Y_OFFSET,
+      ARENA_Z_OFFSET - ARENA_Z_SIZE / 2 + 1,
+      ARENA_X_OFFSET + ARENA_X_SIZE / 2 - 1,
+      ARENA_Y_OFFSET + 10,
+      ARENA_Z_OFFSET + ARENA_Z_SIZE / 2 - 1
+    );
+  }
+
+  if (cobblestoneBlockType) {
+    Utilities.fourWalls(
+      cobblestoneBlockType,
+      ARENA_X_OFFSET - ARENA_X_SIZE / 2,
+      ARENA_Y_OFFSET,
+      ARENA_Z_OFFSET - ARENA_Z_SIZE / 2,
+      ARENA_X_OFFSET + ARENA_X_SIZE / 2,
+      ARENA_Y_OFFSET + 10,
+      ARENA_Z_OFFSET + ARENA_Z_SIZE / 2
+    );
+  }
 }
 
 function gameTick() {
@@ -129,6 +135,7 @@ function gameTick() {
 
   system.run(gameTick);
 }
+
 function spawnNewTerracotta() {
   let overworld = world.getDimension("overworld");
 
@@ -150,7 +157,7 @@ function checkForTerracotta() {
 
   let block = overworld.getBlock({ x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET });
 
-  if (block && block.type !== MinecraftBlockTypes.yellowGlazedTerracotta) {
+  if (block && !block.permutation.matches("minecraft:yellow_glazed_terracotta")) {
     // we didn't find the terracotta! set a new spawn countdown
     score++;
     spawnCountdown = 2;
@@ -193,12 +200,9 @@ function addFuzzyLeaves() {
     const leafY = Math.floor(Math.random() * 10);
     const leafZ = Math.floor(Math.random() * (ARENA_Z_SIZE - 1)) - (ARENA_Z_SIZE / 2 - 1);
 
-    let block =overworld
-      .getBlock({ x: leafX + ARENA_X_OFFSET, y: leafY + ARENA_Y_OFFSET, z: leafZ + ARENA_Z_OFFSET });
-
-    if (block) {
-      block.setPermutation(BlockPermutation.resolve("minecraft:leaves"));
-    }
+    overworld
+      .getBlock({ x: leafX + ARENA_X_OFFSET, y: leafY + ARENA_Y_OFFSET, z: leafZ + ARENA_Z_OFFSET })
+      ?.setPermutation(BlockPermutation.resolve("minecraft:leaves"));
   }
 }
 

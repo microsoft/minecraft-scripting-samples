@@ -77,6 +77,9 @@ Update the first and second UUID properties to make it unique to your project. S
 > Versions 1.19.40 feature `1.0.0-beta` APIs
 > Versions 1.19.50, 1.19.60, and 1.19.70 feature `1.1.0-beta` APIs
 > Versions 1.19.80 features `1.2.0-beta` APIs
+> Versions 1.20.0 features `1.3.0-beta` APIs
+> Versions 1.20.10 features `1.4.0-beta` APIs
+> Versions 1.20.20 features `1.5.0-beta` APIs
 > Future versions will likely require updated versions of Beta APIs.
 
 ### Chapter 2. Let's test the parts of our project
@@ -111,7 +114,7 @@ Now you're in. Great!
 
 By default, this starter pack comes with a simple script that will display a message:
 
-`[Script Engine] Hello starter!`
+`[Script Engine] Hello starter! Tick: <number>`
 
 This means your behavior pack is working and your tools for compiling and pushing TypeScript are just fine. Awesome!
 
@@ -126,43 +129,83 @@ Open up `scripts/main.ts` within Visual Studio Code.
 Remove all the existing script code in **main.ts**. Replace it with this to start:
 
 ```typescript
-import { world, system, BlockPermutation, MinecraftBlockTypes } from "@minecraft/server";
+import {
+  world,
+  system,
+  BlockPermutation,
+  EntityInventoryComponent,
+  ItemStack,
+  DisplaySlotId,
+  BlockType,
+  BlockTypes,
+} from "@minecraft/server";
 
 const START_TICK = 100;
 
 // global variables
 let curTick = 0;
 
+const ARENA_X_SIZE = 30;
+const ARENA_Z_SIZE = 30;
+const ARENA_X_OFFSET = 0;
+const ARENA_Y_OFFSET = -60;
+const ARENA_Z_OFFSET = 0;
+
 function initializeBreakTheTerracotta() {
   const overworld = world.getDimension("overworld");
 
-  // catch in case we've already added this score before.
-  try {
-    overworld.runCommandAsync('scoreboard objectives add score dummy "Level"');
-  } catch (e) {}
+  let scoreObjective = world.scoreboard.getObjective("score");
+
+  if (!scoreObjective) {
+    scoreObjective = world.scoreboard.addObjective("score", "Level");
+  }
 
   // eliminate pesky nearby mobs
-  try {
-    overworld.runCommandAsync("kill @e[type=!player]");
-  } catch (e) {}
+  let entities = overworld.getEntities({
+    excludeTypes: ["player"],
+  });
 
-  overworld.runCommandAsync("scoreboard objectives setdisplay sidebar score");
+  for (let entity of entities) {
+    entity.kill();
+  }
 
-  overworld.runCommandAsync("give @p diamond_sword");
-  overworld.runCommandAsync("give @p dirt 64");
+  // set up scoreboard
+  world.scoreboard.setObjectiveAtDisplaySlot(DisplaySlotId.Sidebar, {
+    objective: scoreObjective,
+  });
 
-  overworld.runCommandAsync("scoreboard players set @p score 0");
+  let players = world.getAllPlayers();
 
-  mc.world.sendMessage("BREAK THE TERRACOTTA");
+  for (let player of players) {
+    player.runCommand("scoreboard players set @s score 0");
+
+    let inv = player.getComponent("inventory") as EntityInventoryComponent;
+    inv.container.addItem(new ItemStack("diamond_sword"));
+    inv.container.addItem(new ItemStack("dirt", 64));
+
+    player.teleport(
+      {
+        x: ARENA_X_OFFSET - 3,
+        y: ARENA_Y_OFFSET,
+        z: ARENA_Z_OFFSET - 3,
+      },
+      {
+        dimension: overworld,
+        rotation: { x: 0, y: 0 } 
+      }
+    );
+  }
+
+  world.sendMessage("BREAK THE TERRACOTTA");
 }
 
 function gameTick() {
   try {
+    curTick++;
+
     if (curTick === START_TICK) {
       initializeBreakTheTerracotta();
     }
-
-    curTick++;
   } catch (e) {
     console.warn("Tick error: " + e);
   }
@@ -171,6 +214,7 @@ function gameTick() {
 }
 
 system.run(gameTick);
+
 ```
 
 This code does some work to initialize our gameplay for Minecraft by running several commands.
@@ -213,7 +257,7 @@ We're going to start by adding some handy helper utility code functions. This wi
 Add a new file to your `scripts` folder called `Utilities.ts`. Correct capitalization matters, so make sure the `U` is capitalized. Add the following code:
 
 ```typescript
-import { world, BlockPermutation, BlockType } from "@minecraft/server";
+import { world, BlockType, BlockPermutation } from "@minecraft/server";
 
 export default class Utilities {
   static fillBlock(
@@ -231,7 +275,7 @@ export default class Utilities {
     for (let i = xFrom; i <= xTo; i++) {
       for (let j = yFrom; j <= yTo; j++) {
         for (let k = zFrom; k <= zTo; k++) {
-          overworld.getBlock({ x: i, y: j, z: k}).setPermutation(perm);
+          overworld.getBlock({ x: i, y: j, z: k })?.setPermutation(perm);
         }
       }
     }
@@ -251,15 +295,15 @@ export default class Utilities {
 
     for (let i = xFrom; i <= xTo; i++) {
       for (let k = yFrom; k <= yTo; k++) {
-        overworld.getBlock({ x: i, y: k, z: zFrom}).setPermutation(perm);
-        overworld.getBlock({ x: i, y: k, z: zTo}).setPermutation(perm);
+        overworld.getBlock({ x: i, y: k, z: zFrom })?.setPermutation(perm);
+        overworld.getBlock({ x: i, y: k, z: zTo })?.setPermutation(perm);
       }
     }
 
     for (let j = zFrom + 1; j < zTo; j++) {
       for (let k = yFrom; k <= yTo; k++) {
-        overworld.getBlock({ x: xFrom, y: k, z: j}).setPermutation(perm);
-        overworld.getBlock({ x: xTo, y: k, z: j}).setPermutation(perm);
+        overworld.getBlock({ x: xFrom, y: k, z:j })?.setPermutation(perm);
+        overworld.getBlock({ x: xTo, y: k, z: j })?.setPermutation(perm);
       }
     }
   }
@@ -280,40 +324,35 @@ First, we'll need an import function. Add a new line above `const START_TICK = 1
 import Utilities from "./Utilities.js";
 ```
 
-Then, add constants that define your arena size and location, directly beneath the `const START_TICK = 100;` line of code:
+Next, within `initializeBreakTheTerracotta`, let's add our arena initialization beneath the `world.sendMessage("BREAK THE TERRACOTTA!");` line of code:
 
 ```typescript
-const ARENA_X_SIZE = 30;
-const ARENA_Z_SIZE = 30;
-const ARENA_X_OFFSET = 0;
-const ARENA_Y_OFFSET = -60;
-const ARENA_Z_OFFSET = 0;
-```
+let airBlockType = BlockTypes.get("minecraft:air");
+let cobblestoneBlockType = BlockTypes.get("minecraft:cobblestone");
 
-Finally, within `initializeBreakTheTerracotta`, let's add our arena initialization beneath the `mc.world.sendMessage("BREAK THE TERRACOTTA!");` line of code:
+if (airBlockType) {
+  Utilities.fillBlock(
+    airBlockType,
+    ARENA_X_OFFSET - ARENA_X_SIZE / 2 + 1,
+    ARENA_Y_OFFSET,
+    ARENA_Z_OFFSET - ARENA_Z_SIZE / 2 + 1,
+    ARENA_X_OFFSET + ARENA_X_SIZE / 2 - 1,
+    ARENA_Y_OFFSET + 10,
+    ARENA_Z_OFFSET + ARENA_Z_SIZE / 2 - 1
+  );
+}
 
-```typescript
-Utilities.fillBlock(
-  MinecraftBlockTypes.air,
-  ARENA_X_OFFSET - ARENA_X_SIZE / 2 + 1,
-  ARENA_Y_OFFSET,
-  ARENA_Z_OFFSET - ARENA_Z_SIZE / 2 + 1,
-  ARENA_X_OFFSET + ARENA_X_SIZE / 2 - 1,
-  ARENA_Y_OFFSET + 10,
-  ARENA_Z_OFFSET + ARENA_Z_SIZE / 2 - 1
-);
-
-Utilities.fourWalls(
-  MinecraftBlockTypes.cobblestone,
-  ARENA_X_OFFSET - ARENA_X_SIZE / 2,
-  ARENA_Y_OFFSET,
-  ARENA_Z_OFFSET - ARENA_Z_SIZE / 2,
-  ARENA_X_OFFSET + ARENA_X_SIZE / 2,
-  ARENA_Y_OFFSET + 10,
-  ARENA_Z_OFFSET + ARENA_Z_SIZE / 2
-);
-
-overworld.runCommandAsync("tp @p " + String(ARENA_X_OFFSET - 3) + " " + ARENA_Y_OFFSET + " " + String(ARENA_Z_OFFSET - 3));
+if (cobblestoneBlockType) {
+  Utilities.fourWalls(
+    cobblestoneBlockType,
+    ARENA_X_OFFSET - ARENA_X_SIZE / 2,
+    ARENA_Y_OFFSET,
+    ARENA_Z_OFFSET - ARENA_Z_SIZE / 2,
+    ARENA_X_OFFSET + ARENA_X_SIZE / 2,
+    ARENA_Y_OFFSET + 10,
+    ARENA_Z_OFFSET + ARENA_Z_SIZE / 2
+  );
+}
 ```
 
 The first line just fills a cuboid with air - basically clearing out the arena of any previous items. The second line re-installs and adds four walls of cobblestone.
@@ -362,25 +401,32 @@ function spawnNewTerracotta() {
   cottaX = Math.floor(Math.random() * (ARENA_X_SIZE - 1)) - (ARENA_X_SIZE / 2 - 1);
   cottaZ = Math.floor(Math.random() * (ARENA_Z_SIZE - 1)) - (ARENA_Z_SIZE / 2 - 1);
 
-  mc.world.sendMessage("Creating new terracotta!");
-  overworld
-    .getBlock({ x: cottaX + ARENA_X_OFFSET, 1 + ARENA_Y_OFFSET, cottaZ + ARENA_Z_OFFSET))
-    .setPermutation(BlockPermutation.resolve("minecraft:yellow_glazed_terracotta"));
+  world.sendMessage("Creating new terracotta!");
+  let block = overworld
+    .getBlock({ x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET });
+
+  if (block) {
+    block.setPermutation(BlockPermutation.resolve("minecraft:yellow_glazed_terracotta"));
+  }
 }
 
 function checkForTerracotta() {
   let overworld = world.getDimension("overworld");
 
-  let block = overworld.getBlock(
-    { x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET}
-  );
+  let block = overworld.getBlock({ x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET });
 
-  if (block.type !== MinecraftBlockTypes.yellowGlazedTerracotta) {
+  if (block && !block.permutation.matches("minecraft:yellow_glazed_terracotta")) {
     // we didn't find the terracotta! set a new spawn countdown
     score++;
     spawnCountdown = 2;
     cottaX = -1;
-    overworld.runCommandAsync("scoreboard players set @p score " + score);
+
+    let players = world.getAllPlayers();
+
+    for (let player of players) {
+      player.runCommand("scoreboard players set @s score " + score);
+    }
+
     world.sendMessage("You broke the terracotta! Creating new terracotta in a few seconds.");
     cottaZ = -1;
   }
@@ -448,7 +494,7 @@ function addFuzzyLeaves() {
 
     overworld
       .getBlock({ x: leafX + ARENA_X_OFFSET, y: leafY + ARENA_Y_OFFSET, z: leafZ + ARENA_Z_OFFSET})
-      .setPermutation(BlockPermutation.resolve("minecraft:leaves"));
+      ?.setPermutation(BlockPermutation.resolve("minecraft:leaves"));
   }
 }
 ```
