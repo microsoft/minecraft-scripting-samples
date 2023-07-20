@@ -1,7 +1,7 @@
 // === CONFIGURABLE VARIABLES
 
 const bpfoldername = "starterbp";
-const useMinecraftPreview = false; // Whether to target the "Minecraft Preview" version of Minecraft vs. the main store version of Minecraft
+const useMinecraftPreview = true; // Whether to target the "Minecraft Preview" version of Minecraft vs. the main store version of Minecraft
 const useMinecraftDedicatedServer = false; // Whether to use Bedrock Dedicated Server - see https://www.minecraft.net/download/server/bedrock
 const dedicatedServerPath = "C:/mc/bds/1.19.0/"; // if using Bedrock Dedicated Server, where to find the extracted contents of the zip package
 
@@ -234,9 +234,6 @@ function backup_localmc_world() {
 const deploy_localmc = gulp.series(
   clean_localmc,
   function (callbackFunction) {
-    if (!useMinecraftDedicatedServer) {
-      console.log("\007"); // annunciate a beep!
-    }
     callbackFunction();
   },
   gulp.parallel(deploy_localmc_behavior_packs, deploy_localmc_resource_packs)
@@ -285,7 +282,6 @@ function startServer(callbackFunction) {
         if (message) {
           if (message.indexOf("Server started.") >= 0) {
             activeServer.stdin.write("script debugger listen 19144\n");
-            console.log("\007"); // annunciate a beep!
           }
           console.log("Server: " + message);
         }
