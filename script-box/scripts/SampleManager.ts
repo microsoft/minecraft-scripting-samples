@@ -45,7 +45,7 @@ export default class SampleManager {
       }
 
       if (!sampleId || sampleId.length < 2) {
-        sampleId="scriptbox";
+        sampleId = "scriptbox";
       }
 
       if (message.startsWith("help")) {
@@ -56,8 +56,7 @@ export default class SampleManager {
         }
 
         mc.world.sendMessage(availableFuncStr);
-      } 
-      else {
+      } else {
         for (const sampleFuncKey in this._availableFuncs) {
           if (sampleFuncKey.toLowerCase() === sampleId) {
             const sampleFunc = this._availableFuncs[sampleFuncKey];
