@@ -10,7 +10,7 @@ const overworld = mc.world.getDimension("overworld");
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#spawnitem
  */
 export function spawnItem(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const featherItem = new mc.ItemStack(mc.MinecraftItemTypes.feather, 1);
+  const featherItem = new mc.ItemStack("minecraft:feather", 1);
 
   overworld.spawnItem(featherItem, targetLocation);
   log(`New feather created at ${targetLocation.x}, ${targetLocation.y}, ${targetLocation.z}!`);

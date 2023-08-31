@@ -59,7 +59,7 @@ const mojangMinecraftFuncs: {
   sendBasicMessage: [sdf16.sendBasicMessage],
   sendTranslatedMessage: [sdf16.sendTranslatedMessage],
   buttonPushEvent: [sdf17.buttonPushEvent],
-  leverActivateEvent: [sdf17.leverActivateEvent],
+  leverActionEvent: [sdf17.leverActionEvent],
   tripWireTripEvent: [sdf17.tripWireTripEvent],
   incrementProperty: [sdf18.incrementProperty],
   incrementPropertyInJsonBlob: [sdf18.incrementPropertyInJsonBlob],

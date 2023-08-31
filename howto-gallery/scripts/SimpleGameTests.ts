@@ -68,7 +68,7 @@ function minibiomes(test: gt.Test) {
   const minecart = test.spawn(minecartEntityType, { x: 9, y: 7, z: 7 });
   const pig = test.spawn(pigEntityType, { x: 9, y: 7, z: 7 });
 
-  test.setBlockType(mc.MinecraftBlockTypes.cobblestone, { x: 10, y: 7, z: 7 });
+  test.setBlockType("minecraft:cobblestone", { x: 10, y: 7, z: 7 });
 
   const minecartRideableComp = minecart.getComponent("minecraft:rideable") as mc.EntityRideableComponent;
 

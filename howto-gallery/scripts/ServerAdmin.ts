@@ -24,7 +24,7 @@ export async function getPlayerProfile(log: (message: string, status?: number) =
     throw new Error("authtoken secret not defined.");
   }
 
-  req.method = mcnet.HttpRequestMethod.POST;
+  req.method = mcnet.HttpRequestMethod.Post;
   req.headers = [new mcnet.HttpHeader("Content-Type", "application/json"), new mcnet.HttpHeader("auth", authTokenSec)];
 
   await mcnet.http.request(req);

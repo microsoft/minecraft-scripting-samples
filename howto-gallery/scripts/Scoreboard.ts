@@ -31,9 +31,9 @@ export function updateScoreboard(log: (message: string, status?: number) => void
   // initialize player score to 100;
   objective.setScore(player0Identity, 100);
 
-  mc.world.scoreboard.setObjectiveAtDisplaySlot("sidebar", {
+  mc.world.scoreboard.setObjectiveAtDisplaySlot(mc.DisplaySlotId.Sidebar, {
     objective: objective,
-    sortOrder: mc.ObjectiveSortOrder.descending,
+    sortOrder: mc.ObjectiveSortOrder.Descending,
   });
 
   const playerScore = objective.getScore(player0Identity) ?? 0;

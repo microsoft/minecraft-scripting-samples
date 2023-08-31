@@ -38,7 +38,7 @@ export function buttonPushEvent(log: (message: string, status?: number) => void,
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/leveractionaftereventsignal
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/leveractionafterevent
  */
-export function leverActivateEvent(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
+export function leverActionEvent(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   // set up a lever
   let cobblestone = overworld.getBlock(targetLocation);
   let lever = overworld.getBlock({ x: targetLocation.x, y: targetLocation.y + 1, z: targetLocation.z });
@@ -51,15 +51,15 @@ export function leverActivateEvent(log: (message: string, status?: number) => vo
   cobblestone.setPermutation(mc.BlockPermutation.resolve("cobblestone"));
   lever.setPermutation(mc.BlockPermutation.resolve("lever").withState("lever_direction", "up_north_south" /* up */));
 
-  mc.world.afterEvents.leverActivate.subscribe((leverActivateEvent: mc.LeverActionAfterEvent) => {
-    let eventLoc = leverActivateEvent.block.location;
+  mc.world.afterEvents.leverAction.subscribe((leverActionEvent: mc.LeverActionAfterEvent) => {
+    let eventLoc = leverActionEvent.block.location;
 
     if (eventLoc.x === targetLocation.x && eventLoc.y === targetLocation.y + 1 && eventLoc.z === targetLocation.z) {
       log(
         "Lever activate event at tick " +
           mc.system.currentTick +
           " Power:" +
-          leverActivateEvent.block.getRedstonePower()
+          leverActionEvent.block.getRedstonePower()
       );
     }
   });
