@@ -78,9 +78,9 @@ export function addTwoSidedSign(log: (message: string, status?: number) => void,
   const signComponent = signBlock.getComponent("minecraft:sign") as mc.BlockSignComponent;
 
   signComponent.setText(`Party Sign!\nThis is green on the front.`);
-  signComponent.setText(`Party Sign!\nThis is red on the back.`, mc.SignSide.back);
-  signComponent.setTextDyeColor(mc.DyeColor.green);
-  signComponent.setTextDyeColor(mc.DyeColor.red, mc.SignSide.back);
+  signComponent.setText(`Party Sign!\nThis is red on the back.`, mc.SignSide.Back);
+  signComponent.setTextDyeColor(mc.DyeColor.Green);
+  signComponent.setTextDyeColor(mc.DyeColor.Red, mc.SignSide.Back);
 
   // players cannot edit sign!
   signComponent.setWaxed();

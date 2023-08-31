@@ -15,7 +15,7 @@ export async function updateScore(log: (message: string, status?: number) => voi
     score: 22,
   });
 
-  req.method = mcnet.HttpRequestMethod.POST;
+  req.method = mcnet.HttpRequestMethod.Post;
   req.headers = [
     new mcnet.HttpHeader("Content-Type", "application/json"),
     new mcnet.HttpHeader("auth", "my-auth-token"),

@@ -155,7 +155,7 @@ export default class Challenge {
     this.tick = this.tick.bind(this);
     this.playerSpawnedFirstTime = this.playerSpawnedFirstTime.bind(this);
     this.playerLeft = this.playerLeft.bind(this);
-    this.leverActivate = this.leverActivate.bind(this);
+    this.leverAction = this.leverAction.bind(this);
     this.beforeChat = this.beforeChat.bind(this);
     this.refreshTeam = this.refreshTeam.bind(this);
     this.clearTeamArea = this.clearTeamArea.bind(this);
@@ -439,7 +439,7 @@ export default class Challenge {
     world.afterEvents.playerSpawn.subscribe(this.playerSpawnedFirstTime);
     world.afterEvents.playerLeave.subscribe(this.playerLeft);
     world.beforeEvents.chatSend.subscribe(this.beforeChat);
-    world.afterEvents.leverActivate.subscribe(this.leverActivate);
+    world.afterEvents.leverActivate.subscribe(this.leverAction);
 
     this.loadPlayerState();
     this.ensureAllPlayers();
@@ -1370,7 +1370,7 @@ export default class Challenge {
     }
   }
 
-  leverActivate(event: LeverActionAfterEvent) {
+  leverAction(event: LeverActionAfterEvent) {
     if (!event.player) {
       return;
     }

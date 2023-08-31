@@ -34,7 +34,7 @@ export default class SampleManager {
         return;
       }
 
-      const nearbyBlockLoc = nearbyBlock.location;
+      const nearbyBlockLoc = nearbyBlock.block.location;
       const nearbyLoc = { x: nearbyBlockLoc.x, y: nearbyBlockLoc.y + 1, z: nearbyBlockLoc.z };
       let sampleId: string | undefined = undefined;
 
@@ -45,7 +45,7 @@ export default class SampleManager {
       }
 
       if (!sampleId || sampleId.length < 2) {
-        let availableFuncStr = "Here is my list of available samples:";
+        let availableFuncStr = "You can run a sample by typing `run <sample name>` in chat. Here is a list of available samples:";
 
         for (const sampleFuncKey in this._availableFuncs) {
           availableFuncStr += " " + sampleFuncKey;
@@ -63,7 +63,7 @@ export default class SampleManager {
           }
         }
 
-        mc.world.sendMessage(`I couldn't find the sample '${sampleId}'`);
+        mc.world.sendMessage(`I couldn't find the sample '${sampleId}'. Type help in chat to see a list of samples.`);
       }
     }
   }
@@ -104,6 +104,7 @@ export default class SampleManager {
     mc.world.afterEvents.chatSend.subscribe(this.newChatMessage.bind(this));
 
     mc.system.run(this.worldTick);
+    mc.world.sendMessage("Type 'run <sample name>' in chat to run a sample, and type 'help' to see a list of samples.");
   }
 
   registerSamples(sampleSet: {

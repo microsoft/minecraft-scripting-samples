@@ -15,9 +15,9 @@ export function itemStacks(log: (message: string, status?: number) => void, targ
   const fiveItemsLoc = { x: targetLocation.x + 1, y: targetLocation.y + 2, z: targetLocation.z + 1 };
   const diamondPickaxeLoc = { x: targetLocation.x + 2, y: targetLocation.y + 2, z: targetLocation.z + 4 };
 
-  const oneEmerald = new mc.ItemStack(mc.MinecraftItemTypes.emerald, 1);
-  const onePickaxe = new mc.ItemStack(mc.MinecraftItemTypes.diamondPickaxe, 1);
-  const fiveEmeralds = new mc.ItemStack(mc.MinecraftItemTypes.emerald, 5);
+  const oneEmerald = new mc.ItemStack("minecraft:emerald", 1);
+  const onePickaxe = new mc.ItemStack("minecraft:diamond_pickaxe", 1);
+  const fiveEmeralds = new mc.ItemStack("minecraft:emerald", 5);
 
   log(`Spawning an emerald at (${oneItemLoc.x}, ${oneItemLoc.y}, ${oneItemLoc.z})`);
   overworld.spawnItem(oneEmerald, oneItemLoc);
@@ -38,7 +38,7 @@ export function itemStacks(log: (message: string, status?: number) => void, targ
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/itemStack#setlore
  */
 export function diamondAwesomeSword(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const diamondAwesomeSword = new mc.ItemStack(mc.MinecraftItemTypes.diamondSword, 1);
+  const diamondAwesomeSword = new mc.ItemStack("minecraft:diamond_sword", 1);
   const players = mc.world.getAllPlayers();
 
   // hover over/select the item in your inventory to see the lore.
@@ -65,7 +65,7 @@ export function diamondAwesomeSword(log: (message: string, status?: number) => v
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/ItemEnchantsComponent
  */
 export function ironFireSword(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const ironFireSword = new mc.ItemStack(mc.MinecraftItemTypes.ironSword, 1);
+  const ironFireSword = new mc.ItemStack("minecraft:iron_sword", 1);
   const players = mc.world.getAllPlayers();
 
   const fireAspectEnchant = new mc.Enchantment("fire_aspect", 3);
