@@ -70,14 +70,3 @@ export function incrementPropertyInJsonBlob(
   paintStr = JSON.stringify(paint); // be very careful to ensure your serialized JSON str cannot exceed limits
   mc.world.setDynamicProperty("samplelibrary:longerjson", paintStr);
 }
-
-mc.world.afterEvents.worldInitialize.subscribe((e) => {
-  const def = new mc.DynamicPropertiesDefinition();
-
-  def.defineNumber("samplelibrary:number");
-  def.defineString("samplelibrary:string", 16);
-  def.defineString("samplelibrary:longerjson", 128);
-  def.defineBoolean("samplelibrary:bool");
-
-  e.propertyRegistry.registerWorldDynamicProperties(def);
-});

@@ -1,4 +1,4 @@
-import { world, MinecraftBlockTypes, Player } from "@minecraft/server";
+import { world, Player, BlockTypes } from "@minecraft/server";
 import Challenge, { ChallengePhase } from "./Challenge.js";
 import ChallengePlayer from "./ChallengePlayer.js";
 import {
@@ -220,8 +220,15 @@ export default class Team {
   }
 
   addTeamName() {
+    const airBlock = BlockTypes.get("minecraft:air");
+    const copperBlock = BlockTypes.get("minecraft:cut_copper_slab");
+
+    if (!airBlock || !copperBlock) {
+      return;
+    }
+
     Utilities.fillBlock(
-      MinecraftBlockTypes.air,
+      airBlock,
       this.nwbX + 5,
       this.nwbY + 1,
       this.nwbZ + 5,
@@ -232,8 +239,8 @@ export default class Team {
     Utilities.writeTextFlatX(
       this.name,
       { x: this.nwbX + 5, y: this.nwbY + 1, z: this.nwbZ + 5 },
-      MinecraftBlockTypes.cutCopperSlab,
-      MinecraftBlockTypes.air
+      copperBlock,
+      airBlock
     );
   }
 
@@ -281,7 +288,7 @@ export default class Team {
 
         let result = await mdf.show(player);
 
-        if (result.formValues && result.formValues[0] !== undefined && typeof(result.formValues) === "string") {
+        if (result.formValues && result.formValues[0] !== undefined && typeof result.formValues === "string") {
           if (!this.isValidName(result.formValues[0])) {
             player.sendMessage("New team name can only be letters or numbers, and less than 11 characters.");
           } else {
@@ -355,9 +362,17 @@ export default class Team {
   }
 
   ensurePad() {
+    const grassBlock = BlockTypes.get("minecraft:grass");
+    const blackstoneBlock = BlockTypes.get("minecraft:blackstone");
+    const stoneBlock = BlockTypes.get("minecraft:stone");
+
+    if (!grassBlock || !blackstoneBlock || !stoneBlock) {
+      return;
+    }
+
     // east bar
     Utilities.fillBlock(
-      MinecraftBlockTypes.grass,
+      grassBlock,
       this.nwbX + PAD_SIZE_X + PAD_SURROUND_X / 2 - 1,
       this.nwbY - 3,
       this.nwbZ,
@@ -368,7 +383,7 @@ export default class Team {
 
     // west bar
     Utilities.fillBlock(
-      MinecraftBlockTypes.grass,
+      grassBlock,
       this.nwbX,
       this.nwbY - 3,
       this.nwbZ,
@@ -380,7 +395,7 @@ export default class Team {
     // north and south are inset since the corners are covered by e/w bars
     // north bar?
     Utilities.fillBlock(
-      MinecraftBlockTypes.grass,
+      grassBlock,
       this.nwbX + PAD_SURROUND_X / 2,
       this.nwbY - 3,
       this.nwbZ,
@@ -391,7 +406,7 @@ export default class Team {
 
     // south bar
     Utilities.fillBlock(
-      MinecraftBlockTypes.grass,
+      grassBlock,
       this.nwbX + PAD_SURROUND_X / 2,
       this.nwbY - 3,
       this.nwbZ + PAD_SIZE_Z + PAD_SURROUND_Z / 2 - 1,
@@ -401,7 +416,7 @@ export default class Team {
     );
 
     Utilities.fillBlock(
-      MinecraftBlockTypes.blackstone,
+      blackstoneBlock,
       this.nwbX + PAD_SURROUND_X / 2 - 2,
       this.nwbY,
       this.nwbZ + PAD_SURROUND_Z / 2 - 2,
@@ -412,7 +427,7 @@ export default class Team {
 
     // east road
     Utilities.fillBlock(
-      MinecraftBlockTypes.stone,
+      stoneBlock,
       this.nwbX + PAD_SIZE_X + PAD_SURROUND_X - 5,
       this.nwbY,
       this.nwbZ,
@@ -423,7 +438,7 @@ export default class Team {
 
     // west road running n/s = out of bounds but filler road
     Utilities.fillBlock(
-      MinecraftBlockTypes.stone,
+      stoneBlock,
       this.nwbX - 4,
       this.nwbY,
       this.nwbZ - 4,
@@ -434,7 +449,7 @@ export default class Team {
 
     // south road
     Utilities.fillBlock(
-      MinecraftBlockTypes.stone,
+      stoneBlock,
       this.nwbX,
       this.nwbY,
       this.nwbZ + PAD_SIZE_Z + PAD_SURROUND_Z - 5,
@@ -445,7 +460,7 @@ export default class Team {
 
     // north road = out of bounds but filler road
     Utilities.fillBlock(
-      MinecraftBlockTypes.stone,
+      stoneBlock,
       this.nwbX,
       this.nwbY,
       this.nwbZ - 4,
@@ -455,7 +470,7 @@ export default class Team {
     );
 
     Utilities.fillBlock(
-      MinecraftBlockTypes.stone,
+      stoneBlock,
       this.nwbX,
       this.nwbY - 10,
       this.nwbZ,
@@ -465,9 +480,7 @@ export default class Team {
     );
 
     let ow = world.getDimension("overworld");
-    let block = ow.getBlock(
-      { x: this.nwbX + JOIN_TEAM_X, y: this.nwbY + JOIN_TEAM_Y, z: this.nwbZ + JOIN_TEAM_Z}
-    );
+    let block = ow.getBlock({ x: this.nwbX + JOIN_TEAM_X, y: this.nwbY + JOIN_TEAM_Y, z: this.nwbZ + JOIN_TEAM_Z });
 
     let consoleType = "options";
 
@@ -485,15 +498,19 @@ export default class Team {
   }
 
   clearPad(index: number) {
-    Utilities.fillBlock(
-      MinecraftBlockTypes.air,
-      this.nwbX - 4,
-      this.nwbY + 1 + index * 4,
-      this.nwbZ - 4,
-      this.nwbX + PAD_SIZE_X + PAD_SURROUND_X,
-      this.nwbY + 5 + index * 4,
-      this.nwbZ + PAD_SIZE_Z + PAD_SURROUND_Z
-    );
+    let airBlock = BlockTypes.get("minecraft:air");
+
+    if (airBlock) {
+      Utilities.fillBlock(
+        airBlock,
+        this.nwbX - 4,
+        this.nwbY + 1 + index * 4,
+        this.nwbZ - 4,
+        this.nwbX + PAD_SIZE_X + PAD_SURROUND_X,
+        this.nwbY + 5 + index * 4,
+        this.nwbZ + PAD_SIZE_Z + PAD_SURROUND_Z
+      );
+    }
   }
 
   getSaveData() {

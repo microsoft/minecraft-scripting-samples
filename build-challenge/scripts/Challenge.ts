@@ -11,11 +11,10 @@ import {
   BlockInventoryComponent,
   ChatSendBeforeEvent,
   PropertyRegistry,
-  MinecraftBlockTypes,
-  MinecraftEntityTypes,
   DynamicPropertiesDefinition,
   WorldSoundOptions,
   Vector,
+  BlockTypes,
 } from "@minecraft/server";
 import ChallengePlayer, { ChallengePlayerRole, IPlayerData } from "./ChallengePlayer.js";
 import Log from "./Log.js";
@@ -357,32 +356,6 @@ export default class Challenge {
       return;
     }
 
-    let playerPropertyDefs = new DynamicPropertiesDefinition();
-    let worldPropertyDefs = new DynamicPropertiesDefinition();
-
-    try {
-      playerPropertyDefs.defineNumber("challenge:teamId");
-      playerPropertyDefs.defineNumber("challenge:voteA");
-      playerPropertyDefs.defineNumber("challenge:voteB");
-      playerPropertyDefs.defineNumber("challenge:role");
-
-      registry.registerEntityTypeDynamicProperties(playerPropertyDefs, MinecraftEntityTypes.player);
-
-      worldPropertyDefs.defineNumber("challenge:phase");
-      worldPropertyDefs.defineNumber("challenge:size");
-      worldPropertyDefs.defineNumber("challenge:nwbX");
-      worldPropertyDefs.defineNumber("challenge:nwbY");
-      worldPropertyDefs.defineNumber("challenge:nwbZ");
-      worldPropertyDefs.defineString("challenge:motdTitle", 40);
-      worldPropertyDefs.defineString("challenge:motdSubtitle", 40);
-      worldPropertyDefs.defineString("challenge:teamData", 1536); // ~32 teams * 30 chars for team
-      worldPropertyDefs.defineString("challenge:playerState", PLAYER_DATA_STORAGE_SIZE); // should allow for up to ~170 players to be tracked at 48 chars per player (which may not be enough?)
-
-      registry.registerWorldDynamicProperties(worldPropertyDefs);
-    } catch (e: any) {
-      Log.debug(e.toString());
-    }
-
     let candNwbX = world.getDynamicProperty("challenge:nwbX") as number;
     let candNwbY = world.getDynamicProperty("challenge:nwbY") as number;
     let candNwbZ = world.getDynamicProperty("challenge:nwbZ") as number;
@@ -439,7 +412,7 @@ export default class Challenge {
     world.afterEvents.playerSpawn.subscribe(this.playerSpawnedFirstTime);
     world.afterEvents.playerLeave.subscribe(this.playerLeft);
     world.beforeEvents.chatSend.subscribe(this.beforeChat);
-    world.afterEvents.leverActivate.subscribe(this.leverAction);
+    world.afterEvents.leverAction.subscribe(this.leverAction);
 
     this.loadPlayerState();
     this.ensureAllPlayers();
@@ -751,15 +724,11 @@ export default class Challenge {
     const centerY = y + 1;
     const centerZ = z + Math.floor((PAD_SIZE_Z + PAD_SURROUND_Z) * 2.5);
 
-    Utilities.fillBlock(
-      MinecraftBlockTypes.air,
-      centerX - 2,
-      centerY - 2,
-      centerZ - 2,
-      centerX + 2,
-      centerY + 2,
-      centerZ + 2
-    );
+    const airBlock = BlockTypes.get("minecraft:air");
+
+    if (airBlock) {
+      Utilities.fillBlock(airBlock, centerX - 2, centerY - 2, centerZ - 2, centerX + 2, centerY + 2, centerZ + 2);
+    }
 
     ow.runCommandAsync(`tickingarea remove_all`);
 
@@ -847,10 +816,11 @@ export default class Challenge {
           player.teleport(vec, {
             dimension: world.getDimension("overworld"),
             facingLocation: {
-            x: vec.x + track.facingAdjust.x,
-            y: vec.y + track.facingAdjust.y,
-            z: vec.z + track.facingAdjust.z,
-          }});
+              x: vec.x + track.facingAdjust.x,
+              y: vec.y + track.facingAdjust.y,
+              z: vec.z + track.facingAdjust.z,
+            },
+          });
 
           if (this.tickIndex % 1200 === 500 && this.#motdSubtitle && this.motdTitle) {
             player.onScreenDisplay.setTitle(this.motdTitle, {
@@ -1195,7 +1165,7 @@ export default class Challenge {
 
     let ow = world.getDimension("overworld");
     if (this.activeTeamScore >= 0) {
-      let canaryLoc = { x:team.padNwbX, y: team.padNwbY, z: team.padNwbZ + (PAD_SIZE_Z / 16) * area};
+      let canaryLoc = { x: team.padNwbX, y: team.padNwbY, z: team.padNwbZ + (PAD_SIZE_Z / 16) * area };
 
       let canaryBlock = ow.getBlock(canaryLoc);
 
@@ -1216,7 +1186,7 @@ export default class Challenge {
       for (let i = 0; i < PAD_SIZE_X; i++) {
         for (let j = 0; j < PAD_SIZE_Y; j++) {
           for (let k = (PAD_SIZE_Z / 16) * area; k < (PAD_SIZE_Z / 16) * (area + 1); k++) {
-            let loc = { x: team.padNwbX + i, y: team.padNwbY + j + 1, z:team.padNwbZ + k};
+            let loc = { x: team.padNwbX + i, y: team.padNwbY + j + 1, z: team.padNwbZ + k };
             let block = ow.getBlock(loc);
 
             if (block) {
@@ -1232,15 +1202,20 @@ export default class Challenge {
                 }
 
                 if (typeId === "chest") {
-                  let leftLoc = { x: loc.x - 1, y: loc.y, z: loc.z};
-                  let northLoc = { x: loc.x, y: loc.y, z: loc.z - 1};
+                  let leftLoc = { x: loc.x - 1, y: loc.y, z: loc.z };
+                  let northLoc = { x: loc.x, y: loc.y, z: loc.z - 1 };
 
                   let leftBlock = ow.getBlock(leftLoc);
                   let northBlock = ow.getBlock(northLoc);
 
                   // if this is a double chest, only calc inventory from the west or northern side of the chest
                   // todo: improve to accommodate double chests placed right next to each other
-                  if (leftBlock && leftBlock.typeId.indexOf("chest") < 0 && northBlock && northBlock.typeId.indexOf("chest") < 0) {
+                  if (
+                    leftBlock &&
+                    leftBlock.typeId.indexOf("chest") < 0 &&
+                    northBlock &&
+                    northBlock.typeId.indexOf("chest") < 0
+                  ) {
                     let invComp = block.getComponent("inventory") as BlockInventoryComponent;
 
                     if (invComp) {
