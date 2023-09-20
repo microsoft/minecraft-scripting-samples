@@ -10,8 +10,6 @@ import {
   Player,
   BlockInventoryComponent,
   ChatSendBeforeEvent,
-  PropertyRegistry,
-  DynamicPropertiesDefinition,
   WorldSoundOptions,
   Vector,
   BlockTypes,
@@ -350,7 +348,7 @@ export default class Challenge {
     this.refreshTeam();
   }
 
-  init(registry: PropertyRegistry) {
+  init() {
     if (this.teams.length > 0) {
       Log.debug("Challenge initialized twice");
       return;
@@ -1221,20 +1219,22 @@ export default class Challenge {
                     if (invComp) {
                       let cont = invComp.container;
 
-                      for (let ci = 0; ci < cont.size; ci++) {
-                        let item = cont.getItem(ci);
+                      if (cont) {
+                        for (let ci = 0; ci < cont.size; ci++) {
+                          let item = cont.getItem(ci);
 
-                        if (item) {
-                          let itemTypeId = item.typeId.toLowerCase().trim();
+                          if (item) {
+                            let itemTypeId = item.typeId.toLowerCase().trim();
 
-                          if (itemTypeId.startsWith("minecraft:")) {
-                            itemTypeId = itemTypeId.substring(10);
-                          }
+                            if (itemTypeId.startsWith("minecraft:")) {
+                              itemTypeId = itemTypeId.substring(10);
+                            }
 
-                          if (ITEM_SCORESHEET[itemTypeId] > 0) {
-                            this.activeTeamScore += ITEM_SCORESHEET[itemTypeId] * item.amount;
-                          } else if (BLOCK_SCORESHEET[itemTypeId] > 0) {
-                            this.activeTeamScore += Math.floor(BLOCK_SCORESHEET[itemTypeId] / 2) * item.amount;
+                            if (ITEM_SCORESHEET[itemTypeId] > 0) {
+                              this.activeTeamScore += ITEM_SCORESHEET[itemTypeId] * item.amount;
+                            } else if (BLOCK_SCORESHEET[itemTypeId] > 0) {
+                              this.activeTeamScore += Math.floor(BLOCK_SCORESHEET[itemTypeId] / 2) * item.amount;
+                            }
                           }
                         }
                       }
