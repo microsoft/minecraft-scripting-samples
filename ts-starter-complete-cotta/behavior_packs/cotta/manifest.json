@@ -5,7 +5,7 @@
     "description": "My TypeScript Project",
     "uuid": "79587552-f454-4cee-855e-652b7675c507",
     "version": [0, 0, 1],
-    "min_engine_version": [1, 20, 0]
+    "min_engine_version": [1, 20, 30]
   },
   "modules": [
     {
@@ -20,7 +20,7 @@
   "dependencies": [
     {
       "module_name": "@minecraft/server",
-      "version": "1.7.0-beta"
+      "version": "1.5.0"
     }
   ]
 }

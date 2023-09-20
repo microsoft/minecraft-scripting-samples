@@ -1,12 +1,4 @@
-import {
-  world,
-  system,
-  BlockPermutation,
-  EntityInventoryComponent,
-  ItemStack,
-  DisplaySlotId,
-  BlockTypes,
-} from "@minecraft/server";
+import { world, system, BlockPermutation, EntityInventoryComponent, ItemStack, DisplaySlotId } from "@minecraft/server";
 import Utilities from "./Utilities.js";
 
 const START_TICK = 100;
@@ -63,19 +55,19 @@ function initializeBreakTheTerracotta() {
       },
       {
         dimension: overworld,
-        rotation: { x: 0, y: 0 } 
+        rotation: { x: 0, y: 0 },
       }
     );
   }
 
   world.sendMessage("BREAK THE TERRACOTTA");
 
-  let airBlockType = BlockTypes.get("minecraft:air");
-  let cobblestoneBlockType = BlockTypes.get("minecraft:cobblestone");
+  let airBlockPerm = BlockPermutation.resolve("minecraft:air");
+  let cobblestoneBlockPerm = BlockPermutation.resolve("minecraft:cobblestone");
 
-  if (airBlockType) {
+  if (airBlockPerm) {
     Utilities.fillBlock(
-      airBlockType,
+      airBlockPerm,
       ARENA_X_OFFSET - ARENA_X_SIZE / 2 + 1,
       ARENA_Y_OFFSET,
       ARENA_Z_OFFSET - ARENA_Z_SIZE / 2 + 1,
@@ -85,9 +77,9 @@ function initializeBreakTheTerracotta() {
     );
   }
 
-  if (cobblestoneBlockType) {
+  if (cobblestoneBlockPerm) {
     Utilities.fourWalls(
-      cobblestoneBlockType,
+      cobblestoneBlockPerm,
       ARENA_X_OFFSET - ARENA_X_SIZE / 2,
       ARENA_Y_OFFSET,
       ARENA_Z_OFFSET - ARENA_Z_SIZE / 2,
@@ -107,8 +99,6 @@ function gameTick() {
     }
 
     if (curTick > START_TICK && curTick % 20 === 0) {
-      let overworld = world.getDimension("overworld");
-
       // no terracotta exists, and we're waiting to spawn a new one.
       if (spawnCountdown > 0) {
         spawnCountdown--;
@@ -144,8 +134,7 @@ function spawnNewTerracotta() {
   cottaZ = Math.floor(Math.random() * (ARENA_Z_SIZE - 1)) - (ARENA_Z_SIZE / 2 - 1);
 
   world.sendMessage("Creating new terracotta!");
-  let block = overworld
-    .getBlock({ x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET });
+  let block = overworld.getBlock({ x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET });
 
   if (block) {
     block.setPermutation(BlockPermutation.resolve("minecraft:yellow_glazed_terracotta"));

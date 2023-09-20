@@ -1,8 +1,8 @@
-import { world, BlockType, BlockPermutation } from "@minecraft/server";
+import { world, BlockPermutation } from "@minecraft/server";
 
 export default class Utilities {
   static fillBlock(
-    blockType: BlockType,
+    blockPerm: BlockPermutation,
     xFrom: number,
     yFrom: number,
     zFrom: number,
@@ -10,20 +10,19 @@ export default class Utilities {
     yTo: number,
     zTo: number
   ) {
-    let overworld = world.getDimension("overworld");
-    let perm = BlockPermutation.resolve(blockType.id);
+    const overworld = world.getDimension("overworld");
 
     for (let i = xFrom; i <= xTo; i++) {
       for (let j = yFrom; j <= yTo; j++) {
         for (let k = zFrom; k <= zTo; k++) {
-          overworld.getBlock({ x: i, y: j, z: k })?.setPermutation(perm);
+          overworld.getBlock({ x: i, y: j, z: k })?.setPermutation(blockPerm);
         }
       }
     }
   }
 
   static fourWalls(
-    blockType: BlockType,
+    perm: BlockPermutation,
     xFrom: number,
     yFrom: number,
     zFrom: number,
@@ -31,8 +30,7 @@ export default class Utilities {
     yTo: number,
     zTo: number
   ) {
-    let overworld = world.getDimension("overworld");
-    let perm = BlockPermutation.resolve(blockType.id);
+    const overworld = world.getDimension("overworld");
 
     for (let i = xFrom; i <= xTo; i++) {
       for (let k = yFrom; k <= yTo; k++) {
@@ -43,7 +41,7 @@ export default class Utilities {
 
     for (let j = zFrom + 1; j < zTo; j++) {
       for (let k = yFrom; k <= yTo; k++) {
-        overworld.getBlock({ x: xFrom, y: k, z:j })?.setPermutation(perm);
+        overworld.getBlock({ x: xFrom, y: k, z: j })?.setPermutation(perm);
         overworld.getBlock({ x: xTo, y: k, z: j })?.setPermutation(perm);
       }
     }
