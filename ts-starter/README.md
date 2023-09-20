@@ -12,23 +12,27 @@ products:
 
 # Minecraft TypeScript Starter Project
 
-This sample demonstrates a simple build process and TypeScript compilation for Minecraft. This readme shows how you can use Betas APIs experiment to build out simple gameplay styles. You can use this project as a starter for your own scripting projects.
+This sample demonstrates a simple build process and TypeScript compilation for Minecraft. This readme shows how you can use Script APIs to build out simple gameplay styles. You can use this project as a starter for your own scripting projects. You can also see a more full [version of this tutorial that uses this TypeScript starter](https://learn.microsoft.com/minecraft/creator/documents/scriptinggettingstarted).
 
 ## Prerequisites
 
-**Install Node.js tools, if you haven't already**
+### Install Node.js tools, if you haven't already
 
-We're going to use the package manager [npm](https://www.npmjs.com/package/npm) to get more tools to make the process of building our project easier.
+We're going to use the Node Package Manager (or NPM) to get more tools to make the process of building our project easier.
 
 Visit [https://nodejs.org/](https://nodejs.org).
 
-Download the version with "LTS" next to the number and install it. (LTS stands for Long Term Support, if you're curious.) In the Node.js Windows installer, accept the installation defaults. You do not need to install any additional tools for Native compilation.
+Download the version with "LTS" next to the number and install it. (LTS stands for Long Term Support, if you're curious.) You do not need to install any additional tools for Native compilation.
 
-**Install Visual Studio Code, if you haven't already**
+### Install Visual Studio Code, if you haven't already
 
 Visit the [Visual Studio Code website](https://code.visualstudio.com) and install Visual Studio Code.
 
 ## Getting Started
+
+1. Using a copy of this starter project from GitHub - you can get a copy of this project by visiting [https://github.com/microsoft/minecraft-scripting-samples/](https://github.com/microsoft/minecraft-scripting-samples/) and, under the Code button, selecting `Download ZIP`.
+
+1. The `ts-starter` folder (this folder) contains a starter TypeScript project for Minecraft.  Note that there is a `ts-starter-complete-cotta` folder that will show you the finished product and code.
 
 1. To make your own environment look like the example, create a folder on your `C:\` drive and call it **projects**. Create a subfolder called **cotta**.
 
@@ -36,27 +40,27 @@ Visit the [Visual Studio Code website](https://code.visualstudio.com) and instal
 
 1. Open a Windows Terminal or PowerShell window and change the working directory to your **cotta** folder:
 
-   ```powershell
-   cd c:\projects\cotta\
-   ```
+    ```powershell
+    cd c:\projects\cotta\
+    ```
 
-1. Use npm to install our tools:
+1. Use NPM to install our tools:
 
-   ```powershell
-   npm i
-   ```
+    ```powershell
+    npm i
+    ```
 
 1. When that's done, enter:
 
-   ```powershell
-   npm i gulp-cli --global
-   ```
+    ```powershell
+    npm i gulp-cli --global
+    ```
 
 1. Use this shortcut command to open the project in Visual Studio Code:
 
-   ```powershell
-   code .
-   ```
+    ```powershell
+    code .
+    ```
 
 It might also ask you to install the Minecraft Debugger and Blockception's Visual Studio Code plugin, which are plugins to Visual Studio Code that can help with Minecraft development. Go ahead and do that, if you haven't already.
 
@@ -66,21 +70,17 @@ In Visual Studio Code, expand the `behavior_packs` node in the treeview to the l
 
 Use the Find/Replace command (Ctrl-Shift-F) to search for "starterbp" and replace the instance in **gulpfile.js** and the instance in **launch.json** with "cotta."
 
+> [!IMPORTANT]
+> You may choose to use either Minecraft or Minecraft Preview to debug and work
+> with your scripts. If you do use Minecraft Preview,
+> open up **gulpfile.js** and, at the top of the file, set
+> `useMinecraftPreview = true;`
+
 Go back the Files tree view and open `behavior_packs\cotta\manifest.json`
 
 Update the name and description properties to something like "Cotta Behavior Pack" and "My TypeScript Project".
 
 Update the first and second UUID properties to make it unique to your project. See [this article](https://learn.microsoft.com/minecraft/creator/documents/behaviorpack) for tips on working with behavior packs and creating your own unique UUIDs.
-
-> IMPORTANT:
-> You may also need to update the version of Beta APIs in your `dependencies` section to match your version of Minecraft.
-> Versions 1.19.40 feature `1.0.0-beta` APIs
-> Versions 1.19.50, 1.19.60, and 1.19.70 feature `1.1.0-beta` APIs
-> Versions 1.19.80 features `1.2.0-beta` APIs
-> Versions 1.20.0 features `1.3.0-beta` APIs
-> Versions 1.20.10 features `1.4.0-beta` APIs
-> Versions 1.20.20 features `1.5.0-beta` APIs
-> Future versions will likely require updated versions of Beta APIs.
 
 ### Chapter 2. Let's test the parts of our project
 
@@ -99,20 +99,17 @@ gulp
 
 This uses a build tool called GulpJS and automatically compiles your TypeScript project and pushes it over into Minecraft.
 
-You may hear a little tone through your speakers when it has successfully completed deployment.
-
 Launch Minecraft and create a new world:
 
 1. Call it **Cotta Test**.
 1. Select a Creative game mode.
 1. Select a Flat world option, under the Advanced section of the Create New World screen.
 1. Under Behavior Packs, under Available, you should see your Cotta Behavior Pack. Select it and Activate it.
-1. Enable the Beta APIs experiment toggle, under the Experiments section of the Create New World screen.
 1. Create the world and go into it.
 
 Now you're in. Great!
 
-By default, this starter pack comes with a simple script that will display a message:
+By default, this starter pack comes with a simple script that will display a message every five seconds:
 
 `[Script Engine] Hello starter! Tick: <number>`
 
@@ -129,27 +126,17 @@ Open up `scripts/main.ts` within Visual Studio Code.
 Remove all the existing script code in **main.ts**. Replace it with this to start:
 
 ```typescript
-import {
-  world,
-  system,
-  BlockPermutation,
-  EntityInventoryComponent,
-  ItemStack,
-  DisplaySlotId,
-  BlockType,
-  BlockTypes,
-} from "@minecraft/server";
+import { world, system, BlockPermutation, EntityInventoryComponent, ItemStack, DisplaySlotId } from "@minecraft/server";
 
 const START_TICK = 100;
-
-// global variables
-let curTick = 0;
-
 const ARENA_X_SIZE = 30;
 const ARENA_Z_SIZE = 30;
 const ARENA_X_OFFSET = 0;
 const ARENA_Y_OFFSET = -60;
 const ARENA_Z_OFFSET = 0;
+
+// global variables
+let curTick = 0;
 
 function initializeBreakTheTerracotta() {
   const overworld = world.getDimension("overworld");
@@ -191,7 +178,7 @@ function initializeBreakTheTerracotta() {
       },
       {
         dimension: overworld,
-        rotation: { x: 0, y: 0 } 
+        rotation: { x: 0, y: 0 },
       }
     );
   }
@@ -214,7 +201,6 @@ function gameTick() {
 }
 
 system.run(gameTick);
-
 ```
 
 This code does some work to initialize our gameplay for Minecraft by running several commands.
@@ -225,10 +211,10 @@ Note that we wait until `START_TICK` (100 ticks in) before the world is actually
 
 Within the initialize function, we run commands that:
 
-- Clear out any existing mobs near the player in the world.
-- Set up a scoreboard objective for overall Level of the player, meaning the number of terracotta breaks they have
-- Give the current player a diamond sword and some dirty dirt
-- Use chat to give the player an instructional message
+* Clear out any existing mobs near the player in the world.
+* Set up a scoreboard objective for overall Level of the player, meaning the number of terracotta breaks they have
+* Give the current player a diamond sword and some dirty dirt
+* Use chat to give the player an instructional message
 
 Now, let's run the code. This time, we're going to run gulp in "watch mode" - meaning it will just sit in the background and watch for changes, and if they happen, they will automatically compile and deploy to the Minecraft folder. This way, we won't have to worry about separately compiling every time we make a change to code.
 
@@ -257,11 +243,11 @@ We're going to start by adding some handy helper utility code functions. This wi
 Add a new file to your `scripts` folder called `Utilities.ts`. Correct capitalization matters, so make sure the `U` is capitalized. Add the following code:
 
 ```typescript
-import { world, BlockType, BlockPermutation } from "@minecraft/server";
+import { world, BlockPermutation } from "@minecraft/server";
 
 export default class Utilities {
   static fillBlock(
-    blockType: BlockType,
+    blockPerm: BlockPermutation,
     xFrom: number,
     yFrom: number,
     zFrom: number,
@@ -269,20 +255,19 @@ export default class Utilities {
     yTo: number,
     zTo: number
   ) {
-    let overworld = world.getDimension("overworld");
-    let perm = BlockPermutation.resolve(blockType.id);
+    const overworld = world.getDimension("overworld");
 
     for (let i = xFrom; i <= xTo; i++) {
       for (let j = yFrom; j <= yTo; j++) {
         for (let k = zFrom; k <= zTo; k++) {
-          overworld.getBlock({ x: i, y: j, z: k })?.setPermutation(perm);
+          overworld.getBlock({ x: i, y: j, z: k })?.setPermutation(blockPerm);
         }
       }
     }
   }
 
   static fourWalls(
-    blockType: BlockType,
+    perm: BlockPermutation,
     xFrom: number,
     yFrom: number,
     zFrom: number,
@@ -290,8 +275,7 @@ export default class Utilities {
     yTo: number,
     zTo: number
   ) {
-    let overworld = world.getDimension("overworld");
-    let perm = BlockPermutation.resolve(blockType.id);
+    const overworld = world.getDimension("overworld");
 
     for (let i = xFrom; i <= xTo; i++) {
       for (let k = yFrom; k <= yTo; k++) {
@@ -302,7 +286,7 @@ export default class Utilities {
 
     for (let j = zFrom + 1; j < zTo; j++) {
       for (let k = yFrom; k <= yTo; k++) {
-        overworld.getBlock({ x: xFrom, y: k, z:j })?.setPermutation(perm);
+        overworld.getBlock({ x: xFrom, y: k, z: j })?.setPermutation(perm);
         overworld.getBlock({ x: xTo, y: k, z: j })?.setPermutation(perm);
       }
     }
@@ -324,34 +308,34 @@ First, we'll need an import function. Add a new line above `const START_TICK = 1
 import Utilities from "./Utilities.js";
 ```
 
-Next, within `initializeBreakTheTerracotta`, let's add our arena initialization beneath the `world.sendMessage("BREAK THE TERRACOTTA!");` line of code:
+Then, within `initializeBreakTheTerracotta`, let's add our arena initialization beneath the `world.sendMessage("BREAK THE TERRACOTTA!");` line of code:
 
 ```typescript
-let airBlockType = BlockTypes.get("minecraft:air");
-let cobblestoneBlockType = BlockTypes.get("minecraft:cobblestone");
+ let airBlockPerm = BlockPermutation.resolve("minecraft:air");
+ let cobblestoneBlockPerm = BlockPermutation.resolve("minecraft:cobblestone");
 
-if (airBlockType) {
-  Utilities.fillBlock(
-    airBlockType,
-    ARENA_X_OFFSET - ARENA_X_SIZE / 2 + 1,
-    ARENA_Y_OFFSET,
-    ARENA_Z_OFFSET - ARENA_Z_SIZE / 2 + 1,
-    ARENA_X_OFFSET + ARENA_X_SIZE / 2 - 1,
-    ARENA_Y_OFFSET + 10,
-    ARENA_Z_OFFSET + ARENA_Z_SIZE / 2 - 1
-  );
-}
+ if (airBlockPerm) {
+   Utilities.fillBlock(
+     airBlockPerm,
+     ARENA_X_OFFSET - ARENA_X_SIZE / 2 + 1,
+     ARENA_Y_OFFSET,
+     ARENA_Z_OFFSET - ARENA_Z_SIZE / 2 + 1,
+     ARENA_X_OFFSET + ARENA_X_SIZE / 2 - 1,
+     ARENA_Y_OFFSET + 10,
+     ARENA_Z_OFFSET + ARENA_Z_SIZE / 2 - 1
+   );
+ }
 
-if (cobblestoneBlockType) {
-  Utilities.fourWalls(
-    cobblestoneBlockType,
-    ARENA_X_OFFSET - ARENA_X_SIZE / 2,
-    ARENA_Y_OFFSET,
-    ARENA_Z_OFFSET - ARENA_Z_SIZE / 2,
-    ARENA_X_OFFSET + ARENA_X_SIZE / 2,
-    ARENA_Y_OFFSET + 10,
-    ARENA_Z_OFFSET + ARENA_Z_SIZE / 2
-  );
+ if (cobblestoneBlockPerm) {
+   Utilities.fourWalls(
+     cobblestoneBlockPerm,
+     ARENA_X_OFFSET - ARENA_X_SIZE / 2,
+     ARENA_Y_OFFSET,
+     ARENA_Z_OFFSET - ARENA_Z_SIZE / 2,
+     ARENA_X_OFFSET + ARENA_X_SIZE / 2,
+     ARENA_Y_OFFSET + 10,
+     ARENA_Z_OFFSET + ARENA_Z_SIZE / 2
+   );
 }
 ```
 
@@ -375,35 +359,32 @@ let spawnCountdown = 1;
 Add the following to the `gameTick` function, beneath the `curTick++` line of code:
 
 ```typescript
-if (curTick > START_TICK && curTick % 20 === 0) {
-  let overworld = world.getDimension("overworld");
+    if (curTick > START_TICK && curTick % 20 === 0) {
+      // no terracotta exists, and we're waiting to spawn a new one.
+      if (spawnCountdown > 0) {
+        spawnCountdown--;
 
-  // no terracotta exists, and we're waiting to spawn a new one.
-  if (spawnCountdown > 0) {
-    spawnCountdown--;
-
-    if (spawnCountdown <= 0) {
-      spawnNewTerracotta();
+        if (spawnCountdown <= 0) {
+          spawnNewTerracotta();
+        }
+      } else {
+        checkForTerracotta();
+      }
     }
-  } else {
-    checkForTerracotta();
-  }
-}
 ```
 
 Now add the `spawnNewTerracotta()` and `checkForTerracotta()` functions after the last function and before the last `system.run(gameTick);` line of code:
 
 ```typescript
 function spawnNewTerracotta() {
-  let overworld = world.getDimension("overworld");
+  const overworld = world.getDimension("overworld");
 
   // create new terracotta
   cottaX = Math.floor(Math.random() * (ARENA_X_SIZE - 1)) - (ARENA_X_SIZE / 2 - 1);
   cottaZ = Math.floor(Math.random() * (ARENA_Z_SIZE - 1)) - (ARENA_Z_SIZE / 2 - 1);
 
   world.sendMessage("Creating new terracotta!");
-  let block = overworld
-    .getBlock({ x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET });
+  let block = overworld.getBlock({ x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET });
 
   if (block) {
     block.setPermutation(BlockPermutation.resolve("minecraft:yellow_glazed_terracotta"));
@@ -411,7 +392,7 @@ function spawnNewTerracotta() {
 }
 
 function checkForTerracotta() {
-  let overworld = world.getDimension("overworld");
+  const overworld = world.getDimension("overworld");
 
   let block = overworld.getBlock({ x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET });
 
@@ -445,7 +426,7 @@ OK, let's add this function after the `checkForTerracotta()` function:
 
 ```typescript
 function spawnMobs() {
-  let overworld = world.getDimension("overworld");
+  const overworld = world.getDimension("overworld");
 
   // spawn mobs = create 1-2 mobs
   let spawnMobCount = Math.floor(Math.random() * 2) + 1;
@@ -454,10 +435,11 @@ function spawnMobs() {
     let zombieX = Math.floor(Math.random() * (ARENA_X_SIZE - 2)) - ARENA_X_SIZE / 2;
     let zombieZ = Math.floor(Math.random() * (ARENA_Z_SIZE - 2)) - ARENA_Z_SIZE / 2;
 
-    overworld.spawnEntity(
-      "minecraft:zombie",
-      { x: zombieX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: zombieZ + ARENA_Z_OFFSET }
-    );
+    overworld.spawnEntity("minecraft:zombie", {
+      x: zombieX + ARENA_X_OFFSET,
+      y: 1 + ARENA_Y_OFFSET,
+      z: zombieZ + ARENA_Z_OFFSET,
+    });
   }
 }
 ```
@@ -467,10 +449,10 @@ This function will spawn 1-2 zombies within the arena, at a random location. You
 Let's call that function within our `gameTick` method:
 
 ```typescript
-let spawnInterval = Math.ceil(200 / ((score + 1) / 3));
-if (curTick > START_TICK && curTick % spawnInterval === 0) {
-  spawnMobs();
-}
+  const spawnInterval = Math.ceil(200 / ((score + 1) / 3));
+  if (curTick > START_TICK && curTick % spawnInterval === 0) {
+    spawnMobs();
+  }
 ```
 
 For gameplay, we want mobs to spawn more frequently as your score goes up. To do this, the frequency at which `spawnMobs` is called depends on the `spawnInterval` variable. `spawnInterval` is the span of time between spawning new mobs. Because we divide this interval by our current score, this means that as our score goes up, the interval of time between spawning mobs gets shorter. This makes the challenge harder over time.
@@ -485,7 +467,7 @@ Add this function to **main.ts** to randomly place some fuzzy leaves:
 
 ```typescript
 function addFuzzyLeaves() {
-  let overworld = world.getDimension("overworld");
+  const overworld = world.getDimension("overworld");
 
   for (let i = 0; i < 10; i++) {
     const leafX = Math.floor(Math.random() * (ARENA_X_SIZE - 1)) - (ARENA_X_SIZE / 2 - 1);
@@ -493,7 +475,7 @@ function addFuzzyLeaves() {
     const leafZ = Math.floor(Math.random() * (ARENA_Z_SIZE - 1)) - (ARENA_Z_SIZE / 2 - 1);
 
     overworld
-      .getBlock({ x: leafX + ARENA_X_OFFSET, y: leafY + ARENA_Y_OFFSET, z: leafZ + ARENA_Z_OFFSET})
+      .getBlock({ x: leafX + ARENA_X_OFFSET, y: leafY + ARENA_Y_OFFSET, z: leafZ + ARENA_Z_OFFSET })
       ?.setPermutation(BlockPermutation.resolve("minecraft:leaves"));
   }
 }
@@ -502,9 +484,9 @@ function addFuzzyLeaves() {
 And call that function in your gameTick() function:
 
 ```typescript
-if (curTick > START_TICK && curTick % 29 === 0) {
-  addFuzzyLeaves();
-}
+  if (curTick > START_TICK && curTick % 29 === 0) {
+    addFuzzyLeaves();
+  }
 ```
 
 You may wonder why the interval here is 29. The main idea was to select a number to avoid the chance that on a particular tick we do everything at once (create new leaves, spawn mobs AND check terracotta state), so we try to have offset schedules for all of these different game activities.
@@ -519,6 +501,6 @@ Like the randomly spawning leaves, you can see how you can add different gamepla
 
 ## Manifest
 
-- [gulpfile.js](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/gulpfile.js): This file contains build instructions for Gulp, for building out TypeScript code.
-- [scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/scripts): This contains all of your TypeScript files, that will be compiled and built into your projects.
-- [behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/behavior_packs): This contains resources and JSON files that define your behavior pack.
+-[gulpfile.js](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/gulpfile.js): This file contains build instructions for Gulp, for building out TypeScript code.
+-[scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/scripts): This contains all of your TypeScript files, that will be compiled and built into your projects.
+-[behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/behavior_packs): This contains resources and JSON files that define your behavior pack.
