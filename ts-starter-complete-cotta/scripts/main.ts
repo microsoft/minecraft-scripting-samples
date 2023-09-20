@@ -111,7 +111,7 @@ function gameTick() {
       }
     }
 
-    let spawnInterval = Math.ceil(200 / ((score + 1) / 3));
+    const spawnInterval = Math.ceil(200 / ((score + 1) / 3));
     if (curTick > START_TICK && curTick % spawnInterval === 0) {
       spawnMobs();
     }
@@ -127,7 +127,7 @@ function gameTick() {
 }
 
 function spawnNewTerracotta() {
-  let overworld = world.getDimension("overworld");
+  const overworld = world.getDimension("overworld");
 
   // create new terracotta
   cottaX = Math.floor(Math.random() * (ARENA_X_SIZE - 1)) - (ARENA_X_SIZE / 2 - 1);
@@ -142,7 +142,7 @@ function spawnNewTerracotta() {
 }
 
 function checkForTerracotta() {
-  let overworld = world.getDimension("overworld");
+  const overworld = world.getDimension("overworld");
 
   let block = overworld.getBlock({ x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET });
 
@@ -164,7 +164,7 @@ function checkForTerracotta() {
 }
 
 function spawnMobs() {
-  let overworld = world.getDimension("overworld");
+  const overworld = world.getDimension("overworld");
 
   // spawn mobs = create 1-2 mobs
   let spawnMobCount = Math.floor(Math.random() * 2) + 1;
@@ -182,7 +182,7 @@ function spawnMobs() {
 }
 
 function addFuzzyLeaves() {
-  let overworld = world.getDimension("overworld");
+  const overworld = world.getDimension("overworld");
 
   for (let i = 0; i < 10; i++) {
     const leafX = Math.floor(Math.random() * (ARENA_X_SIZE - 1)) - (ARENA_X_SIZE / 2 - 1);
