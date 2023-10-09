@@ -158,8 +158,6 @@ export default class Team {
   applyScore() {
     let teamName = this.name;
 
-    let ow = world.getDimension("overworld");
-
     if (this.challenge.teams.length >= 4) {
       if (this.teamUsageQuartile == 0) {
         teamName = "█ " + teamName;
@@ -189,7 +187,7 @@ export default class Team {
 
     teamName += "  ";
 
-    ow.runCommandAsync(`scoreboard players set "${teamName}" main ${this.effectiveScore}`);
+    world.scoreboard.getObjective("main")?.addScore(teamName, this.effectiveScore);
   }
 
   ensurePlayerIsOnTeam(challPlayer: ChallengePlayer) {
@@ -202,10 +200,12 @@ export default class Team {
     this.players.push(challPlayer);
 
     if (challPlayer.player) {
-      //Log.debug(`spawnpoint @s ${this.nwbX + SPAWN_TEAM_X} ${this.nwbY + SPAWN_TEAM_Y} ${this.nwbZ + SPAWN_TEAM_Z}`);
-      challPlayer.player.runCommandAsync(
-        `spawnpoint @s ${this.nwbX + SPAWN_TEAM_X} ${this.nwbY + SPAWN_TEAM_Y} ${this.nwbZ + SPAWN_TEAM_Z}`
-      );
+      challPlayer.player.setSpawnPoint({
+        x: this.nwbX + SPAWN_TEAM_X,
+        y: this.nwbY + SPAWN_TEAM_Y,
+        z: this.nwbZ + SPAWN_TEAM_Z,
+        dimension: world.getDimension("overworld"),
+      });
     }
   }
 
@@ -245,9 +245,8 @@ export default class Team {
   }
 
   init() {
-    let ow = world.getDimension("overworld");
-
-    ow.runCommandAsync(`scoreboard players add "${this.name}" ${this.#score}`);
+    console.warn("Setting score for " + this.name + " to " + this.#score);
+    world.scoreboard.getObjective("main")?.addScore(this.name, this.#score);
   }
 
   isValidName(newName: string) {
@@ -488,7 +487,7 @@ export default class Team {
       consoleType = "vote";
     }
 
-    ow.runCommandAsync(
+    ow.runCommand(
       `structure load challenge:${consoleType} ${this.nwbX + OPTIONS_AREA_TEAM_X} ${this.nwbY + OPTIONS_AREA_TEAM_Y} ${
         this.nwbZ + OPTIONS_AREA_TEAM_Z
       } 0_degrees `

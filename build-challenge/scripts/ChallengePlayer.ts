@@ -155,7 +155,7 @@ export default class ChallengePlayer {
       mode = "s";
     }
 
-    this.player.runCommandAsync("gamemode " + mode + " @s");
+    this.player.runCommand("gamemode " + mode + " @s");
   }
 
   save() {

@@ -13,6 +13,8 @@ import {
   WorldSoundOptions,
   Vector,
   BlockTypes,
+  Scoreboard,
+  DisplaySlotId,
 } from "@minecraft/server";
 import ChallengePlayer, { ChallengePlayerRole, IPlayerData } from "./ChallengePlayer.js";
 import Log from "./Log.js";
@@ -446,9 +448,10 @@ export default class Challenge {
   }
 
   refreshTeamScores() {
-    let obj = world.scoreboard.getObjective("main");
-    let ow = world.getDimension("overworld");
-    ow.runCommandAsync("scoreboard objectives remove main");
+    if (world.scoreboard.getObjective("main")) {
+      world.scoreboard.removeObjective("main");
+    }
+
     this.addScores();
   }
 
@@ -456,243 +459,260 @@ export default class Challenge {
     let mess = event.message;
 
     if (event.sender && event.sender.typeId === "minecraft:player" && mess) {
-      let messageSender = this.ensurePlayer(event.sender);
-
-      if (!messageSender) {
-        return;
-      }
-
       mess = mess.toLowerCase().trim();
-
       if (mess.startsWith("!")) {
-        let nextSpace = mess.indexOf(" ");
-        event.cancel = true;
-        let content = "";
-        let contentSep: string[] = [];
+        system.run(() => {
+          let messageSender = this.ensurePlayer(event.sender);
 
-        if (nextSpace < 0) {
-          nextSpace = mess.length;
-          content = "";
-        } else {
-          content = mess.substring(nextSpace + 1, mess.length);
-          contentSep = content.split(" ");
-        }
-        let command = mess.substring(1, nextSpace);
+          if (!messageSender) {
+            return;
+          }
 
-        if (nextSpace > 0) {
-          switch (command) {
-            case "setmotdtitle":
-              if (!messageSender.isAdmin) {
-                this.sendMessageToAdminsPlus(
-                  "Cannot run setmotdtitle, " + messageSender.name + " is not an admin.",
-                  event.sender
-                );
-                return;
-              }
+          let nextSpace = mess.indexOf(" ");
+          event.cancel = true;
+          let content = "";
+          let contentSep: string[] = [];
 
-              if (content.length > 39 || content.length < 2) {
-                this.sendMessageToAdminsPlus("Message must be less than 40 chars.", event.sender);
-                return;
-              }
+          if (nextSpace < 0) {
+            nextSpace = mess.length;
+            content = "";
+          } else {
+            content = mess.substring(nextSpace + 1, mess.length);
+            contentSep = content.split(" ");
+          }
+          let command = mess.substring(1, nextSpace);
 
-              this.motdTitle = event.message.substring(event.message.indexOf(" ") + 1);
-              this.showMotd(event.sender);
-              break;
-
-            case "setmotdsubtitle":
-              if (!messageSender.isAdmin) {
-                this.sendMessageToAdminsPlus(
-                  "Cannot run setmotdsubtitle, " + messageSender.name + " is not an admin.",
-                  event.sender
-                );
-                return;
-              }
-
-              if (content.length > 39 || content.length < 2) {
-                this.sendMessageToAdminsPlus("Message must be less than 40 chars.", event.sender);
-                return;
-              }
-
-              this.motdSubtitle = event.message.substring(event.message.indexOf(" ") + 1);
-              this.showMotd(event.sender);
-              break;
-
-            case "setstart":
-              if (this.#phase !== ChallengePhase.setup) {
-                this.sendMessageToAdminsPlus("Cannot run setstart outside of setup phase.", event.sender);
-                return;
-              }
-
-              if (!messageSender.isAdmin) {
-                this.sendMessageToAdminsPlus(
-                  "Cannot run setstart, " + messageSender.name + " is not an admin.",
-                  event.sender
-                );
-                return;
-              }
-
-              if (contentSep.length === 3) {
-                try {
-                  let x = parseInt(contentSep[0]);
-                  let y = parseInt(contentSep[1]);
-                  let z = parseInt(contentSep[2]);
-
-                  this.sendMessageToAdminsPlus("Setting new start location to " + x + " " + y + " " + z, event.sender);
-
-                  this.setStart(x, y, z);
-                } catch (e) {}
-              }
-              break;
-
-            case "debug":
-              this.save();
-
-              this.sendMessageToAdminsPlus(
-                "State: Ph:" +
-                  this.#phase +
-                  " Size:" +
-                  this.#size +
-                  " " +
-                  " NWB: " +
-                  this.nwbLocation.x +
-                  " " +
-                  this.nwbLocation.y +
-                  " " +
-                  this.nwbLocation.z
-              );
-              this.sendMessageToAdminsPlus("Team:" + world.getDynamicProperty("challenge:teamData"));
-              this.sendMessageToAdminsPlus("Player:" + world.getDynamicProperty("challenge:playerState"));
-              break;
-
-            case "setphase":
-              if (!messageSender.isAdmin) {
-                this.sendMessageToAdminsPlus(
-                  "Cannot run setphase, " + messageSender.name + " is not an admin.",
-                  event.sender
-                );
-                return;
-              }
-
-              if (contentSep.length === 1) {
-                switch (contentSep[0].toLowerCase()) {
-                  case "pre":
-                    this.phase = ChallengePhase.pre;
-                    break;
-                  case "post":
-                    this.phase = ChallengePhase.post;
-                    break;
-                  case "build":
-                    this.phase = ChallengePhase.build;
-                    break;
-                  case "vote":
-                    this.phase = ChallengePhase.vote;
-                    break;
-                  case "setup":
-                    this.phase = ChallengePhase.setup;
-                    break;
-                }
-              }
-              break;
-
-            case "setrole":
-              if (contentSep.length === 2) {
-                let name = contentSep[0];
-
-                let player = this.getPlayer(name);
-
-                if (!player) {
-                  this.sendMessageToAdminsPlus("Could not find player '" + name + "'", event.sender);
-                  return;
-                }
-
+          if (nextSpace > 0) {
+            switch (command) {
+              case "setmotdtitle":
                 if (!messageSender.isAdmin) {
                   this.sendMessageToAdminsPlus(
-                    "Cannot run setrole, " + messageSender.name + " is not an admin.",
+                    "Cannot run setmotdtitle, " + messageSender.name + " is not an admin.",
                     event.sender
                   );
                   return;
                 }
 
-                switch (contentSep[1].toLowerCase()) {
-                  case "spectator":
-                    if (player.role == ChallengePlayerRole.admin) {
-                      this.sendMessageToAdminsPlus("Setting player '" + name + "' to adminSpectator.", event.sender);
-                      player.role = ChallengePlayerRole.adminSpectator;
-                    } else {
-                      this.sendMessageToAdminsPlus("Setting player '" + name + "' to spectator.", event.sender);
-                      player.role = ChallengePlayerRole.spectator;
-                    }
-                    break;
-                  case "admin":
-                    this.sendMessageToAdminsPlus("Setting player '" + name + "' to admin.", event.sender);
-                    player.role = ChallengePlayerRole.admin;
-                    break;
-                  case "judge":
-                    this.sendMessageToAdminsPlus("Setting player '" + name + "' to judge.", event.sender);
-                    player.role = ChallengePlayerRole.judge;
-                    break;
-                  case "player":
-                    this.sendMessageToAdminsPlus("Setting player '" + name + "' to player.", event.sender);
-                    player.lastTeamSwitchTick = this.tickIndex;
-                    player.role = ChallengePlayerRole.admin;
-                    break;
+                if (content.length > 39 || content.length < 2) {
+                  this.sendMessageToAdminsPlus("Message must be less than 40 chars.", event.sender);
+                  return;
                 }
-              }
-              break;
 
-            case "setsize":
-              if (this.#phase !== ChallengePhase.setup) {
-                Log.debug("Cannot run setsize outside of setup phase.");
-                return;
-              }
+                this.motdTitle = event.message.substring(event.message.indexOf(" ") + 1);
+                this.showMotd(event.sender);
+                break;
 
-              if (!messageSender.isAdmin) {
-                this.sendMessageToAdminsPlus(
-                  "Cannot run setsize, " + messageSender.name + " is not an admin.",
-                  event.sender
-                );
-                return;
-              }
-
-              if (contentSep.length === 1) {
-                switch (contentSep[0].toLowerCase()) {
-                  case "s":
-                    this.size = ChallengeBoardSize.small;
-                    break;
-                  case "m":
-                    this.size = ChallengeBoardSize.medium;
-                    break;
-                  case "l":
-                    this.size = ChallengeBoardSize.large;
-                    break;
-                  case "xl":
-                    this.size = ChallengeBoardSize.xtralarge;
-                    break;
+              case "setmotdsubtitle":
+                if (!messageSender.isAdmin) {
+                  this.sendMessageToAdminsPlus(
+                    "Cannot run setmotdsubtitle, " + messageSender.name + " is not an admin.",
+                    event.sender
+                  );
+                  return;
                 }
-              }
 
-              break;
+                if (content.length > 39 || content.length < 2) {
+                  this.sendMessageToAdminsPlus("Message must be less than 40 chars.", event.sender);
+                  return;
+                }
 
-            case "clearpads":
-              if (this.#phase !== ChallengePhase.setup) {
-                Log.debug("Cannot run clearpads outside of setup phase.");
-                return;
-              }
+                this.motdSubtitle = event.message.substring(event.message.indexOf(" ") + 1);
+                this.showMotd(event.sender);
+                break;
 
-              if (!messageSender.isAdmin) {
+              case "setstart":
+                if (this.#phase !== ChallengePhase.setup) {
+                  this.sendMessageToAdminsPlus("Cannot run setstart outside of setup phase.", event.sender);
+                  return;
+                }
+
+                if (!messageSender.isAdmin) {
+                  this.sendMessageToAdminsPlus(
+                    "Cannot run setstart, " + messageSender.name + " is not an admin.",
+                    event.sender
+                  );
+                  return;
+                }
+
+                if (contentSep.length === 3) {
+                  try {
+                    let x = parseInt(contentSep[0]);
+                    let y = parseInt(contentSep[1]);
+                    let z = parseInt(contentSep[2]);
+
+                    this.sendMessageToAdminsPlus(
+                      "Setting new start location to " + x + " " + y + " " + z,
+                      event.sender
+                    );
+
+                    this.setStart(x, y, z);
+                  } catch (e) {}
+                } else {
+                  const blockRay = event.sender.getBlockFromViewDirection();
+
+                  if (blockRay && blockRay.block) {
+                    const blockLoc = blockRay.block.location;
+
+                    this.sendMessageToAdminsPlus(
+                      "Setting new start location to " + blockLoc.x + " " + blockLoc.y + " " + blockLoc.z,
+                      event.sender
+                    );
+
+                    this.setStart(blockLoc.x, blockLoc.y, blockLoc.z);
+                  }
+                }
+                break;
+
+              case "debug":
+                this.save();
+
                 this.sendMessageToAdminsPlus(
-                  "Cannot run clearpads, " + messageSender.name + " is not an admin.",
-                  event.sender
+                  "State: Ph:" +
+                    this.#phase +
+                    " Size:" +
+                    this.#size +
+                    " " +
+                    " NWB: " +
+                    this.nwbLocation.x +
+                    " " +
+                    this.nwbLocation.y +
+                    " " +
+                    this.nwbLocation.z
                 );
-                return;
-              }
+                this.sendMessageToAdminsPlus("Team:" + world.getDynamicProperty("challenge:teamData"));
+                this.sendMessageToAdminsPlus("Player:" + world.getDynamicProperty("challenge:playerState"));
+                break;
 
-              this.sendMessageToAdminsPlus("Clearing pads!", event.sender);
+              case "setphase":
+                if (!messageSender.isAdmin) {
+                  this.sendMessageToAdminsPlus(
+                    "Cannot run setphase, " + messageSender.name + " is not an admin.",
+                    event.sender
+                  );
+                  return;
+                }
 
-              this.clearPads();
-              break;
+                if (contentSep.length === 1) {
+                  switch (contentSep[0].toLowerCase()) {
+                    case "pre":
+                      this.phase = ChallengePhase.pre;
+                      break;
+                    case "post":
+                      this.phase = ChallengePhase.post;
+                      break;
+                    case "build":
+                      this.phase = ChallengePhase.build;
+                      break;
+                    case "vote":
+                      this.phase = ChallengePhase.vote;
+                      break;
+                    case "setup":
+                      this.phase = ChallengePhase.setup;
+                      break;
+                  }
+                }
+                break;
+
+              case "setrole":
+                if (contentSep.length === 2) {
+                  let name = contentSep[0];
+
+                  let player = this.getPlayer(name);
+
+                  if (!player) {
+                    this.sendMessageToAdminsPlus("Could not find player '" + name + "'", event.sender);
+                    return;
+                  }
+
+                  if (!messageSender.isAdmin) {
+                    this.sendMessageToAdminsPlus(
+                      "Cannot run setrole, " + messageSender.name + " is not an admin.",
+                      event.sender
+                    );
+                    return;
+                  }
+
+                  switch (contentSep[1].toLowerCase()) {
+                    case "spectator":
+                      if (player.role == ChallengePlayerRole.admin) {
+                        this.sendMessageToAdminsPlus("Setting player '" + name + "' to adminSpectator.", event.sender);
+                        player.role = ChallengePlayerRole.adminSpectator;
+                      } else {
+                        this.sendMessageToAdminsPlus("Setting player '" + name + "' to spectator.", event.sender);
+                        player.role = ChallengePlayerRole.spectator;
+                      }
+                      break;
+                    case "admin":
+                      this.sendMessageToAdminsPlus("Setting player '" + name + "' to admin.", event.sender);
+                      player.role = ChallengePlayerRole.admin;
+                      break;
+                    case "judge":
+                      this.sendMessageToAdminsPlus("Setting player '" + name + "' to judge.", event.sender);
+                      player.role = ChallengePlayerRole.judge;
+                      break;
+                    case "player":
+                      this.sendMessageToAdminsPlus("Setting player '" + name + "' to player.", event.sender);
+                      player.lastTeamSwitchTick = this.tickIndex;
+                      player.role = ChallengePlayerRole.admin;
+                      break;
+                  }
+                }
+                break;
+
+              case "setsize":
+                if (this.#phase !== ChallengePhase.setup) {
+                  Log.debug("Cannot run setsize outside of setup phase.");
+                  return;
+                }
+
+                if (!messageSender.isAdmin) {
+                  this.sendMessageToAdminsPlus(
+                    "Cannot run setsize, " + messageSender.name + " is not an admin.",
+                    event.sender
+                  );
+                  return;
+                }
+
+                if (contentSep.length === 1) {
+                  switch (contentSep[0].toLowerCase()) {
+                    case "s":
+                      this.size = ChallengeBoardSize.small;
+                      break;
+                    case "m":
+                      this.size = ChallengeBoardSize.medium;
+                      break;
+                    case "l":
+                      this.size = ChallengeBoardSize.large;
+                      break;
+                    case "xl":
+                      this.size = ChallengeBoardSize.xtralarge;
+                      break;
+                  }
+                }
+
+                break;
+
+              case "clearpads":
+                if (this.#phase !== ChallengePhase.setup) {
+                  Log.debug("Cannot run clearpads outside of setup phase.");
+                  return;
+                }
+
+                if (!messageSender.isAdmin) {
+                  this.sendMessageToAdminsPlus(
+                    "Cannot run clearpads, " + messageSender.name + " is not an admin.",
+                    event.sender
+                  );
+                  return;
+                }
+
+                this.sendMessageToAdminsPlus("Clearing pads!", event.sender);
+
+                this.clearPads();
+                break;
+            }
           }
-        }
+        });
       }
     }
   }
@@ -728,17 +748,21 @@ export default class Challenge {
       Utilities.fillBlock(airBlock, centerX - 2, centerY - 2, centerZ - 2, centerX + 2, centerY + 2, centerZ + 2);
     }
 
-    ow.runCommandAsync(`tickingarea remove_all`);
+    ow.runCommand(`tickingarea remove_all`);
 
     for (let i = 0; i < 8; i++) {
-      ow.runCommandAsync(
+      ow.runCommand(
         `tickingarea add ${x + (TOTAL_X / 8) * i} ${y} ${z} ${x + (TOTAL_X / 8) * (i + 1)} ${y + TOTAL_Y} ${
           z + TOTAL_Z
         } bc${i} true`
       );
     }
 
-    ow.runCommandAsync(`setworldspawn ${centerX} ${centerY} ${centerZ}`);
+    world.setDefaultSpawnLocation({
+      x: centerX,
+      y: centerY,
+      z: centerZ,
+    });
 
     this.save();
     this.setupTracks();
@@ -877,7 +901,12 @@ export default class Challenge {
                     stayDuration: 3,
                     subtitle: "You cannot enter " + team.name + "'s area",
                   });
-                  player.runCommandAsync("tp @s " + newX + " " + newY + " " + newZ);
+
+                  player.teleport({
+                    x: newX,
+                    y: newY,
+                    z: newZ,
+                  });
                 }
               }
             }
@@ -891,19 +920,19 @@ export default class Challenge {
     let ow = world.getDimension("overworld");
 
     if (this.#motdTitle) {
-      ow.runCommandAsync('tellraw @a { "rawtext": [{ "text": "§l' + this.#motdTitle + '" }]  }');
+      world.sendMessage({ rawtext: [{ text: "§l' + this.#motdTitle + '" }] });
     }
 
     if (this.#motdSubtitle) {
-      ow.runCommandAsync('tellraw @a { "rawtext": [{ "text": "' + this.#motdSubtitle + '" }]  }');
+      world.sendMessage({ rawtext: [{ text: "' + this.#motdSubtitle + '" }] });
     }
 
-    ow.runCommandAsync("gamerule sendcommandfeedback false");
-    ow.runCommandAsync("gamerule mobgriefing false");
-    ow.runCommandAsync("gamerule commandblocksenabled false");
-    ow.runCommandAsync("gamerule commandblockoutput false");
-    ow.runCommandAsync("gamerule tntexplodes false");
-    ow.runCommandAsync("gamerule pvp false");
+    ow.runCommand("gamerule sendcommandfeedback false");
+    ow.runCommand("gamerule mobgriefing false");
+    ow.runCommand("gamerule commandblocksenabled false");
+    ow.runCommand("gamerule commandblockoutput false");
+    ow.runCommand("gamerule tntexplodes false");
+    ow.runCommand("gamerule pvp false");
 
     system.run(this.updateMetaBonuses);
     system.run(this.refreshTeamScores);
@@ -912,8 +941,9 @@ export default class Challenge {
   addScores() {
     let ow = world.getDimension("overworld");
 
-    ow.runCommandAsync(`scoreboard objectives add main dummy "Team Score"`);
-    ow.runCommandAsync("scoreboard objectives setdisplay sidebar main");
+    // adding main team score
+    let mainObj = world.scoreboard.addObjective("main", "Team Score");
+    world.scoreboard.setObjectiveAtDisplaySlot(DisplaySlotId.Sidebar, { objective: mainObj });
 
     for (let team of this.teams) {
       if (team.active || team.score > 0) {
@@ -933,7 +963,7 @@ export default class Challenge {
           stayDuration: 7,
           subtitle: "OPs are getting the game ready, hold on",
         });
-        ow.runCommandAsync("gamemode c");
+        ow.runCommand("gamemode c");
         this.applyRoleToAllPlayers();
         break;
 
@@ -944,7 +974,7 @@ export default class Challenge {
           stayDuration: 7,
           subtitle: "Pull lever near a pad to join a team",
         });
-        ow.runCommandAsync("gamemode a");
+        ow.runCommand("gamemode a");
         this.applyRoleToAllPlayers();
         break;
 
@@ -955,7 +985,7 @@ export default class Challenge {
           stayDuration: 7,
           subtitle: "Build things on your team pad",
         });
-        ow.runCommandAsync("gamemode s");
+        ow.runCommand("gamemode s");
         this.applyRoleToAllPlayers();
         break;
 
@@ -966,7 +996,7 @@ export default class Challenge {
           stayDuration: 7,
           subtitle: "Pull lever to vote for a team (2 votes)",
         });
-        ow.runCommandAsync("gamemode a");
+        ow.runCommand("gamemode a");
         this.applyRoleToAllPlayers();
         break;
 
@@ -977,7 +1007,7 @@ export default class Challenge {
           stayDuration: 7,
           subtitle: "Congratulate the winners",
         });
-        ow.runCommandAsync("gamemode a");
+        ow.runCommand("gamemode a");
         this.applyRoleToAllPlayers();
         break;
     }
