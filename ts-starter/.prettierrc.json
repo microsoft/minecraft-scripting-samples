@@ -4,7 +4,7 @@
     "semi": true,
     "singleQuote": false,
     "tabs": false,
-    "backetSpacing": true,
+    "bracketSpacing": true,
     "arrowParens": "always",
     "printWidth": 120
   }
