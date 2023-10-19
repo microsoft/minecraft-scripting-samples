@@ -266,8 +266,8 @@ export default class Utilities {
   static writeTextFlatX(
     text: string,
     nwb: { x: number; y: number; z: number },
-    letterPixelBlockType: BlockType,
-    emptyPixelBlockType: BlockType
+    letterPixelBlockPerm: BlockPermutation,
+    emptyPixelBlockPerm: BlockPermutation
   ) {
     let textClean = text.toLowerCase();
 
@@ -283,14 +283,14 @@ export default class Utilities {
           let line = fontChar[i];
 
           for (let j = 0; j < line.length; j++) {
-            let bl = { x: xStart + j, y: nwb.y, z: nwb.z + i};
+            let bl = { x: xStart + j, y: nwb.y, z: nwb.z + i };
             let block = ow.getBlock(bl);
 
             if (block) {
               if (line[j] === "x") {
-                block.setPermutation(BlockPermutation.resolve(letterPixelBlockType.id));
+                block.setPermutation(letterPixelBlockPerm);
               } else {
-                block.setPermutation(BlockPermutation.resolve(emptyPixelBlockType.id));
+                block.setPermutation(emptyPixelBlockPerm);
               }
             }
           }
@@ -298,11 +298,11 @@ export default class Utilities {
 
         xStart += fontChar[0].length;
         for (let i = 0; i < fontChar.length; i++) {
-          let bl = { x: xStart, y: nwb.y, z: nwb.z + i};
+          let bl = { x: xStart, y: nwb.y, z: nwb.z + i };
           let block = ow.getBlock(bl);
 
           if (block) {
-            block.setPermutation(BlockPermutation.resolve(emptyPixelBlockType.id));
+            block.setPermutation(emptyPixelBlockPerm);
           }
         }
         xStart++;
@@ -311,7 +311,7 @@ export default class Utilities {
   }
 
   static fillBlock(
-    type: BlockType,
+    perm: BlockPermutation,
     fromX: number,
     fromY: number,
     fromZ: number,
@@ -320,11 +320,17 @@ export default class Utilities {
     toZ: number
   ) {
     let overworld = world.getDimension("overworld");
-    let perm = BlockPermutation.resolve(type.id);
 
-    for (let i = fromX; i <= toX; i++) {
-      for (let j = fromY; j <= toY; j++) {
-        for (let k = fromZ; k <= toZ; k++) {
+    const fromXa = Math.min(fromX, toX);
+    const fromYa = Math.min(fromY, toY);
+    const fromZa = Math.min(fromZ, toZ);
+    const toXa = Math.max(fromX, toX);
+    const toYa = Math.max(fromY, toY);
+    const toZa = Math.max(fromZ, toZ);
+
+    for (let i = fromXa; i <= toXa; i++) {
+      for (let j = fromYa; j <= toYa; j++) {
+        for (let k = fromZa; k <= toZa; k++) {
           let bl = { x: i, y: j, z: k };
           let block = overworld.getBlock(bl);
 

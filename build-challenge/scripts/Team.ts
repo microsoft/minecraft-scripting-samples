@@ -1,5 +1,5 @@
-import { world, Player, BlockTypes } from "@minecraft/server";
-import Challenge, { ChallengePhase } from "./Challenge.js";
+import { world, Player, BlockTypes, BlockPermutation } from "@minecraft/server";
+import Challenge, { ChallengeFlavor, ChallengePhase } from "./Challenge.js";
 import ChallengePlayer from "./ChallengePlayer.js";
 import {
   PAD_SURROUND_X as PAD_SURROUND_X,
@@ -147,7 +147,11 @@ export default class Team {
     let newPlayerArr = [];
 
     for (let i = 0; i < this.players.length; i++) {
-      if (this.players[i] !== playerToRemove && this.players[i].name !== playerToRemove.name) {
+      if (
+        this.players[i] !== playerToRemove &&
+        this.challenge.canonicalizePlayerName(this.players[i].name) !==
+          this.challenge.canonicalizePlayerName(playerToRemove.name)
+      ) {
         newPlayerArr.push(this.players[i]);
       }
     }
@@ -190,9 +194,25 @@ export default class Team {
     world.scoreboard.getObjective("main")?.addScore(teamName, this.effectiveScore);
   }
 
+  getEffectiveTeamPlayerCount() {
+    let count = 0;
+
+    for (let i = 0; i < this.players.length; i++) {
+      if (!this.players[i].allowTeamChangeAlways) {
+        count++;
+      }
+    }
+
+    return count;
+  }
+
   ensurePlayerIsOnTeam(challPlayer: ChallengePlayer) {
     for (let i = 0; i < this.players.length; i++) {
-      if (this.players[i] === challPlayer || this.players[i].name === challPlayer.name) {
+      if (
+        this.players[i] === challPlayer ||
+        this.challenge.canonicalizePlayerName(this.players[i].name) ===
+          this.challenge.canonicalizePlayerName(challPlayer.name)
+      ) {
         return;
       }
     }
@@ -220,10 +240,10 @@ export default class Team {
   }
 
   addTeamName() {
-    const airBlock = BlockTypes.get("minecraft:air");
-    const copperBlock = BlockTypes.get("minecraft:cut_copper_slab");
+    const airBlock = BlockPermutation.resolve("minecraft:air");
+    const signBlock = BlockPermutation.resolve("minecraft:wooden_slab", { wood_type: "birch" });
 
-    if (!airBlock || !copperBlock) {
+    if (!airBlock || !signBlock) {
       return;
     }
 
@@ -236,16 +256,12 @@ export default class Team {
       this.nwbY + 1,
       this.nwbZ + 10
     );
-    Utilities.writeTextFlatX(
-      this.name,
-      { x: this.nwbX + 5, y: this.nwbY + 1, z: this.nwbZ + 5 },
-      copperBlock,
-      airBlock
-    );
+
+    Utilities.writeTextFlatX(this.name, { x: this.nwbX + 5, y: this.nwbY + 1, z: this.nwbZ + 5 }, signBlock, airBlock);
   }
 
   init() {
-    console.warn("Setting score for " + this.name + " to " + this.#score);
+    // console.warn("Setting score for " + this.name + " to " + this.#score);
     world.scoreboard.getObjective("main")?.addScore(this.name, this.#score);
   }
 
@@ -287,7 +303,7 @@ export default class Team {
 
         let result = await mdf.show(player);
 
-        if (result.formValues && result.formValues[0] !== undefined && typeof result.formValues === "string") {
+        if (result.formValues && result.formValues[0] !== undefined && typeof result.formValues[0] === "string") {
           if (!this.isValidName(result.formValues[0])) {
             player.sendMessage("New team name can only be letters or numbers, and less than 11 characters.");
           } else {
@@ -361,17 +377,18 @@ export default class Team {
   }
 
   ensurePad() {
-    const grassBlock = BlockTypes.get("minecraft:grass");
-    const blackstoneBlock = BlockTypes.get("minecraft:blackstone");
-    const stoneBlock = BlockTypes.get("minecraft:stone");
+    const foundationSurroundBlock = BlockPermutation.resolve("minecraft:grass");
+    const foundationBlock = BlockPermutation.resolve("minecraft:sandstone");
+    const foundationLowerBlock = BlockPermutation.resolve("minecraft:bedrock");
+    const roadBlock = BlockPermutation.resolve("minecraft:red_sandstone");
 
-    if (!grassBlock || !blackstoneBlock || !stoneBlock) {
+    if (!foundationSurroundBlock || !foundationBlock || !roadBlock || !foundationLowerBlock) {
       return;
     }
 
     // east bar
     Utilities.fillBlock(
-      grassBlock,
+      foundationSurroundBlock,
       this.nwbX + PAD_SIZE_X + PAD_SURROUND_X / 2 - 1,
       this.nwbY - 3,
       this.nwbZ,
@@ -382,7 +399,7 @@ export default class Team {
 
     // west bar
     Utilities.fillBlock(
-      grassBlock,
+      foundationSurroundBlock,
       this.nwbX,
       this.nwbY - 3,
       this.nwbZ,
@@ -394,7 +411,7 @@ export default class Team {
     // north and south are inset since the corners are covered by e/w bars
     // north bar?
     Utilities.fillBlock(
-      grassBlock,
+      foundationSurroundBlock,
       this.nwbX + PAD_SURROUND_X / 2,
       this.nwbY - 3,
       this.nwbZ,
@@ -405,7 +422,7 @@ export default class Team {
 
     // south bar
     Utilities.fillBlock(
-      grassBlock,
+      foundationSurroundBlock,
       this.nwbX + PAD_SURROUND_X / 2,
       this.nwbY - 3,
       this.nwbZ + PAD_SIZE_Z + PAD_SURROUND_Z / 2 - 1,
@@ -415,7 +432,7 @@ export default class Team {
     );
 
     Utilities.fillBlock(
-      blackstoneBlock,
+      foundationBlock,
       this.nwbX + PAD_SURROUND_X / 2 - 2,
       this.nwbY,
       this.nwbZ + PAD_SURROUND_Z / 2 - 2,
@@ -424,9 +441,19 @@ export default class Team {
       this.nwbZ + PAD_SIZE_Z + PAD_SURROUND_Z / 2 - 2
     );
 
+    Utilities.fillBlock(
+      foundationLowerBlock,
+      this.nwbX + PAD_SURROUND_X / 2 - 2,
+      this.nwbY - 4,
+      this.nwbZ + PAD_SURROUND_Z / 2 - 2,
+      this.nwbX + PAD_SIZE_X + PAD_SURROUND_X / 2 - 2,
+      this.nwbY - 1,
+      this.nwbZ + PAD_SIZE_Z + PAD_SURROUND_Z / 2 - 2
+    );
+
     // east road
     Utilities.fillBlock(
-      stoneBlock,
+      roadBlock,
       this.nwbX + PAD_SIZE_X + PAD_SURROUND_X - 5,
       this.nwbY,
       this.nwbZ,
@@ -437,7 +464,7 @@ export default class Team {
 
     // west road running n/s = out of bounds but filler road
     Utilities.fillBlock(
-      stoneBlock,
+      roadBlock,
       this.nwbX - 4,
       this.nwbY,
       this.nwbZ - 4,
@@ -448,7 +475,7 @@ export default class Team {
 
     // south road
     Utilities.fillBlock(
-      stoneBlock,
+      roadBlock,
       this.nwbX,
       this.nwbY,
       this.nwbZ + PAD_SIZE_Z + PAD_SURROUND_Z - 5,
@@ -459,7 +486,7 @@ export default class Team {
 
     // north road = out of bounds but filler road
     Utilities.fillBlock(
-      stoneBlock,
+      roadBlock,
       this.nwbX,
       this.nwbY,
       this.nwbZ - 4,
@@ -469,7 +496,7 @@ export default class Team {
     );
 
     Utilities.fillBlock(
-      stoneBlock,
+      roadBlock,
       this.nwbX,
       this.nwbY - 10,
       this.nwbZ,
@@ -483,12 +510,14 @@ export default class Team {
 
     let consoleType = "options";
 
-    if (this.challenge.phase === ChallengePhase.vote) {
+    if (this.challenge.phase === ChallengePhase.vote && this.challenge.flavor === ChallengeFlavor.regular) {
       consoleType = "vote";
+    } else if (this.challenge.phase === ChallengePhase.vote && this.challenge.flavor === ChallengeFlavor.goodVibes) {
+      consoleType = "vote2";
     }
 
     ow.runCommand(
-      `structure load challenge:${consoleType} ${this.nwbX + OPTIONS_AREA_TEAM_X} ${this.nwbY + OPTIONS_AREA_TEAM_Y} ${
+      `/structure load challenge:${consoleType} ${this.nwbX + OPTIONS_AREA_TEAM_X} ${this.nwbY + OPTIONS_AREA_TEAM_Y} ${
         this.nwbZ + OPTIONS_AREA_TEAM_Z
       } 0_degrees `
     );
@@ -497,7 +526,7 @@ export default class Team {
   }
 
   clearPad(index: number) {
-    let airBlock = BlockTypes.get("minecraft:air");
+    let airBlock = BlockPermutation.resolve("minecraft:air");
 
     if (airBlock) {
       Utilities.fillBlock(
@@ -506,7 +535,7 @@ export default class Team {
         this.nwbY + 1 + index * 4,
         this.nwbZ - 4,
         this.nwbX + PAD_SIZE_X + PAD_SURROUND_X,
-        this.nwbY + 5 + index * 4,
+        this.nwbY + 7 + index * 4,
         this.nwbZ + PAD_SIZE_Z + PAD_SURROUND_Z
       );
     }

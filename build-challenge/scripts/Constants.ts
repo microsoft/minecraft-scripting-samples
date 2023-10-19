@@ -3,15 +3,15 @@ export const TEAM_INIT_TICK = 40;
 export const TEAM_SIZE_X = 6;
 export const TEAM_SIZE_Z = 6;
 export const PAD_SIZE_X = 32;
-export const PAD_SIZE_Y = 64;
+export const PAD_SIZE_Y = 96;
 export const PAD_SIZE_Z = 32;
 export const PAD_SURROUND_X = 32;
 export const PAD_SURROUND_Z = 32;
 export const AIRSPACE_GAP = 6;
 
-export const TOTAL_X = TEAM_SIZE_X * PAD_SIZE_X + (TEAM_SIZE_X - 1) * PAD_SURROUND_X;
+export const TOTAL_X = TEAM_SIZE_X * PAD_SIZE_X + TEAM_SIZE_X * PAD_SURROUND_X;
 export const TOTAL_Y = PAD_SIZE_Y;
-export const TOTAL_Z = TEAM_SIZE_Z * PAD_SIZE_Z + (TEAM_SIZE_Z - 1) * PAD_SURROUND_Z;
+export const TOTAL_Z = TEAM_SIZE_Z * PAD_SIZE_Z + TEAM_SIZE_Z * PAD_SURROUND_Z;
 
 export const JOIN_TEAM_X = 3;
 export const JOIN_TEAM_Y = 1;

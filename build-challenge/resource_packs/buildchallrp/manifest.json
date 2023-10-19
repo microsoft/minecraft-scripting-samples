@@ -1,0 +1,24 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Build challenge resource pack",
+    "description": "Build challenge resource pack",
+    "uuid": "1103c416-7d50-4cf7-99c2-01decb358293",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 20, 30]
+  },
+  "modules": [
+    {
+      "description": "Demo Resource Pack",
+      "type": "resources",
+      "uuid": "488b9027-02bc-4909-81c8-e2b20eb78757",
+      "version": [1, 0, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "cfe3d87b-8792-47f6-b4e0-67b251065ca9",
+      "version": [1, 0, 0]
+    }
+  ]
+}

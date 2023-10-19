@@ -2,7 +2,6 @@ import Team from "./Team.js";
 import {
   world,
   system,
-  PlayerJoinAfterEvent,
   PlayerSpawnAfterEvent,
   PlayerLeaveAfterEvent,
   LeverActionAfterEvent,
@@ -10,11 +9,16 @@ import {
   Player,
   BlockInventoryComponent,
   ChatSendBeforeEvent,
-  WorldSoundOptions,
   Vector,
-  BlockTypes,
-  Scoreboard,
   DisplaySlotId,
+  BlockPermutation,
+  ScriptEventCommandMessageAfterEvent,
+  EntityInventoryComponent,
+  ItemStack,
+  ItemUseOnAfterEvent,
+  Block,
+  System,
+  TicksPerSecond,
 } from "@minecraft/server";
 import ChallengePlayer, { ChallengePlayerRole, IPlayerData } from "./ChallengePlayer.js";
 import Log from "./Log.js";
@@ -64,6 +68,11 @@ export enum ChallengeBoardSize {
   xtralarge = 32,
 }
 
+export enum ChallengeFlavor {
+  regular = 0,
+  goodVibes = 1,
+}
+
 export default class Challenge {
   nwbLocation = { x: 0, y: 0, z: 0 }; // nwb = north west bottom
   teams: Team[] = [];
@@ -75,6 +84,7 @@ export default class Challenge {
   #size: ChallengeBoardSize = ChallengeBoardSize.small;
   #motdTitle: string = "Build Challenge";
   #motdSubtitle: string = "A place to showcase your build skills";
+  #flavor: ChallengeFlavor = 0;
   refreshTeamIter = 0;
   clearTeamIter = 0;
 
@@ -97,6 +107,21 @@ export default class Challenge {
 
         this.refreshTeam();
       }
+
+      this.save();
+    }
+  }
+
+  get flavor() {
+    return this.#flavor;
+  }
+
+  set flavor(newFlavor: number) {
+    if (this.#flavor !== newFlavor) {
+      let oldPhase = this.#flavor;
+      this.#flavor = newFlavor;
+
+      this.applyFlavor();
 
       this.save();
     }
@@ -152,16 +177,19 @@ export default class Challenge {
 
   constructor() {
     this.tick = this.tick.bind(this);
-    this.playerSpawnedFirstTime = this.playerSpawnedFirstTime.bind(this);
+    this.playerSpawned = this.playerSpawned.bind(this);
     this.playerLeft = this.playerLeft.bind(this);
     this.leverAction = this.leverAction.bind(this);
+    this.itemUseOn = this.itemUseOn.bind(this);
     this.beforeChat = this.beforeChat.bind(this);
+    this.handleScriptEvent = this.handleScriptEvent.bind(this);
     this.refreshTeam = this.refreshTeam.bind(this);
     this.clearTeamArea = this.clearTeamArea.bind(this);
     this.postInit = this.postInit.bind(this);
     this.continueInit = this.continueInit.bind(this);
     this.continueInit2 = this.continueInit2.bind(this);
     this.applyPhase = this.applyPhase.bind(this);
+    this.applyFlavor = this.applyFlavor.bind(this);
     this.updateMetaBonuses = this.updateMetaBonuses.bind(this);
     this.refreshTeamScores = this.refreshTeamScores.bind(this);
     this.clearPads = this.clearPads.bind(this);
@@ -175,6 +203,7 @@ export default class Challenge {
     world.setDynamicProperty("challenge:nwbX", this.nwbLocation.x);
     world.setDynamicProperty("challenge:nwbY", this.nwbLocation.y);
     world.setDynamicProperty("challenge:nwbZ", this.nwbLocation.z);
+    world.setDynamicProperty("challenge:flavor", this.#flavor);
 
     let data = [];
 
@@ -372,6 +401,14 @@ export default class Challenge {
       this.#phase = ChallengePhase.pre;
     }
 
+    val = world.getDynamicProperty("challenge:flavor") as number;
+
+    if (val) {
+      this.#flavor = val;
+    } else {
+      this.#flavor = ChallengeFlavor.regular;
+    }
+
     let motdTitle = world.getDynamicProperty("challenge:motdTitle") as string;
 
     if (motdTitle) {
@@ -406,13 +443,16 @@ export default class Challenge {
   continueInit2() {
     system.run(this.tick);
     system.run(this.applyPhase);
+    system.run(this.applyFlavor);
 
     const overworld = world.getDimension("overworld");
 
-    world.afterEvents.playerSpawn.subscribe(this.playerSpawnedFirstTime);
+    world.afterEvents.playerSpawn.subscribe(this.playerSpawned);
     world.afterEvents.playerLeave.subscribe(this.playerLeft);
     world.beforeEvents.chatSend.subscribe(this.beforeChat);
     world.afterEvents.leverAction.subscribe(this.leverAction);
+    world.afterEvents.itemUseOn.subscribe(this.itemUseOn);
+    system.afterEvents.scriptEventReceive.subscribe(this.handleScriptEvent);
 
     this.loadPlayerState();
     this.ensureAllPlayers();
@@ -459,269 +499,334 @@ export default class Challenge {
     let mess = event.message;
 
     if (event.sender && event.sender.typeId === "minecraft:player" && mess) {
-      mess = mess.toLowerCase().trim();
       if (mess.startsWith("!")) {
         system.run(() => {
-          let messageSender = this.ensurePlayer(event.sender);
+          this.processMessage(mess, event.sender);
+        });
+        event.cancel = true;
+      }
+    }
+  }
 
-          if (!messageSender) {
+  handleScriptEvent(event: ScriptEventCommandMessageAfterEvent) {
+    if (!event.sourceEntity || event.sourceEntity.typeId !== "minecraft:player") {
+      return;
+    }
+
+    let id = event.id;
+
+    if (id.startsWith("bc:")) {
+      id = id.substring(3, id.length);
+    }
+
+    let mess = event.message;
+
+    if (mess.startsWith('"') && mess.endsWith('"')) {
+      mess = mess.substring(1, mess.length - 1);
+    }
+
+    this.processMessage("!" + id + " " + mess, event.sourceEntity as Player);
+  }
+
+  processMessage(message: string, player: Player) {
+    let mess = message.toLowerCase().trim();
+    let messageSender = this.ensurePlayer(player);
+
+    if (!messageSender) {
+      return;
+    }
+
+    let nextSpace = mess.indexOf(" ");
+    let content = "";
+    let contentSep: string[] = [];
+
+    if (nextSpace < 0) {
+      nextSpace = mess.length;
+      content = "";
+    } else {
+      content = mess.substring(nextSpace + 1, mess.length);
+      contentSep = content.split(" ");
+    }
+    let command = mess.substring(1, nextSpace);
+
+    if (nextSpace > 0) {
+      switch (command) {
+        case "setmotdtitle":
+          if (!messageSender.isAdmin) {
+            this.sendMessageToAdminsPlus(
+              "Cannot run setmotdtitle, " + messageSender.name + " is not an admin.",
+              player
+            );
             return;
           }
 
-          let nextSpace = mess.indexOf(" ");
-          event.cancel = true;
-          let content = "";
-          let contentSep: string[] = [];
-
-          if (nextSpace < 0) {
-            nextSpace = mess.length;
-            content = "";
-          } else {
-            content = mess.substring(nextSpace + 1, mess.length);
-            contentSep = content.split(" ");
+          if (content.length > 39 || content.length < 2) {
+            this.sendMessageToAdminsPlus("Message must be less than 40 chars.", player);
+            return;
           }
-          let command = mess.substring(1, nextSpace);
 
-          if (nextSpace > 0) {
-            switch (command) {
-              case "setmotdtitle":
-                if (!messageSender.isAdmin) {
-                  this.sendMessageToAdminsPlus(
-                    "Cannot run setmotdtitle, " + messageSender.name + " is not an admin.",
-                    event.sender
-                  );
-                  return;
-                }
+          this.motdTitle = message.substring(message.indexOf(" ") + 1);
+          this.showMotd(player);
+          break;
 
-                if (content.length > 39 || content.length < 2) {
-                  this.sendMessageToAdminsPlus("Message must be less than 40 chars.", event.sender);
-                  return;
-                }
+        case "setmotdsubtitle":
+          if (!messageSender.isAdmin) {
+            this.sendMessageToAdminsPlus(
+              "Cannot run setmotdsubtitle, " + messageSender.name + " is not an admin.",
+              player
+            );
+            return;
+          }
 
-                this.motdTitle = event.message.substring(event.message.indexOf(" ") + 1);
-                this.showMotd(event.sender);
+          if (content.length > 39 || content.length < 2) {
+            this.sendMessageToAdminsPlus("Message must be less than 40 chars.", player);
+            return;
+          }
+
+          this.motdSubtitle = message.substring(message.indexOf(" ") + 1);
+          this.showMotd(player);
+          break;
+
+        case "setstart":
+          if (this.#phase !== ChallengePhase.setup) {
+            this.sendMessageToAdminsPlus("Cannot run setstart outside of setup phase.", player);
+            return;
+          }
+
+          if (!messageSender.isAdmin) {
+            this.sendMessageToAdminsPlus("Cannot run setstart, " + player.name + " is not an admin.", player);
+            return;
+          }
+
+          if (contentSep.length === 3) {
+            try {
+              let x = parseInt(contentSep[0]);
+              let y = parseInt(contentSep[1]);
+              let z = parseInt(contentSep[2]);
+
+              this.sendMessageToAdminsPlus("Setting new start location to " + x + " " + y + " " + z, player);
+
+              this.setStart(x, y, z);
+            } catch (e) {}
+          } else {
+            const blockRay = player.getBlockFromViewDirection();
+
+            if (blockRay && blockRay.block) {
+              const blockLoc = blockRay.block.location;
+
+              this.sendMessageToAdminsPlus(
+                "Setting new start location to " + blockLoc.x + " " + blockLoc.y + " " + blockLoc.z,
+                player
+              );
+
+              this.setStart(blockLoc.x, blockLoc.y, blockLoc.z);
+            }
+          }
+          break;
+
+        case "debug":
+          this.save();
+
+          this.sendMessageToAdminsPlus(
+            "State: Ph:" +
+              this.#phase +
+              " Size:" +
+              this.#size +
+              " " +
+              " NWB: " +
+              this.nwbLocation.x +
+              " " +
+              this.nwbLocation.y +
+              " " +
+              this.nwbLocation.z
+          );
+          this.sendMessageToAdminsPlus("Team:" + world.getDynamicProperty("challenge:teamData"));
+          this.sendMessageToAdminsPlus("Player:" + world.getDynamicProperty("challenge:playerState"));
+          break;
+
+        case "setphase":
+          if (!messageSender.isAdmin) {
+            this.sendMessageToAdminsPlus("Cannot run setphase, " + messageSender.name + " is not an admin.", player);
+            return;
+          }
+
+          if (contentSep.length === 1) {
+            switch (contentSep[0].toLowerCase()) {
+              case "pre":
+                this.phase = ChallengePhase.pre;
                 break;
-
-              case "setmotdsubtitle":
-                if (!messageSender.isAdmin) {
-                  this.sendMessageToAdminsPlus(
-                    "Cannot run setmotdsubtitle, " + messageSender.name + " is not an admin.",
-                    event.sender
-                  );
-                  return;
-                }
-
-                if (content.length > 39 || content.length < 2) {
-                  this.sendMessageToAdminsPlus("Message must be less than 40 chars.", event.sender);
-                  return;
-                }
-
-                this.motdSubtitle = event.message.substring(event.message.indexOf(" ") + 1);
-                this.showMotd(event.sender);
+              case "post":
+                this.phase = ChallengePhase.post;
                 break;
-
-              case "setstart":
-                if (this.#phase !== ChallengePhase.setup) {
-                  this.sendMessageToAdminsPlus("Cannot run setstart outside of setup phase.", event.sender);
-                  return;
-                }
-
-                if (!messageSender.isAdmin) {
-                  this.sendMessageToAdminsPlus(
-                    "Cannot run setstart, " + messageSender.name + " is not an admin.",
-                    event.sender
-                  );
-                  return;
-                }
-
-                if (contentSep.length === 3) {
-                  try {
-                    let x = parseInt(contentSep[0]);
-                    let y = parseInt(contentSep[1]);
-                    let z = parseInt(contentSep[2]);
-
-                    this.sendMessageToAdminsPlus(
-                      "Setting new start location to " + x + " " + y + " " + z,
-                      event.sender
-                    );
-
-                    this.setStart(x, y, z);
-                  } catch (e) {}
-                } else {
-                  const blockRay = event.sender.getBlockFromViewDirection();
-
-                  if (blockRay && blockRay.block) {
-                    const blockLoc = blockRay.block.location;
-
-                    this.sendMessageToAdminsPlus(
-                      "Setting new start location to " + blockLoc.x + " " + blockLoc.y + " " + blockLoc.z,
-                      event.sender
-                    );
-
-                    this.setStart(blockLoc.x, blockLoc.y, blockLoc.z);
-                  }
-                }
+              case "build":
+                this.phase = ChallengePhase.build;
                 break;
-
-              case "debug":
-                this.save();
-
-                this.sendMessageToAdminsPlus(
-                  "State: Ph:" +
-                    this.#phase +
-                    " Size:" +
-                    this.#size +
-                    " " +
-                    " NWB: " +
-                    this.nwbLocation.x +
-                    " " +
-                    this.nwbLocation.y +
-                    " " +
-                    this.nwbLocation.z
-                );
-                this.sendMessageToAdminsPlus("Team:" + world.getDynamicProperty("challenge:teamData"));
-                this.sendMessageToAdminsPlus("Player:" + world.getDynamicProperty("challenge:playerState"));
+              case "vote":
+                this.phase = ChallengePhase.vote;
                 break;
-
-              case "setphase":
-                if (!messageSender.isAdmin) {
-                  this.sendMessageToAdminsPlus(
-                    "Cannot run setphase, " + messageSender.name + " is not an admin.",
-                    event.sender
-                  );
-                  return;
-                }
-
-                if (contentSep.length === 1) {
-                  switch (contentSep[0].toLowerCase()) {
-                    case "pre":
-                      this.phase = ChallengePhase.pre;
-                      break;
-                    case "post":
-                      this.phase = ChallengePhase.post;
-                      break;
-                    case "build":
-                      this.phase = ChallengePhase.build;
-                      break;
-                    case "vote":
-                      this.phase = ChallengePhase.vote;
-                      break;
-                    case "setup":
-                      this.phase = ChallengePhase.setup;
-                      break;
-                  }
-                }
-                break;
-
-              case "setrole":
-                if (contentSep.length === 2) {
-                  let name = contentSep[0];
-
-                  let player = this.getPlayer(name);
-
-                  if (!player) {
-                    this.sendMessageToAdminsPlus("Could not find player '" + name + "'", event.sender);
-                    return;
-                  }
-
-                  if (!messageSender.isAdmin) {
-                    this.sendMessageToAdminsPlus(
-                      "Cannot run setrole, " + messageSender.name + " is not an admin.",
-                      event.sender
-                    );
-                    return;
-                  }
-
-                  switch (contentSep[1].toLowerCase()) {
-                    case "spectator":
-                      if (player.role == ChallengePlayerRole.admin) {
-                        this.sendMessageToAdminsPlus("Setting player '" + name + "' to adminSpectator.", event.sender);
-                        player.role = ChallengePlayerRole.adminSpectator;
-                      } else {
-                        this.sendMessageToAdminsPlus("Setting player '" + name + "' to spectator.", event.sender);
-                        player.role = ChallengePlayerRole.spectator;
-                      }
-                      break;
-                    case "admin":
-                      this.sendMessageToAdminsPlus("Setting player '" + name + "' to admin.", event.sender);
-                      player.role = ChallengePlayerRole.admin;
-                      break;
-                    case "judge":
-                      this.sendMessageToAdminsPlus("Setting player '" + name + "' to judge.", event.sender);
-                      player.role = ChallengePlayerRole.judge;
-                      break;
-                    case "player":
-                      this.sendMessageToAdminsPlus("Setting player '" + name + "' to player.", event.sender);
-                      player.lastTeamSwitchTick = this.tickIndex;
-                      player.role = ChallengePlayerRole.admin;
-                      break;
-                  }
-                }
-                break;
-
-              case "setsize":
-                if (this.#phase !== ChallengePhase.setup) {
-                  Log.debug("Cannot run setsize outside of setup phase.");
-                  return;
-                }
-
-                if (!messageSender.isAdmin) {
-                  this.sendMessageToAdminsPlus(
-                    "Cannot run setsize, " + messageSender.name + " is not an admin.",
-                    event.sender
-                  );
-                  return;
-                }
-
-                if (contentSep.length === 1) {
-                  switch (contentSep[0].toLowerCase()) {
-                    case "s":
-                      this.size = ChallengeBoardSize.small;
-                      break;
-                    case "m":
-                      this.size = ChallengeBoardSize.medium;
-                      break;
-                    case "l":
-                      this.size = ChallengeBoardSize.large;
-                      break;
-                    case "xl":
-                      this.size = ChallengeBoardSize.xtralarge;
-                      break;
-                  }
-                }
-
-                break;
-
-              case "clearpads":
-                if (this.#phase !== ChallengePhase.setup) {
-                  Log.debug("Cannot run clearpads outside of setup phase.");
-                  return;
-                }
-
-                if (!messageSender.isAdmin) {
-                  this.sendMessageToAdminsPlus(
-                    "Cannot run clearpads, " + messageSender.name + " is not an admin.",
-                    event.sender
-                  );
-                  return;
-                }
-
-                this.sendMessageToAdminsPlus("Clearing pads!", event.sender);
-
-                this.clearPads();
+              case "setup":
+                this.phase = ChallengePhase.setup;
                 break;
             }
           }
-        });
+          break;
+
+        case "setflavor":
+          if (!messageSender.isAdmin) {
+            this.sendMessageToAdminsPlus("Cannot run setflavor, " + messageSender.name + " is not an admin.", player);
+            return;
+          }
+
+          if (contentSep.length === 1) {
+            switch (contentSep[0].toLowerCase()) {
+              case "goodvibes":
+              case "1":
+                this.#flavor = ChallengeFlavor.goodVibes;
+                break;
+              default:
+                this.#flavor = ChallengeFlavor.regular;
+                break;
+            }
+          }
+
+          if (this.#flavor === ChallengeFlavor.goodVibes) {
+            this.sendMessageToAdminsPlus("Current game flavor is set to goodvibes.", player);
+          } else {
+            this.sendMessageToAdminsPlus("Current game flavor is set to regular.", player);
+          }
+          break;
+
+        case "setrole":
+          if (contentSep.length === 2) {
+            let name = contentSep[0];
+
+            let challPlayer = this.getPlayer(name);
+
+            if (!challPlayer) {
+              this.sendMessageToAdminsPlus("Could not find player '" + name + "'", player);
+              return;
+            }
+
+            if (!messageSender.isAdmin) {
+              this.sendMessageToAdminsPlus("Cannot run setrole, " + messageSender.name + " is not an admin.", player);
+              return;
+            }
+
+            switch (contentSep[1].toLowerCase()) {
+              case "spectator":
+                if (challPlayer.role == ChallengePlayerRole.admin) {
+                  this.sendMessageToAdminsPlus("Setting player '" + name + "' to adminSpectator.", player);
+                  challPlayer.role = ChallengePlayerRole.adminSpectator;
+                } else {
+                  this.sendMessageToAdminsPlus("Setting player '" + name + "' to spectator.", player);
+                  challPlayer.role = ChallengePlayerRole.spectator;
+                }
+                break;
+              case "admin":
+                this.sendMessageToAdminsPlus("Setting player '" + name + "' to admin.", player);
+                challPlayer.role = ChallengePlayerRole.admin;
+                break;
+              case "judge":
+                this.sendMessageToAdminsPlus("Setting player '" + name + "' to judge.", player);
+                challPlayer.role = ChallengePlayerRole.judge;
+                break;
+              case "player":
+                this.sendMessageToAdminsPlus("Setting player '" + name + "' to player.", player);
+                challPlayer.lastTeamSwitchTick = this.tickIndex;
+                challPlayer.role = ChallengePlayerRole.admin;
+                break;
+            }
+          }
+          break;
+
+        case "setallowteamchange":
+          if (contentSep.length === 2) {
+            let name = contentSep[0];
+
+            let challPlayer = this.getPlayer(name);
+
+            if (!challPlayer) {
+              this.sendMessageToAdminsPlus("Could not find player '" + name + "'", player);
+              return;
+            }
+
+            if (!messageSender.isAdmin) {
+              this.sendMessageToAdminsPlus(
+                "Cannot run setallowteamchange, " + messageSender.name + " is not an admin.",
+                player
+              );
+              return;
+            }
+
+            switch (contentSep[1].toLowerCase()) {
+              case "true":
+              case "t":
+              case "1":
+                challPlayer.allowTeamChangeAlways = true;
+                break;
+              case "false":
+              case "f":
+              case "0":
+                challPlayer.allowTeamChangeAlways = false;
+                break;
+            }
+          }
+          break;
+
+        case "setsize":
+          if (this.#phase !== ChallengePhase.setup) {
+            Log.debug("Cannot run setsize outside of setup phase.");
+            return;
+          }
+
+          if (!messageSender.isAdmin) {
+            this.sendMessageToAdminsPlus("Cannot run setsize, " + messageSender.name + " is not an admin.", player);
+            return;
+          }
+
+          if (contentSep.length === 1) {
+            switch (contentSep[0].toLowerCase()) {
+              case "s":
+                this.size = ChallengeBoardSize.small;
+                break;
+              case "m":
+                this.size = ChallengeBoardSize.medium;
+                break;
+              case "l":
+                this.size = ChallengeBoardSize.large;
+                break;
+              case "xl":
+                this.size = ChallengeBoardSize.xtralarge;
+                break;
+            }
+          }
+
+          break;
+
+        case "clearpads":
+          if (this.#phase !== ChallengePhase.setup) {
+            Log.debug("Cannot run clearpads outside of setup phase.");
+            return;
+          }
+
+          if (!messageSender.isAdmin) {
+            this.sendMessageToAdminsPlus("Cannot run clearpads, " + messageSender.name + " is not an admin.", player);
+            return;
+          }
+
+          this.sendMessageToAdminsPlus("Clearing pads!", player);
+
+          this.clearPads();
+          break;
       }
     }
   }
 
   getPlayer(name: string) {
-    name = name.toLowerCase();
+    name = this.canonicalizePlayerName(name);
 
     for (let playerName in this.challengePlayers) {
-      let playerNameCand = playerName.toLowerCase();
+      let playerNameCand = this.canonicalizePlayerName(playerName);
 
       if (name === playerNameCand) {
         return this.challengePlayers[playerName];
@@ -729,6 +834,23 @@ export default class Challenge {
     }
 
     return undefined;
+  }
+
+  ensurePlayerByName(name: string) {
+    const nameCanon = this.canonicalizePlayerName(name);
+
+    for (let playerName in this.challengePlayers) {
+      let playerNameCand = this.canonicalizePlayerName(playerName);
+
+      if (nameCanon === playerNameCand) {
+        return this.challengePlayers[playerName];
+      }
+    }
+
+    const newChallPlayer = new ChallengePlayer(this, name);
+    this.challengePlayers[nameCanon] = newChallPlayer;
+
+    return newChallPlayer;
   }
 
   setStart(x: number, y: number, z: number) {
@@ -742,7 +864,7 @@ export default class Challenge {
     const centerY = y + 1;
     const centerZ = z + Math.floor((PAD_SIZE_Z + PAD_SURROUND_Z) * 2.5);
 
-    const airBlock = BlockTypes.get("minecraft:air");
+    const airBlock = BlockPermutation.resolve("minecraft:air");
 
     if (airBlock) {
       Utilities.fillBlock(airBlock, centerX - 2, centerY - 2, centerZ - 2, centerX + 2, centerY + 2, centerZ + 2);
@@ -750,12 +872,17 @@ export default class Challenge {
 
     ow.runCommand(`tickingarea remove_all`);
 
-    for (let i = 0; i < 8; i++) {
-      ow.runCommand(
-        `tickingarea add ${x + (TOTAL_X / 8) * i} ${y} ${z} ${x + (TOTAL_X / 8) * (i + 1)} ${y + TOTAL_Y} ${
-          z + TOTAL_Z
-        } bc${i} true`
-      );
+    for (let i = 0; i < 9; i++) {
+      const tickingAreaCommand = `tickingarea add ${Math.floor(x - 10 + (TOTAL_X / 8) * i)} ${y - 4} ${
+        z - 2
+      } ${Math.ceil(x - 10 + (TOTAL_X / 8) * (i + 1))} ${y + TOTAL_Y} ${z + TOTAL_Z + 2} bc${i} true`;
+
+      console.warn("Running: " + tickingAreaCommand);
+      try {
+        ow.runCommandAsync(tickingAreaCommand);
+      } catch (e) {
+        console.warn("Failed to run: " + tickingAreaCommand);
+      }
     }
 
     world.setDefaultSpawnLocation({
@@ -846,9 +973,9 @@ export default class Challenge {
 
           if (this.tickIndex % 1200 === 500 && this.#motdSubtitle && this.motdTitle) {
             player.onScreenDisplay.setTitle(this.motdTitle, {
-              fadeInDuration: 1,
-              fadeOutDuration: 1,
-              stayDuration: 6,
+              fadeInDuration: 1 * TicksPerSecond,
+              fadeOutDuration: 1 * TicksPerSecond,
+              stayDuration: 6 * TicksPerSecond,
               subtitle: this.#motdSubtitle,
             });
           }
@@ -896,9 +1023,9 @@ export default class Challenge {
                   }
 
                   player.onScreenDisplay.setTitle(" ", {
-                    fadeInDuration: 1,
-                    fadeOutDuration: 1,
-                    stayDuration: 3,
+                    fadeInDuration: 1 * TicksPerSecond,
+                    fadeOutDuration: 1 * TicksPerSecond,
+                    stayDuration: 3 * TicksPerSecond,
                     subtitle: "You cannot enter " + team.name + "'s area",
                   });
 
@@ -920,11 +1047,11 @@ export default class Challenge {
     let ow = world.getDimension("overworld");
 
     if (this.#motdTitle) {
-      world.sendMessage({ rawtext: [{ text: "§l' + this.#motdTitle + '" }] });
+      world.sendMessage({ rawtext: [{ text: "§l" + this.#motdTitle }] });
     }
 
     if (this.#motdSubtitle) {
-      world.sendMessage({ rawtext: [{ text: "' + this.#motdSubtitle + '" }] });
+      world.sendMessage({ rawtext: [{ text: this.#motdSubtitle }] });
     }
 
     ow.runCommand("gamerule sendcommandfeedback false");
@@ -952,15 +1079,17 @@ export default class Challenge {
     }
   }
 
+  applyFlavor() {}
+
   applyPhase() {
     let ow = world.getDimension("overworld");
 
     switch (this.phase) {
       case ChallengePhase.setup:
         this.sendToAllPlayers("Setup Phase", {
-          fadeInDuration: 1,
-          fadeOutDuration: 1,
-          stayDuration: 7,
+          fadeInDuration: 1 * TicksPerSecond,
+          fadeOutDuration: 1 * TicksPerSecond,
+          stayDuration: 7 * TicksPerSecond,
           subtitle: "OPs are getting the game ready, hold on",
         });
         ow.runCommand("gamemode c");
@@ -969,9 +1098,9 @@ export default class Challenge {
 
       case ChallengePhase.pre:
         this.sendToAllPlayers("Preliminary Phase", {
-          fadeInDuration: 1,
-          fadeOutDuration: 1,
-          stayDuration: 7,
+          fadeInDuration: 1 * TicksPerSecond,
+          fadeOutDuration: 1 * TicksPerSecond,
+          stayDuration: 7 * TicksPerSecond,
           subtitle: "Pull lever near a pad to join a team",
         });
         ow.runCommand("gamemode a");
@@ -980,9 +1109,9 @@ export default class Challenge {
 
       case ChallengePhase.build:
         this.sendToAllPlayers("Build Phase", {
-          fadeInDuration: 1,
-          fadeOutDuration: 1,
-          stayDuration: 7,
+          fadeInDuration: 1 * TicksPerSecond,
+          fadeOutDuration: 1 * TicksPerSecond,
+          stayDuration: 7 * TicksPerSecond,
           subtitle: "Build things on your team pad",
         });
         ow.runCommand("gamemode s");
@@ -990,21 +1119,30 @@ export default class Challenge {
         break;
 
       case ChallengePhase.vote:
-        this.sendToAllPlayers("Vote Phase", {
-          fadeInDuration: 1,
-          fadeOutDuration: 1,
-          stayDuration: 7,
-          subtitle: "Pull lever to vote for a team (2 votes)",
-        });
+        if (this.#flavor === ChallengeFlavor.goodVibes) {
+          this.sendToAllPlayers("Heart Phase", {
+            fadeInDuration: 1 * TicksPerSecond,
+            fadeOutDuration: 1 * TicksPerSecond,
+            stayDuration: 7 * TicksPerSecond,
+            subtitle: "Give your heart to\r\nyour favorite team builds",
+          });
+        } else {
+          this.sendToAllPlayers("Vote Phase", {
+            fadeInDuration: 1 * TicksPerSecond,
+            fadeOutDuration: 1 * TicksPerSecond,
+            stayDuration: 7 * TicksPerSecond,
+            subtitle: "Pull lever to vote for a team (2 votes)",
+          });
+        }
         ow.runCommand("gamemode a");
         this.applyRoleToAllPlayers();
         break;
 
       case ChallengePhase.post:
         this.sendToAllPlayers("Post Phase", {
-          fadeInDuration: 1,
-          fadeOutDuration: 1,
-          stayDuration: 7,
+          fadeInDuration: 1 * TicksPerSecond,
+          fadeOutDuration: 1 * TicksPerSecond,
+          stayDuration: 7 * TicksPerSecond,
           subtitle: "Congratulate the winners",
         });
         ow.runCommand("gamemode a");
@@ -1318,21 +1456,25 @@ export default class Challenge {
     }
   }
 
-  playerSpawnedFirstTime(event: PlayerSpawnAfterEvent) {
-    if (!event.player || !event.initialSpawn) {
+  playerSpawned(event: PlayerSpawnAfterEvent) {
+    if (!event.player) {
       return;
     }
 
+    this.ensurePlayerHasProperEquipment(event.player);
+
     this.ensurePlayer(event.player);
 
-    this.showMotd(event.player);
+    if (event.initialSpawn) {
+      this.showMotd(event.player);
+    }
 
     switch (this.phase) {
       case ChallengePhase.setup:
         event.player.onScreenDisplay.setTitle("Setup Phase", {
-          fadeInDuration: 1,
-          fadeOutDuration: 1,
-          stayDuration: 7,
+          fadeInDuration: 1 * TicksPerSecond,
+          fadeOutDuration: 1 * TicksPerSecond,
+          stayDuration: 7 * TicksPerSecond,
           subtitle: "OPs are getting the game ready, hold on",
         });
 
@@ -1340,38 +1482,57 @@ export default class Challenge {
 
       case ChallengePhase.pre:
         event.player.onScreenDisplay.setTitle("Preliminary Phase", {
-          fadeInDuration: 1,
-          fadeOutDuration: 1,
-          stayDuration: 7,
+          fadeInDuration: 1 * TicksPerSecond,
+          fadeOutDuration: 1 * TicksPerSecond,
+          stayDuration: 7 * TicksPerSecond,
           subtitle: "Pull lever near a pad to join a team",
         });
         break;
 
       case ChallengePhase.build:
         event.player.onScreenDisplay.setTitle("Build Phase", {
-          fadeInDuration: 1,
-          fadeOutDuration: 1,
-          stayDuration: 7,
+          fadeInDuration: 1 * TicksPerSecond,
+          fadeOutDuration: 1 * TicksPerSecond,
+          stayDuration: 7 * TicksPerSecond,
           subtitle: "Build things on your team pad",
         });
         break;
 
       case ChallengePhase.vote:
-        event.player.onScreenDisplay.setTitle("Vote Phase", {
-          fadeInDuration: 1,
-          fadeOutDuration: 1,
-          stayDuration: 7,
-          subtitle: "Pull lever to vote for a team (2 votes)",
-        });
+        if (this.#flavor === ChallengeFlavor.goodVibes) {
+          event.player.onScreenDisplay.setTitle("Heart Phase", {
+            fadeInDuration: 1 * TicksPerSecond,
+            fadeOutDuration: 1 * TicksPerSecond,
+            stayDuration: 7 * TicksPerSecond,
+            subtitle: "Give a heart to your two favorite builds (2 hearts)",
+          });
+        } else {
+          event.player.onScreenDisplay.setTitle("Vote Phase", {
+            fadeInDuration: 1 * TicksPerSecond,
+            fadeOutDuration: 1 * TicksPerSecond,
+            stayDuration: 7 * TicksPerSecond,
+            subtitle: "Pull lever to vote for a team (2 votes)",
+          });
+        }
         break;
 
       case ChallengePhase.post:
         event.player.onScreenDisplay.setTitle("Post Phase", {
-          fadeInDuration: 1,
-          fadeOutDuration: 1,
-          stayDuration: 7,
+          fadeInDuration: 1 * TicksPerSecond,
+          fadeOutDuration: 1 * TicksPerSecond,
+          stayDuration: 7 * TicksPerSecond,
           subtitle: "Congratulate the winners",
         });
+    }
+  }
+
+  itemUseOn(event: ItemUseOnAfterEvent) {
+    if (!event.source) {
+      return;
+    }
+
+    if (event.itemStack.typeId === "bc:heart" && this.#phase === ChallengePhase.vote) {
+      this.doAction(event.source, event.block);
     }
   }
 
@@ -1380,22 +1541,42 @@ export default class Challenge {
       return;
     }
 
-    let x = event.block.x;
-    let y = event.block.y;
-    let z = event.block.z;
+    this.doAction(event.player, event.block);
+  }
+
+  doAction(player: Player, block: Block) {
+    let x = block.x;
+    let y = block.y;
+    let z = block.z;
 
     for (let team of this.teams) {
       if (x === team.nwbX + JOIN_TEAM_X && y === team.nwbY + JOIN_TEAM_Y && z === team.nwbZ + JOIN_TEAM_Z) {
-        let challPlayer = this.ensurePlayer(event.player);
+        let challPlayer = this.ensurePlayer(player);
 
         if (challPlayer) {
           if (this.#phase === ChallengePhase.vote) {
             if (challPlayer.teamId === team.index) {
-              event.player.onScreenDisplay.setTitle(`Nope`, {
-                fadeInDuration: 1,
-                fadeOutDuration: 1,
-                stayDuration: 5,
-                subtitle: "You can't vote for your own team.",
+              if (this.#flavor === ChallengeFlavor.goodVibes) {
+                player.onScreenDisplay.setTitle(`Share the love`, {
+                  fadeInDuration: 1 * TicksPerSecond,
+                  fadeOutDuration: 1 * TicksPerSecond,
+                  stayDuration: 5 * TicksPerSecond,
+                  subtitle: "Give hearts to teams other than his own.",
+                });
+              } else {
+                player.onScreenDisplay.setTitle(`Nope`, {
+                  fadeInDuration: 1 * TicksPerSecond,
+                  fadeOutDuration: 1 * TicksPerSecond,
+                  stayDuration: 5 * TicksPerSecond,
+                  subtitle: "You can't vote for your own team.",
+                });
+              }
+            } else if (challPlayer.allowTeamChangeAlways) {
+              player.onScreenDisplay.setTitle(`Nope`, {
+                fadeInDuration: 1 * TicksPerSecond,
+                fadeOutDuration: 1 * TicksPerSecond,
+                stayDuration: 5 * TicksPerSecond,
+                subtitle: "A temporary account can't vote for teams.",
               });
             } else {
               if (challPlayer.voteA !== team.index && challPlayer.teamId !== team.index) {
@@ -1405,32 +1586,39 @@ export default class Challenge {
                 this.updateMetaBonuses();
               }
 
+              let noun = "vote";
+
+              if (this.#flavor === ChallengeFlavor.goodVibes) {
+                noun = "heart";
+              }
+
               if (challPlayer.voteB >= 0) {
-                event.player.onScreenDisplay.setTitle(`Your votes`, {
-                  fadeInDuration: 1,
-                  fadeOutDuration: 1,
-                  stayDuration: 5,
+                player.onScreenDisplay.setTitle(`Your ` + noun + `s:`, {
+                  fadeInDuration: 1 * TicksPerSecond,
+                  fadeOutDuration: 1 * TicksPerSecond,
+                  stayDuration: 5 * TicksPerSecond,
                   subtitle: this.teams[challPlayer.voteA].name + ", " + this.teams[challPlayer.voteB].name,
                 });
               } else {
-                event.player.onScreenDisplay.setTitle(`Your vote:`, {
-                  fadeInDuration: 1,
-                  fadeOutDuration: 1,
-                  stayDuration: 5,
+                player.onScreenDisplay.setTitle(`Your ` + noun + `:`, {
+                  fadeInDuration: 1 * TicksPerSecond,
+                  fadeOutDuration: 1 * TicksPerSecond,
+                  stayDuration: 5 * TicksPerSecond,
                   subtitle: this.teams[challPlayer.voteA].name,
                 });
               }
             }
           } else if (challPlayer.teamId === team.index) {
-            event.player.onScreenDisplay.setTitle(`Already joined ` + team.name);
-          } else if (team.players.length >= MAX_PLAYERS_TEAM) {
-            event.player.onScreenDisplay.setTitle(`Team ${team.name} is full at ${MAX_PLAYERS_TEAM}`);
+            player.onScreenDisplay.setTitle(`Already joined ` + team.name);
+          } else if (team.getEffectiveTeamPlayerCount() >= MAX_PLAYERS_TEAM) {
+            player.onScreenDisplay.setTitle(`Team ${team.name} is full at ${MAX_PLAYERS_TEAM}`);
           } else if (
             challPlayer.teamId >= 0 &&
             !challPlayer.isAdmin &&
+            !challPlayer.allowTeamChangeAlways &&
             this.tickIndex > challPlayer.lastTeamSwitchTick + MAX_TIME_TO_SWITCH_TEAMS_TICK
           ) {
-            event.player.onScreenDisplay.setTitle(`You can no longer switch teams.`);
+            player.onScreenDisplay.setTitle(`You can no longer switch teams.`);
           } else {
             if (challPlayer.teamId >= 0 && challPlayer.teamId < this.teams.length) {
               this.teams[challPlayer.teamId].removePlayer(challPlayer);
@@ -1441,10 +1629,10 @@ export default class Challenge {
 
             team.ensurePlayerIsOnTeam(challPlayer);
 
-            event.player.onScreenDisplay.setTitle(`Joined`, {
-              fadeInDuration: 1,
-              fadeOutDuration: 1,
-              stayDuration: 7,
+            player.onScreenDisplay.setTitle(`Joined`, {
+              fadeInDuration: 1 * TicksPerSecond,
+              fadeOutDuration: 1 * TicksPerSecond,
+              stayDuration: 7 * TicksPerSecond,
               subtitle: team.name,
             });
           }
@@ -1454,7 +1642,7 @@ export default class Challenge {
         y === team.nwbY + TEAM_OPTIONS_Y &&
         z === team.nwbZ + TEAM_OPTIONS_Z
       ) {
-        team.showOptions(event.player);
+        team.showOptions(player);
       }
     }
   }
@@ -1465,7 +1653,7 @@ export default class Challenge {
       return;
     }
 
-    let cp = this.challengePlayers[name];
+    let cp = this.challengePlayers[this.canonicalizePlayerName(name)];
 
     return cp;
   }
@@ -1476,7 +1664,7 @@ export default class Challenge {
       return;
     }
 
-    let cp = this.challengePlayers[name];
+    let cp = this.challengePlayers[this.canonicalizePlayerName(name)];
 
     if (!cp) {
       cp = new ChallengePlayer(this, name, undefined);
@@ -1487,10 +1675,40 @@ export default class Challenge {
         this.teams[cp.teamId].ensurePlayerIsOnTeam(cp);
       }
 
-      this.challengePlayers[name] = cp;
+      this.challengePlayers[this.canonicalizePlayerName(name)] = cp;
     }
 
     return cp;
+  }
+
+  public canonicalizePlayerName(name: string) {
+    return name.toLowerCase();
+  }
+
+  ensurePlayerHasProperEquipment(player: Player) {
+    if (this.#phase === ChallengePhase.vote && this.#flavor === ChallengeFlavor.goodVibes) {
+      this.ensurePlayerHas(player, "bc:heart");
+    }
+  }
+
+  ensurePlayerHas(player: Player, itemTypeId: string, amount?: number) {
+    const inventory = player.getComponent("inventory") as EntityInventoryComponent;
+
+    if (inventory) {
+      const cont = inventory.container;
+
+      if (cont) {
+        for (let i = 0; i < inventory.inventorySize; i++) {
+          let item = cont.getItem(i);
+
+          if (item && item.typeId === itemTypeId && (amount === undefined || item.amount >= amount)) {
+            return;
+          }
+        }
+
+        cont.addItem(new ItemStack(itemTypeId, amount));
+      }
+    }
   }
 
   ensurePlayer(player: Player) {
@@ -1511,7 +1729,7 @@ export default class Challenge {
         this.teams[cp.teamId].ensurePlayerIsOnTeam(cp);
       }
 
-      this.challengePlayers[name] = cp;
+      this.challengePlayers[this.canonicalizePlayerName(name)] = cp;
     } else {
       let wasPlayerDefined = true;
 
