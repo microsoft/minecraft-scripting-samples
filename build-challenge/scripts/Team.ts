@@ -191,7 +191,7 @@ export default class Team {
 
     teamName += "  ";
 
-    world.scoreboard.getObjective("main")?.addScore(teamName, this.effectiveScore);
+    world.scoreboard.getObjective("main")?.setScore(teamName, this.effectiveScore);
   }
 
   getEffectiveTeamPlayerCount() {
@@ -262,7 +262,7 @@ export default class Team {
 
   init() {
     // console.warn("Setting score for " + this.name + " to " + this.#score);
-    world.scoreboard.getObjective("main")?.addScore(this.name, this.#score);
+    world.scoreboard.getObjective("main")?.setScore(this.name, this.#score);
   }
 
   isValidName(newName: string) {

@@ -947,6 +947,14 @@ export default class Challenge {
     }
   }
 
+  ensureAllPlayersHaveEquipment() {
+    let players = world.getPlayers();
+
+    for (let player of players) {
+      this.ensurePlayerHasProperEquipment(player);
+    }
+  }
+
   updatePlayers() {
     let players = world.getPlayers();
 
@@ -1126,6 +1134,8 @@ export default class Challenge {
             stayDuration: 7 * TicksPerSecond,
             subtitle: "Give your heart to\r\nyour favorite team builds",
           });
+
+          this.ensureAllPlayersHaveEquipment();
         } else {
           this.sendToAllPlayers("Vote Phase", {
             fadeInDuration: 1 * TicksPerSecond,
@@ -1336,9 +1346,9 @@ export default class Challenge {
       let canaryBlock = ow.getBlock(canaryLoc);
 
       // if we don't find blackstone at our canary location, assume the chunk is loaded and bail on calculating score.
-      if (canaryBlock && canaryBlock.typeId !== "minecraft:blackstone") {
+      if (canaryBlock && canaryBlock.typeId !== "minecraft:sandstone") {
         Log.debug(
-          "Did not find blackstone at " +
+          "Did not find sandstone at " +
             team.padNwbX +
             " " +
             team.padNwbY +
@@ -1425,6 +1435,7 @@ export default class Challenge {
             }
           }
         }
+
         team.score = this.activeTeamScore;
 
         team.applyScore();
@@ -1504,7 +1515,7 @@ export default class Challenge {
             fadeInDuration: 1 * TicksPerSecond,
             fadeOutDuration: 1 * TicksPerSecond,
             stayDuration: 7 * TicksPerSecond,
-            subtitle: "Give a heart to your two favorite builds (2 hearts)",
+            subtitle: "Give a heart to your two favorite builds",
           });
         } else {
           event.player.onScreenDisplay.setTitle("Vote Phase", {
@@ -1561,7 +1572,7 @@ export default class Challenge {
                   fadeInDuration: 1 * TicksPerSecond,
                   fadeOutDuration: 1 * TicksPerSecond,
                   stayDuration: 5 * TicksPerSecond,
-                  subtitle: "Give hearts to teams other than his own.",
+                  subtitle: "Give hearts to teams other than your own.",
                 });
               } else {
                 player.onScreenDisplay.setTitle(`Nope`, {
