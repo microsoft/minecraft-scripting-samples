@@ -24,6 +24,7 @@ export default class ChallengePlayer {
   #challenge: Challenge;
   #voteA: number = -1;
   #voteB: number = -1;
+  #allowTeamChangeAlways: boolean = false;
   #role: ChallengePlayerRole = ChallengePlayerRole.unknown;
   lastTeamSwitchTick = 0;
 
@@ -59,6 +60,20 @@ export default class ChallengePlayer {
     this.#role = newRole;
 
     this.applyRole();
+
+    this.save();
+  }
+
+  get allowTeamChangeAlways() {
+    return this.#allowTeamChangeAlways;
+  }
+
+  set allowTeamChangeAlways(newTeamChange: boolean) {
+    if (this.#allowTeamChangeAlways === newTeamChange) {
+      return;
+    }
+
+    this.#allowTeamChangeAlways = this.#allowTeamChangeAlways;
 
     this.save();
   }
@@ -155,7 +170,11 @@ export default class ChallengePlayer {
       mode = "s";
     }
 
-    this.player.runCommand("gamemode " + mode + " @s");
+    try {
+      if (this.player.isValid()) {
+        this.player.runCommand("gamemode " + mode + " @s");
+      }
+    } catch (e) {}
   }
 
   save() {
@@ -167,6 +186,7 @@ export default class ChallengePlayer {
     this.#player.setDynamicProperty("challenge:voteA", this.#voteA);
     this.#player.setDynamicProperty("challenge:voteB", this.#voteB);
     this.#player.setDynamicProperty("challenge:role", this.#role);
+    this.#player.setDynamicProperty("challenge:allowTeamChangeAlways", this.#allowTeamChangeAlways);
   }
 
   load() {
@@ -199,6 +219,13 @@ export default class ChallengePlayer {
       this.#role = ChallengePlayerRole.unknown;
     } else {
       this.#role = val;
+    }
+
+    let bVal = this.#player.getDynamicProperty("challenge:allowTeamChangeAlways") as boolean;
+    if (bVal === true) {
+      this.#allowTeamChangeAlways = true;
+    } else {
+      this.#allowTeamChangeAlways = false;
     }
   }
 }

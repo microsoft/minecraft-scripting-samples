@@ -1,0 +1,18 @@
+{
+  "format_version": "1.20.30",
+  "minecraft:item": {
+    "description": {
+      "identifier": "bc:heart",
+      "category": "Items"
+    },
+    "components": {
+      "minecraft:max_stack_size": 16,
+      "minecraft:icon": {
+        "texture": "bc:heart"
+      },
+      "minecraft:display_name": {
+        "value": "Heart Vote"
+      }
+    }
+  }
+}

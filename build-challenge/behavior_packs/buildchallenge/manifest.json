@@ -4,7 +4,7 @@
     "name": "Build Challenge",
     "description": "Host a build challenge within a survival world",
     "uuid": "cfe3d87b-8792-47f6-b4e0-67b251065ca9",
-    "version": [0, 0, 1],
+    "version": [1, 0, 0],
     "min_engine_version": [1, 19, 40]
   },
   "modules": [
@@ -20,11 +20,15 @@
   "dependencies": [
     {
       "module_name": "@minecraft/server",
-      "version": "1.7.0-beta"
+      "version": "1.8.0-beta"
     },
     {
       "module_name": "@minecraft/server-ui",
       "version": "1.2.0-beta"
+    },
+    {
+      "uuid": "1103c416-7d50-4cf7-99c2-01decb358293",
+      "version": [1, 0, 0]
     }
   ]
 }
