@@ -220,12 +220,16 @@ export default class Team {
     this.players.push(challPlayer);
 
     if (challPlayer.player) {
-      challPlayer.player.setSpawnPoint({
-        x: this.nwbX + SPAWN_TEAM_X,
-        y: this.nwbY + SPAWN_TEAM_Y,
-        z: this.nwbZ + SPAWN_TEAM_Z,
-        dimension: world.getDimension("overworld"),
-      });
+      if (challPlayer.player.isValid()) {
+        try {
+          challPlayer.player.setSpawnPoint({
+            x: this.nwbX + SPAWN_TEAM_X,
+            y: this.nwbY + SPAWN_TEAM_Y,
+            z: this.nwbZ + SPAWN_TEAM_Z,
+            dimension: world.getDimension("overworld"),
+          });
+        } catch (e) {}
+      }
     }
   }
 

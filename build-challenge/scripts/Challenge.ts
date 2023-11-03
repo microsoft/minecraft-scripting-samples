@@ -733,7 +733,7 @@ export default class Challenge {
               case "player":
                 this.sendMessageToAdminsPlus("Setting player '" + name + "' to player.", player);
                 challPlayer.lastTeamSwitchTick = this.tickIndex;
-                challPlayer.role = ChallengePlayerRole.admin;
+                challPlayer.role = ChallengePlayerRole.player;
                 break;
             }
           }
@@ -762,11 +762,13 @@ export default class Challenge {
               case "true":
               case "t":
               case "1":
+                this.sendMessageToAdminsPlus("Changing " + name + " to always allow team change.", player);
                 challPlayer.allowTeamChangeAlways = true;
                 break;
               case "false":
               case "f":
               case "0":
+                this.sendMessageToAdminsPlus("Changing " + name + " to disallow team change.", player);
                 challPlayer.allowTeamChangeAlways = false;
                 break;
             }
@@ -1067,10 +1069,11 @@ export default class Challenge {
     ow.runCommand("gamerule commandblocksenabled false");
     ow.runCommand("gamerule commandblockoutput false");
     ow.runCommand("gamerule tntexplodes false");
+    ow.runCommand("gamerule doinsomnia false");
     ow.runCommand("gamerule pvp false");
 
-    system.run(this.updateMetaBonuses);
-    system.run(this.refreshTeamScores);
+    system.runTimeout(this.updateMetaBonuses, 3);
+    system.runTimeout(this.refreshTeamScores, 6);
   }
 
   addScores() {
@@ -1213,18 +1216,18 @@ export default class Challenge {
 
     this.updateCount(this.tickIndex);
 
-    if (this.tickIndex % 400 === 0) {
+    if (this.tickIndex % 200 === 0) {
       this.updateTocks();
     }
 
-    if (this.tickIndex % 800 === 0) {
+    if (this.tickIndex % 600 === 0) {
       this.updateMetaBonuses();
     }
     /*    } catch (e) {
       Log.debug("Challenge script error: " + e);
     }*/
 
-    system.run(this.tick);
+    system.runTimeout(this.tick, 2);
   }
 
   updateMetaBonuses() {
@@ -1430,9 +1433,11 @@ export default class Challenge {
       if (this.activeTeamScore !== team.score && this.activeTeamScore >= 0) {
         if (this.activeTeamScore > team.score && team.score > 0) {
           for (let challPlayer of team.players) {
-            if (challPlayer.player) {
-              challPlayer.player.playSound("random.orb");
-            }
+            try {
+              if (challPlayer.player && challPlayer.player.isValid()) {
+                challPlayer.player.playSound("random.orb");
+              }
+            } catch (e) {}
           }
         }
 

@@ -3,7 +3,7 @@ export const TEAM_INIT_TICK = 40;
 export const TEAM_SIZE_X = 6;
 export const TEAM_SIZE_Z = 6;
 export const PAD_SIZE_X = 32;
-export const PAD_SIZE_Y = 96;
+export const PAD_SIZE_Y = 48;
 export const PAD_SIZE_Z = 32;
 export const PAD_SURROUND_X = 32;
 export const PAD_SURROUND_Z = 32;
@@ -483,7 +483,7 @@ export const BLOCK_SCORESHEET: { [type: string]: number } = {
   powder_snow: 10,
   sculk_sensor: 10,
   pointed_dripstone: 10,
-  copper_ore: 10,
+  copper_ore: 3,
   lightning_rod: 10,
   dripstone_block: 10,
   dirt_with_roots: 10,
@@ -508,7 +508,7 @@ export const BLOCK_SCORESHEET: { [type: string]: number } = {
   azalea: 10,
   flowering_azalea: 10,
   glow_frame: 10,
-  copper_block: 10,
+  copper_block: 1,
   exposed_copper: 10,
   weathered_copper: 10,
   oxidized_copper: 10,
