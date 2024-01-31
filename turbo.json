@@ -1,0 +1,61 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "pipeline": {
+        "scripting-build-tasks#build": {
+            "outputs": [
+                "lib/**",
+                "dist/**"
+            ],
+            "outputMode": "errors-only"
+        },
+        "build": {
+            "dependsOn": [
+                "scripting-build-tasks#build",
+                "^build"
+            ],
+            "outputs": [
+                "lib/**",
+                "dist/**"
+            ],
+            "inputs": [
+                "src/**/*.ts",
+                "*.json",
+                "*.js"
+            ]
+        },
+        "lint": {
+            "dependsOn": [
+                "scripting-build-tasks#build",
+                "build"
+            ],
+            "outputs": [],
+            "inputs": [
+                "src/**/*.ts"
+            ]
+        },
+        "test": {
+            "dependsOn": [
+                "scripting-build-tasks#build",
+                "build",
+                "lint"
+            ],
+            "outputs": [],
+            "inputs": [
+                "src/**/*.ts"
+            ]
+        },
+        "clean": {
+            "dependsOn": [
+                "scripting-build-tasks#build"
+            ],
+            "outputs": [],
+            "cache": false,
+            "outputMode": "errors-only"
+        },
+        "clean-tools": {
+            "dependsOn": [],
+            "outputs": [],
+            "cache": false
+        }
+    }
+}

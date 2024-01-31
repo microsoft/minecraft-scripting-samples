@@ -1,0 +1,29 @@
+{
+    "format_version": 2,
+    "header": {
+        "description": "My script resource pack",
+        "name": "My script resource pack",
+        "min_engine_version": [
+            1,
+            18,
+            0
+        ],
+        "uuid": "5612746c-a037-4f05-8ceb-b2af1cab1b24",
+        "version": [
+            1,
+            0,
+            0
+        ]
+    },
+    "modules": [
+        {
+            "type": "resources",
+            "uuid": "fbbb2276-b94b-4b8e-aaec-cf8d6df5a0b5",
+            "version": [
+                1,
+                0,
+                0
+            ]
+        }
+    ]
+}

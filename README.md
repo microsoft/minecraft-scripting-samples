@@ -4,14 +4,34 @@ This project contains samples of [@minecraft/server](https://learn.microsoft.com
 
 ## Current Samples
 
- * [ts-starter](ts-starter/README.md) - A starter project that lets you use TypeScript, alongside a tutorial on how to use more `@minecraft/server` APIs.
- * [ts-starter-complete-cotta](ts-starter-complete-cotta/README.md) - A completed version of the `ts-starter` tutorial, featuring the Break the Cotta simple arena game.
- * [howto-gallery](howto-gallery/README.md) - A set of small code snippets that can be played back within the game.
- * [build-challenge](build-challenge/README.md) - A more complex starter script map with the ability to form teams that build structures, that can then be voted on.
- 
+- [ts-starter](ts-starter/README.md) - A starter project that lets you use TypeScript, alongside a tutorial on how to use more `@minecraft/server` APIs.
+- [ts-starter-complete-cotta](ts-starter-complete-cotta/README.md) - A completed version of the `ts-starter` tutorial, featuring the Break the Cotta simple arena game.
+- [howto-gallery](howto-gallery/README.md) - A set of small code snippets that can be played back within the game.
+- [build-challenge](build-challenge/README.md) - A more complex starter script map with the ability to form teams that build structures, that can then be voted on.
+
+## Getting Started
+
+1. Use NPM to install our tools:
+
+   ```powershell
+   npm i
+   ```
+
+1. When that's done, it is required to initialize common build tasks, enter:
+
+   ```powershell
+   npm run build
+   ```
+
+1. Use this shortcut command to open the project in Visual Studio Code:
+
+   ```powershell
+   code .
+   ```
+
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+This project welcomes contributions and suggestions. Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
 the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
 
@@ -25,8 +45,8 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## Trademarks
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
+This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft
+trademarks or logos is subject to and must follow
 [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.

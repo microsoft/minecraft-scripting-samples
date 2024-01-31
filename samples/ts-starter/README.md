@@ -32,7 +32,7 @@ Visit the [Visual Studio Code website](https://code.visualstudio.com) and instal
 
 1. Using a copy of this starter project from GitHub - you can get a copy of this project by visiting [https://github.com/microsoft/minecraft-scripting-samples/](https://github.com/microsoft/minecraft-scripting-samples/) and, under the Code button, selecting `Download ZIP`.
 
-1. The `ts-starter` folder (this folder) contains a starter TypeScript project for Minecraft.  Note that there is a `ts-starter-complete-cotta` folder that will show you the finished product and code.
+1. The `ts-starter` folder (this folder) contains a starter TypeScript project for Minecraft. Note that there is a `ts-starter-complete-cotta` folder that will show you the finished product and code.
 
 1. To make your own environment look like the example, create a folder on your `C:\` drive and call it **projects**. Create a subfolder called **cotta**.
 
@@ -40,41 +40,41 @@ Visit the [Visual Studio Code website](https://code.visualstudio.com) and instal
 
 1. Open a Windows Terminal or PowerShell window and change the working directory to your **cotta** folder:
 
-    ```powershell
-    cd c:\projects\cotta\
-    ```
+   ```powershell
+   cd c:\projects\cotta\
+   ```
 
 1. Use NPM to install our tools:
 
-    ```powershell
-    npm i
-    ```
-
-1. When that's done, enter:
-
-    ```powershell
-    npm i gulp-cli --global
-    ```
+   ```powershell
+   npm i
+   ```
 
 1. Use this shortcut command to open the project in Visual Studio Code:
 
-    ```powershell
-    code .
-    ```
+   ```powershell
+   code .
+   ```
 
 It might also ask you to install the Minecraft Debugger and Blockception's Visual Studio Code plugin, which are plugins to Visual Studio Code that can help with Minecraft development. Go ahead and do that, if you haven't already.
 
 ### Chapter 1. Customize the behavior pack
 
-In Visual Studio Code, expand the `behavior_packs` node in the treeview to the left, and rename the **starterbp** folder to "cotta".
+In Visual Studio Code, open the file `.env`. This contains the environment variables to use to configure project:
 
-Use the Find/Replace command (Ctrl-Shift-F) to search for "starterbp" and replace the instance in **gulpfile.js** and the instance in **launch.json** with "cotta."
+```
+PROJECT_NAME="starter"
+MINECRAFT_PRODUCT="BedrockUWP"
+CUSTOM_DEPLOYMENT_PATH=""
+```
 
-> [!IMPORTANT]
-> You may choose to use either Minecraft or Minecraft Preview to debug and work
-> with your scripts. If you do use Minecraft Preview,
-> open up **gulpfile.js** and, at the top of the file, set
-> `useMinecraftPreview = true;`
+- **PROJECT_NAME** is used as the folder name under all the assets are going to be deployed inside the game directories (e.g., development_behavior_packs\\**PROJECT_NAME**, development_resource_packs\\**PROJECT_NAME**).
+  Use the Find/Replace command (Ctrl-Shift-F) to search for "starterbp" and replace the instance in **gulpfile.js** and the instance in **launch.json** with "cotta."
+
+- **MINECRAFT_PRODUCT**. You can choose to use either Minecraft or Minecraft Preview to debug and work with your scripts. These are the possible values: **BedrockUWP, PreviewUWP, Custom**.
+  Use **Custom** in case of deploy on any other path.
+
+- **CUSTOM_DEPLOYMENT_PATH**. In case of using **Custom** for **MINECRAFT_PRODUCT**, this is the path used to generate the assets.
 
 Go back the Files tree view and open `behavior_packs\cotta\manifest.json`
 
@@ -94,10 +94,10 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 Run this one, too.
 
 ```powershell
-gulp
+npm run local-deploy
 ```
 
-This uses a build tool called GulpJS and automatically compiles your TypeScript project and pushes it over into Minecraft.
+This uses a build tool called just-scripts and automatically compiles your TypeScript project and pushes it over into Minecraft.
 
 Launch Minecraft and create a new world:
 
@@ -111,7 +111,7 @@ Now you're in. Great!
 
 By default, this starter pack comes with a simple script that will display a message every five seconds:
 
-`[Script Engine] Hello starter! Tick: <number>`
+`[Script Engine] Localized "Hello" from the scripting tick!`
 
 This means your behavior pack is working and your tools for compiling and pushing TypeScript are just fine. Awesome!
 
@@ -211,17 +211,17 @@ Note that we wait until `START_TICK` (100 ticks in) before the world is actually
 
 Within the initialize function, we run commands that:
 
-* Clear out any existing mobs near the player in the world.
-* Set up a scoreboard objective for overall Level of the player, meaning the number of terracotta breaks they have
-* Give the current player a diamond sword and some dirty dirt
-* Use chat to give the player an instructional message
+- Clear out any existing mobs near the player in the world.
+- Set up a scoreboard objective for overall Level of the player, meaning the number of terracotta breaks they have
+- Give the current player a diamond sword and some dirty dirt
+- Use chat to give the player an instructional message
 
 Now, let's run the code. This time, we're going to run gulp in "watch mode" - meaning it will just sit in the background and watch for changes, and if they happen, they will automatically compile and deploy to the Minecraft folder. This way, we won't have to worry about separately compiling every time we make a change to code.
 
 Go back to your PowerShell window, and enter:
 
 ```powershell
-gulp watch
+npm run watch
 ```
 
 You should see gulp compile and deploy to the Minecraft folder, and make a noise when it does that. From here, we don't need to tend to PowerShell except to see if there are any compilation errors down the road.
@@ -311,31 +311,31 @@ import Utilities from "./Utilities.js";
 Then, within `initializeBreakTheTerracotta`, let's add our arena initialization beneath the `world.sendMessage("BREAK THE TERRACOTTA!");` line of code:
 
 ```typescript
- let airBlockPerm = BlockPermutation.resolve("minecraft:air");
- let cobblestoneBlockPerm = BlockPermutation.resolve("minecraft:cobblestone");
+let airBlockPerm = BlockPermutation.resolve("minecraft:air");
+let cobblestoneBlockPerm = BlockPermutation.resolve("minecraft:cobblestone");
 
- if (airBlockPerm) {
-   Utilities.fillBlock(
-     airBlockPerm,
-     ARENA_X_OFFSET - ARENA_X_SIZE / 2 + 1,
-     ARENA_Y_OFFSET,
-     ARENA_Z_OFFSET - ARENA_Z_SIZE / 2 + 1,
-     ARENA_X_OFFSET + ARENA_X_SIZE / 2 - 1,
-     ARENA_Y_OFFSET + 10,
-     ARENA_Z_OFFSET + ARENA_Z_SIZE / 2 - 1
-   );
- }
+if (airBlockPerm) {
+  Utilities.fillBlock(
+    airBlockPerm,
+    ARENA_X_OFFSET - ARENA_X_SIZE / 2 + 1,
+    ARENA_Y_OFFSET,
+    ARENA_Z_OFFSET - ARENA_Z_SIZE / 2 + 1,
+    ARENA_X_OFFSET + ARENA_X_SIZE / 2 - 1,
+    ARENA_Y_OFFSET + 10,
+    ARENA_Z_OFFSET + ARENA_Z_SIZE / 2 - 1
+  );
+}
 
- if (cobblestoneBlockPerm) {
-   Utilities.fourWalls(
-     cobblestoneBlockPerm,
-     ARENA_X_OFFSET - ARENA_X_SIZE / 2,
-     ARENA_Y_OFFSET,
-     ARENA_Z_OFFSET - ARENA_Z_SIZE / 2,
-     ARENA_X_OFFSET + ARENA_X_SIZE / 2,
-     ARENA_Y_OFFSET + 10,
-     ARENA_Z_OFFSET + ARENA_Z_SIZE / 2
-   );
+if (cobblestoneBlockPerm) {
+  Utilities.fourWalls(
+    cobblestoneBlockPerm,
+    ARENA_X_OFFSET - ARENA_X_SIZE / 2,
+    ARENA_Y_OFFSET,
+    ARENA_Z_OFFSET - ARENA_Z_SIZE / 2,
+    ARENA_X_OFFSET + ARENA_X_SIZE / 2,
+    ARENA_Y_OFFSET + 10,
+    ARENA_Z_OFFSET + ARENA_Z_SIZE / 2
+  );
 }
 ```
 
@@ -359,18 +359,18 @@ let spawnCountdown = 1;
 Add the following to the `gameTick` function, beneath the `curTick++` line of code:
 
 ```typescript
-    if (curTick > START_TICK && curTick % 20 === 0) {
-      // no terracotta exists, and we're waiting to spawn a new one.
-      if (spawnCountdown > 0) {
-        spawnCountdown--;
+if (curTick > START_TICK && curTick % 20 === 0) {
+  // no terracotta exists, and we're waiting to spawn a new one.
+  if (spawnCountdown > 0) {
+    spawnCountdown--;
 
-        if (spawnCountdown <= 0) {
-          spawnNewTerracotta();
-        }
-      } else {
-        checkForTerracotta();
-      }
+    if (spawnCountdown <= 0) {
+      spawnNewTerracotta();
     }
+  } else {
+    checkForTerracotta();
+  }
+}
 ```
 
 Now add the `spawnNewTerracotta()` and `checkForTerracotta()` functions after the last function and before the last `system.run(gameTick);` line of code:
@@ -449,10 +449,10 @@ This function will spawn 1-2 zombies within the arena, at a random location. You
 Let's call that function within our `gameTick` method:
 
 ```typescript
-  const spawnInterval = Math.ceil(200 / ((score + 1) / 3));
-  if (curTick > START_TICK && curTick % spawnInterval === 0) {
-    spawnMobs();
-  }
+const spawnInterval = Math.ceil(200 / ((score + 1) / 3));
+if (curTick > START_TICK && curTick % spawnInterval === 0) {
+  spawnMobs();
+}
 ```
 
 For gameplay, we want mobs to spawn more frequently as your score goes up. To do this, the frequency at which `spawnMobs` is called depends on the `spawnInterval` variable. `spawnInterval` is the span of time between spawning new mobs. Because we divide this interval by our current score, this means that as our score goes up, the interval of time between spawning mobs gets shorter. This makes the challenge harder over time.
@@ -484,9 +484,9 @@ function addFuzzyLeaves() {
 And call that function in your gameTick() function:
 
 ```typescript
-  if (curTick > START_TICK && curTick % 29 === 0) {
-    addFuzzyLeaves();
-  }
+if (curTick > START_TICK && curTick % 29 === 0) {
+  addFuzzyLeaves();
+}
 ```
 
 You may wonder why the interval here is 29. The main idea was to select a number to avoid the chance that on a particular tick we do everything at once (create new leaves, spawn mobs AND check terracotta state), so we try to have offset schedules for all of these different game activities.
@@ -501,6 +501,6 @@ Like the randomly spawning leaves, you can see how you can add different gamepla
 
 ## Manifest
 
--[gulpfile.js](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/gulpfile.js): This file contains build instructions for Gulp, for building out TypeScript code.
--[scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/scripts): This contains all of your TypeScript files, that will be compiled and built into your projects.
--[behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/behavior_packs): This contains resources and JSON files that define your behavior pack.
+- [just.config.ts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/samples/ts-starter/just.config.ts): This file contains build instructions for just-scripts, for building out TypeScript code. -[scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/samples/ts-starter/scripts): This contains all of your TypeScript files, that will be compiled and built into your projects.
+- [assets/behavior_pack](https://github.com/microsoft/minecraft-scripting-samples/blob/main/samples/ts-starter/behavior_packs): This contains resources and JSON files that define your behavior pack.
+- [assets/resource_pack](https://github.com/microsoft/minecraft-scripting-samples/blob/main/samples/ts-starter/resource_packs): This contains resources and JSON files to use with the behavior pack. Hera are the localized strings under texts directory.

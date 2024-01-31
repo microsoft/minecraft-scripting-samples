@@ -1,0 +1,27 @@
+{ 
+    "compilerOptions":{ 
+        "composite": false,
+        "declaration": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "inlineSources": false,
+        "isolatedModules": true,
+        "moduleResolution": "NodeNext",
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "preserveWatchOutput": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "sourceMap": true,
+        "lib": ["ES2020"],
+        "module": "NodeNext",
+        "target": "ES2020",
+       "outDir":"lib"
+    },
+    "include":[ 
+       "src/**/*"
+    ],
+    "exclude": ["lib", "build", "node_modules"],
+    "compileOnSave":false
+ }
+

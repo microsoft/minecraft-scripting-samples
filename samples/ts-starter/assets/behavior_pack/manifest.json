@@ -4,8 +4,16 @@
     "name": "My script behavior pack",
     "description": "My behavior pack description",
     "uuid": "14e467b4-e3aa-49d3-8352-f8439fd7b2ee",
-    "version": [0, 0, 1],
-    "min_engine_version": [1, 20, 30]
+    "version": [
+      0,
+      0,
+      1
+    ],
+    "min_engine_version": [
+      1,
+      20,
+      30
+    ]
   },
   "modules": [
     {
@@ -13,7 +21,11 @@
       "language": "javascript",
       "type": "script",
       "uuid": "7c7e693f-99f4-41a9-95e0-1f57b37e1e12",
-      "version": [0, 0, 1],
+      "version": [
+        0,
+        0,
+        1
+      ],
       "entry": "scripts/main.js"
     }
   ],

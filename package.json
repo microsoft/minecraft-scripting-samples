@@ -1,0 +1,28 @@
+{
+    "name": "minecraft-scripting-samples",
+    "version": "1.0.0",
+    "description": "The root package.json for the minecraft-scripting-samples.",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/microsoft/minecraft-scripting-samples.git"
+    },
+    "engines": {
+        "node": ">=20.0.0",
+        "npm": ">=10.0.0"
+    },
+    "workspaces": [
+        "tools/*",
+        "samples/*",
+        "projects/*"
+    ],
+    "scripts": {
+        "build": "turbo run build",
+        "test": "turbo run test",
+        "lint": "turbo run lint",
+        "clean": "turbo run clean"
+    },
+    "devDependencies": {
+        "@types/node": "^16.0.0 || ^18.0.0 || ^20.0.0",
+        "turbo": "^1.11.3"
+    }
+}
