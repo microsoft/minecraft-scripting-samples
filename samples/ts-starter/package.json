@@ -5,7 +5,7 @@
   "description": "Minecraft TypeScript Starter Project",
   "private": true,
   "devDependencies": {
-    "@minecraft/core-build-tasks": "../../resources/minecraft-core-build-tasks-1.0.1-patch-05.tgz",
+    "@minecraft/core-build-tasks": "../../resources/minecraft-core-build-tasks-1.0.1-patch-06.tgz",
     "del": "^6.0.0",
     "eslint-plugin-minecraft-linting": "^1.0.1",
     "just-scripts": "^2.1.3",

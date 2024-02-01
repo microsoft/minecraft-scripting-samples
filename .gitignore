@@ -7,7 +7,6 @@
 **/dist/**
 **/lib/**
 *.tgz
-!resources/*.tgz
 
 # User-specific files
 *.rsuser
