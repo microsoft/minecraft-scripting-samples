@@ -1,4 +1,4 @@
-import { argv, parallel, series, task, tscTask, watch } from "just-scripts";
+import { argv, parallel, series, task, tscTask } from "just-scripts";
 import {
   BundleTaskParams,
   bundleTask,
@@ -72,5 +72,3 @@ task(
 
 // Local Deploy used for deploying local changes directly to output via the bundler. It does a full build and package first just in case.
 task("local-deploy", series("build", "package"));
-
-task("watch", series("local-deploy"));
