@@ -4,10 +4,10 @@ import {
   bundleTask,
   cleanCollateralTask,
   copyTask,
+  coreLint,
   generateContentsJsonTask,
   setupEnvironment,
-} from "scripting-build-tasks";
-import { coreLint } from "@minecraft/core-build-tasks";
+} from "@minecraft/core-build-tasks";
 import rimraf from "rimraf";
 import path from "path";
 
