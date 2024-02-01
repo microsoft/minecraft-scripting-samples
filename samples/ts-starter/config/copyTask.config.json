@@ -15,17 +15,5 @@
                 "./dist/scripts"
             ]
         }
-    ],
-    "development_resource_packs/PROJECT_NAME": [
-        {
-            "folders": [
-                "./assets/resource_pack"
-            ]
-        },
-        {
-            "files": [
-                "./dist/resource_pack/contents.json"
-            ]
-        }
     ]
 }

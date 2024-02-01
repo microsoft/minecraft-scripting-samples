@@ -9,26 +9,6 @@ This project contains samples of [@minecraft/server](https://learn.microsoft.com
 - [howto-gallery](howto-gallery/README.md) - A set of small code snippets that can be played back within the game.
 - [build-challenge](build-challenge/README.md) - A more complex starter script map with the ability to form teams that build structures, that can then be voted on.
 
-## Getting Started
-
-1. Use NPM to install our tools:
-
-   ```powershell
-   npm i
-   ```
-
-1. When that's done, it is required to initialize common build tasks, enter:
-
-   ```powershell
-   npm run build
-   ```
-
-1. Use this shortcut command to open the project in Visual Studio Code:
-
-   ```powershell
-   code .
-   ```
-
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a

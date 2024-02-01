@@ -111,7 +111,7 @@ Now you're in. Great!
 
 By default, this starter pack comes with a simple script that will display a message every five seconds:
 
-`[Script Engine] Localized "Hello" from the scripting tick!`
+`[Script Engine] Hello starter! Tick: <number>`
 
 This means your behavior pack is working and your tools for compiling and pushing TypeScript are just fine. Awesome!
 
@@ -501,6 +501,7 @@ Like the randomly spawning leaves, you can see how you can add different gamepla
 
 ## Manifest
 
-- [just.config.ts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/samples/ts-starter/just.config.ts): This file contains build instructions for just-scripts, for building out TypeScript code. -[scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/samples/ts-starter/scripts): This contains all of your TypeScript files, that will be compiled and built into your projects.
+- [just.config.ts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/samples/ts-starter/just.config.ts): This file contains build instructions for just-scripts, for building out TypeScript code.
+- [scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/samples/ts-starter/scripts): This contains all of your TypeScript files, that will be compiled and built into your projects.
 - [assets/behavior_pack](https://github.com/microsoft/minecraft-scripting-samples/blob/main/samples/ts-starter/behavior_packs): This contains resources and JSON files that define your behavior pack.
 - [assets/resource_pack](https://github.com/microsoft/minecraft-scripting-samples/blob/main/samples/ts-starter/resource_packs): This contains resources and JSON files to use with the behavior pack. Hera are the localized strings under texts directory.

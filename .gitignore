@@ -3,15 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-# Local projects
-projects/
-
 # build output
 **/dist/**
 **/lib/**
 *.tgz
 !resources/*.tgz
-.turbo
 
 # User-specific files
 *.rsuser
