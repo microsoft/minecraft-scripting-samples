@@ -1,6 +1,8 @@
 import { argv, parallel, series, task, tscTask } from "just-scripts";
 import {
   BundleTaskParams,
+  CleanCollateralTaskParams,
+  CopyTaskParameters,
   bundleTask,
   cleanCollateralTask,
   copyTask,
@@ -17,6 +19,21 @@ const buildTaskOptions: BundleTaskParams = {
   outfile: path.resolve(__dirname, "./dist/scripts/main.js"),
   minifyWhitespace: false,
   sourcemap: true,
+};
+
+const cleanTaskOptions: CleanCollateralTaskParams = {
+  pathsToClean: [
+    "LOCALAPPDATA/Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/LocalState/games/com.mojang/development_behavior_packs/PROJECT_NAME",
+    "LOCALAPPDATA/Packages/Microsoft.MinecraftUWP_8wekyb3d8bbwe/LocalState/games/com.mojang/development_resource_packs/PROJECT_NAME",
+    "LOCALAPPDATA/Packages/Microsoft.MinecraftWindowsBeta_8wekyb3d8bbwe/LocalState/games/com.mojang/development_behavior_packs/PROJECT_NAME",
+    "LOCALAPPDATA/Packages/Microsoft.MinecraftWindowsBeta_8wekyb3d8bbwe/LocalState/games/com.mojang/development_resource_packs/PROJECT_NAME",
+  ],
+};
+
+const copyTaskOptions: CopyTaskParameters = {
+  copyToBehaviorPacks: ["./assets/behavior_pack", "./dist/behavior_pack/contents.json"],
+  copyToScripts: ["./dist/scripts"],
+  copyToResourcePacks: [],
 };
 
 // Setup env variables
@@ -39,10 +56,7 @@ task("clean-local", () => {
     // Silent failure on failing to clean
   });
 });
-task(
-  "clean-collateral",
-  cleanCollateralTask({ cleanCollateralTaskConfigPath: "./config/cleanCollateralTask.config.json" })
-);
+task("clean-collateral", cleanCollateralTask(cleanTaskOptions));
 task("clean", parallel("clean-local", "clean-collateral"));
 
 // Package
@@ -58,13 +72,7 @@ task(
     ignoreTargetFolderExists: true,
   })
 );
-task(
-  "copyArtifacts",
-  copyTask({
-    packageRoot: __dirname,
-    copyTaskConfigPath: path.resolve(__dirname, "./config/copyTask.config.json"),
-  })
-);
+task("copyArtifacts", copyTask(copyTaskOptions));
 task(
   "package",
   series("generateContentsJsonBehaviorPack", "generateContentsJsonResourcePack", "clean-collateral", "copyArtifacts")
