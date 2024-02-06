@@ -33,7 +33,6 @@ const cleanTaskOptions: CleanCollateralTaskParams = {
 const copyTaskOptions: CopyTaskParameters = {
   copyToBehaviorPacks: ["./assets/behavior_pack", "./dist/behavior_pack/contents.json"],
   copyToScripts: ["./dist/scripts"],
-  copyToResourcePacks: [],
 };
 
 // Setup env variables
