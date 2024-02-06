@@ -5,10 +5,11 @@
   "description": "Minecraft TypeScript Starter Project",
   "private": true,
   "devDependencies": {
-    "@minecraft/core-build-tasks": "../../resources/minecraft-core-build-tasks-1.0.1-patch-10.tgz",
+    "@minecraft/core-build-tasks": "../resources/minecraft-core-build-tasks-1.0.1-patch-11.tgz",
     "del": "^6.0.0",
     "eslint-plugin-minecraft-linting": "^1.0.1",
     "just-scripts": "^2.1.3",
+    "npm-watch": "^0.11.0",
     "prettier": "^2.8.2",
     "rimraf": "^3.0.2",
     "source-map": "^0.7.4",
@@ -30,8 +31,8 @@
     "local-deploy": {
       "patterns": [
         "scripts",
-        "assets/behavior_pack",
-        "assets/resource_pack"
+        "behavior_packs",
+        "resource_packs"
       ],
       "quiet": false,
       "extensions": "ts,json,lang,png"

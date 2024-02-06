@@ -12,6 +12,7 @@ import {
 } from "@minecraft/core-build-tasks";
 import rimraf from "rimraf";
 import path from "path";
+import { GenerateContentsJsonParameters } from "@minecraft/core-build-tasks/lib/tasks/generateContentsJson";
 
 const buildTaskOptions: BundleTaskParams = {
   entryPoint: path.join(__dirname, "./scripts/main.ts"),
@@ -30,8 +31,19 @@ const cleanTaskOptions: CleanCollateralTaskParams = {
   ],
 };
 
+const generateBehaviorPackContentsJsonOptions: GenerateContentsJsonParameters = {
+  targetPath: "./behavior_packs/starterbp",
+  outputFile: "./dist/behavior_pack/contents.json",
+};
+
+const generateResourcePackContentsJsonOptions: GenerateContentsJsonParameters = {
+  targetPath: "./resource_packs/starterbp",
+  outputFile: "./dist/resource_packs/contents.json",
+  ignoreTargetFolderExists: true,
+};
+
 const copyTaskOptions: CopyTaskParameters = {
-  copyToBehaviorPacks: ["./assets/behavior_pack", "./dist/behavior_pack/contents.json"],
+  copyToBehaviorPacks: ["./behavior_packs/starterbp", "./dist/behavior_pack/contents.json"],
   copyToScripts: ["./dist/scripts"],
 };
 
@@ -59,18 +71,8 @@ task("clean-collateral", cleanCollateralTask(cleanTaskOptions));
 task("clean", parallel("clean-local", "clean-collateral"));
 
 // Package
-task(
-  "generateContentsJsonBehaviorPack",
-  generateContentsJsonTask({ targetPath: "./assets/behavior_pack", outputFile: "./dist/behavior_pack/contents.json" })
-);
-task(
-  "generateContentsJsonResourcePack",
-  generateContentsJsonTask({
-    targetPath: "./assets/resource_pack",
-    outputFile: "./dist/resource_pack/contents.json",
-    ignoreTargetFolderExists: true,
-  })
-);
+task("generateContentsJsonBehaviorPack", generateContentsJsonTask(generateBehaviorPackContentsJsonOptions));
+task("generateContentsJsonResourcePack", generateContentsJsonTask(generateResourcePackContentsJsonOptions));
 task("copyArtifacts", copyTask(copyTaskOptions));
 task(
   "package",

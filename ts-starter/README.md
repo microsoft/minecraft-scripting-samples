@@ -501,7 +501,6 @@ Like the randomly spawning leaves, you can see how you can add different gamepla
 
 ## Manifest
 
-- [just.config.ts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/samples/ts-starter/just.config.ts): This file contains build instructions for just-scripts, for building out TypeScript code.
-- [scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/samples/ts-starter/scripts): This contains all of your TypeScript files, that will be compiled and built into your projects.
-- [assets/behavior_pack](https://github.com/microsoft/minecraft-scripting-samples/blob/main/samples/ts-starter/behavior_packs): This contains resources and JSON files that define your behavior pack.
-- [assets/resource_pack](https://github.com/microsoft/minecraft-scripting-samples/blob/main/samples/ts-starter/resource_packs): This contains resources and JSON files to use with the behavior pack. Hera are the localized strings under texts directory.
+- [just.config.ts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/just.config.ts): This file contains build instructions for just-scripts, for building out TypeScript code.
+- [scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/scripts): This contains all of your TypeScript files, that will be compiled and built into your projects.
+- [behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/behavior_packs): This contains resources and JSON files that define your behavior pack.
