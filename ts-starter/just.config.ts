@@ -4,13 +4,13 @@ import {
   CleanCollateralTaskParams,
   CopyTaskParameters,
   bundleTask,
+  cleanTask,
   cleanCollateralTask,
   copyTask,
   coreLint,
   generateContentsJsonTask,
   setupEnvironment,
 } from "@minecraft/core-build-tasks";
-import rimraf from "rimraf";
 import path from "path";
 import { GenerateContentsJsonParameters } from "@minecraft/core-build-tasks/lib/tasks/generateContentsJson";
 
@@ -59,14 +59,7 @@ task("bundle", bundleTask(buildTaskOptions));
 task("build", series("typescript", "bundle"));
 
 // Clean
-task("clean-local", () => {
-  rimraf("lib", {}, () => {
-    // Silent failure on failing to clean
-  });
-  rimraf("dist", {}, () => {
-    // Silent failure on failing to clean
-  });
-});
+task("clean-local", cleanTask(["lib", "dist"]));
 task("clean-collateral", cleanCollateralTask(cleanTaskOptions));
 task("clean", parallel("clean-local", "clean-collateral"));
 
