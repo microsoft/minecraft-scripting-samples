@@ -49,7 +49,8 @@ export default class SampleManager {
       }
 
       if (message.startsWith("help")) {
-        let availableFuncStr = "You can run a sample by typing `run <sample name>` in chat. Here is a list of available samples:";
+        let availableFuncStr =
+          "You can run a sample by typing `run <sample name>` in chat. Here is a list of available samples:";
 
         for (const sampleFuncKey in this._availableFuncs) {
           availableFuncStr += " " + sampleFuncKey;
@@ -108,7 +109,7 @@ export default class SampleManager {
     mc.world.afterEvents.chatSend.subscribe(this.newChatMessage.bind(this));
 
     mc.system.run(this.worldTick);
-    
+
     mc.world.sendMessage("Type 'run <sample name>' in chat to run a sample, and type 'help' to see a list of samples.");
   }
 

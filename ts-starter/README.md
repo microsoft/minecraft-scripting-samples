@@ -493,6 +493,20 @@ You may wonder why the interval here is 29. The main idea was to select a number
 
 Now exit out and reload your game. As you run around, you should see new leaves get spawned. This should add a little bit more challenge to your gameplay!
 
+### Linting
+
+To run lint use this shortcut command:
+
+```powershell
+   npm run lint
+```
+
+To auto fix issues use this:
+
+```powershell
+   npm run lint -- --fix
+```
+
 ### Summary
 
 With this starter, you've seen how to build a nice little arena game.
