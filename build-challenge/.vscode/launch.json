@@ -8,8 +8,8 @@
         "mode": "listen",
         "preLaunchTask": "build",
         "localRoot": "${workspaceFolder}/scripts/",
-        "sourceMapRoot": "${workspaceFolder}/build/behavior_packs/_buildchallengeDebug/",
-        "generatedSourceRoot": "${workspaceFolder}/build/behavior_packs/buildchallenge/scripts/",        
+        "sourceMapRoot": "${workspaceFolder}/dist/scripts/",
+        "generatedSourceRoot": "${workspaceFolder}/dist/scripts/",
         "port": 19144
       }
     ]
