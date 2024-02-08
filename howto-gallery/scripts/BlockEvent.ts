@@ -56,10 +56,7 @@ export function leverActionEvent(log: (message: string, status?: number) => void
 
     if (eventLoc.x === targetLocation.x && eventLoc.y === targetLocation.y + 1 && eventLoc.z === targetLocation.z) {
       log(
-        "Lever activate event at tick " +
-          mc.system.currentTick +
-          " Power:" +
-          leverActionEvent.block.getRedstonePower()
+        "Lever activate event at tick " + mc.system.currentTick + " Power:" + leverActionEvent.block.getRedstonePower()
       );
     }
   });

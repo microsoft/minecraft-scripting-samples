@@ -38,9 +38,7 @@ export function givePlayerEquipment(log: (message: string, status?: number) => v
   equipmentCompPlayer.setEquipment(mc.EquipmentSlot.Mainhand, new mc.ItemStack("minecraft:wooden_sword"));
   equipmentCompPlayer.setEquipment(mc.EquipmentSlot.Offhand, new mc.ItemStack("minecraft:shield"));
 
-  const equipmentCompArmorStand = armorStand.getComponent(
-    "equippable"
-  ) as mc.EntityEquippableComponent;
+  const equipmentCompArmorStand = armorStand.getComponent("equippable") as mc.EntityEquippableComponent;
   equipmentCompArmorStand.setEquipment(mc.EquipmentSlot.Head, new mc.ItemStack("minecraft:golden_helmet"));
   equipmentCompArmorStand.setEquipment(mc.EquipmentSlot.Chest, new mc.ItemStack("minecraft:iron_chestplate"));
   equipmentCompArmorStand.setEquipment(mc.EquipmentSlot.Legs, new mc.ItemStack("minecraft:diamond_leggings"));

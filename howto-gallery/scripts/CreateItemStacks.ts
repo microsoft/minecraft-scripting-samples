@@ -43,7 +43,7 @@ export function diamondAwesomeSword(log: (message: string, status?: number) => v
 
   // hover over/select the item in your inventory to see the lore.
   diamondAwesomeSword.setLore(["§c§lDiamond Sword of Awesome§r", "+10 coolness", "§p+4 shiny§r"]);
-  
+
   const enchants = diamondAwesomeSword.getComponent("minecraft:enchantments") as mc.ItemEnchantsComponent;
   const enchantments = enchants.enchantments;
 

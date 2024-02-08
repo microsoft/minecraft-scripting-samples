@@ -42,9 +42,7 @@ export function pistonBeforeEvent(log: (message: string, status?: number) => voi
   }
 
   uncanceledPiston.setPermutation(mc.BlockPermutation.resolve("piston").withState("facing_direction", 3));
-  uncanceledButton.setPermutation(
-    mc.BlockPermutation.resolve("acacia_button").withState("facing_direction", 1)
-  );
+  uncanceledButton.setPermutation(mc.BlockPermutation.resolve("acacia_button").withState("facing_direction", 1));
 
   mc.world.beforeEvents.pistonActivate.subscribe((pistonEvent: mc.PistonActivateBeforeEvent) => {
     let eventLoc = pistonEvent.piston.block.location;

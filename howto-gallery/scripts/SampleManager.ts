@@ -45,7 +45,8 @@ export default class SampleManager {
       }
 
       if (!sampleId || sampleId.length < 2) {
-        let availableFuncStr = "You can run a sample by typing `run <sample name>` in chat. Here is a list of available samples:";
+        let availableFuncStr =
+          "You can run a sample by typing `run <sample name>` in chat. Here is a list of available samples:";
 
         for (const sampleFuncKey in this._availableFuncs) {
           availableFuncStr += " " + sampleFuncKey;
