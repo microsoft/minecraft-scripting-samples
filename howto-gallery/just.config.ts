@@ -9,18 +9,16 @@ import {
   copyTask,
   coreLint,
   generateContentsJsonTask,
+  mcaddonTask,
   setupEnvironment,
+  ZipTaskParameters,
 } from "@minecraft/core-build-tasks";
 import path from "path";
 import { GenerateContentsJsonParameters } from "@minecraft/core-build-tasks/lib/tasks/generateContentsJson";
 
 const buildTaskOptions: BundleTaskParams = {
   entryPoint: path.join(__dirname, "./scripts/main.ts"),
-  external: [
-    "@minecraft/server",
-    "@minecraft/server-gametest",
-    "@minecraft/server-ui",
-  ],
+  external: ["@minecraft/server", "@minecraft/server-gametest", "@minecraft/server-ui"],
   outfile: path.resolve(__dirname, "./dist/scripts/main.js"),
   minifyWhitespace: false,
   sourcemap: true,
@@ -35,25 +33,25 @@ const cleanTaskOptions: CleanCollateralTaskParams = {
   ],
 };
 
-const generateBehaviorPackContentsJsonOptions: GenerateContentsJsonParameters =
-  {
-    targetPath: "./behavior_packs/howto-gallery",
-    outputFile: "./dist/behavior_pack/contents.json",
-  };
+const generateBehaviorPackContentsJsonOptions: GenerateContentsJsonParameters = {
+  targetPath: "./behavior_packs/howto-gallery",
+  outputFile: "./dist/behavior_pack/contents.json",
+};
 
-const generateResourcePackContentsJsonOptions: GenerateContentsJsonParameters =
-  {
-    targetPath: "./resource_packs/howto-gallery",
-    outputFile: "./dist/resource_packs/contents.json",
-    ignoreTargetFolderExists: true,
-  };
+const generateResourcePackContentsJsonOptions: GenerateContentsJsonParameters = {
+  targetPath: "./resource_packs/howto-gallery",
+  outputFile: "./dist/resource_packs/contents.json",
+  ignoreTargetFolderExists: true,
+};
 
 const copyTaskOptions: CopyTaskParameters = {
-  copyToBehaviorPacks: [
-    "./behavior_packs/howto-gallery",
-    "./dist/behavior_pack/contents.json",
-  ],
+  copyToBehaviorPacks: ["./behavior_packs/howto-gallery", "./dist/behavior_pack/contents.json"],
   copyToScripts: ["./dist/scripts"],
+};
+
+const mcaddonTaskOptions: ZipTaskParameters = {
+  ...copyTaskOptions,
+  outputFile: "./dist/packages/buildchallenge.mcaddon",
 };
 
 // Setup env variables
@@ -73,24 +71,15 @@ task("clean-collateral", cleanCollateralTask(cleanTaskOptions));
 task("clean", parallel("clean-local", "clean-collateral"));
 
 // Package
-task(
-  "generateContentsJsonBehaviorPack",
-  generateContentsJsonTask(generateBehaviorPackContentsJsonOptions)
-);
-task(
-  "generateContentsJsonResourcePack",
-  generateContentsJsonTask(generateResourcePackContentsJsonOptions)
-);
+task("generateContentsJsonBehaviorPack", generateContentsJsonTask(generateBehaviorPackContentsJsonOptions));
+task("generateContentsJsonResourcePack", generateContentsJsonTask(generateResourcePackContentsJsonOptions));
+task("generateJsonContentsFiles", parallel("generateContentsJsonBehaviorPack", "generateContentsJsonResourcePack"));
 task("copyArtifacts", copyTask(copyTaskOptions));
-task(
-  "package",
-  series(
-    "generateContentsJsonBehaviorPack",
-    "generateContentsJsonResourcePack",
-    "clean-collateral",
-    "copyArtifacts"
-  )
-);
+task("package", series("generateJsonContentsFiles", "clean-collateral", "copyArtifacts"));
 
 // Local Deploy used for deploying local changes directly to output via the bundler. It does a full build and package first just in case.
 task("local-deploy", series("build", "package"));
+
+// Mcaddon
+task("createMcaddonFile", series("generateJsonContentsFiles", mcaddonTask(mcaddonTaskOptions)));
+task("mcaddon", series("clean-local", "build", "createMcaddonFile"));

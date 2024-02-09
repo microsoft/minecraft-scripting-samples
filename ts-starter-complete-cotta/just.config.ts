@@ -9,7 +9,9 @@ import {
   copyTask,
   coreLint,
   generateContentsJsonTask,
+  mcaddonTask,
   setupEnvironment,
+  ZipTaskParameters,
 } from "@minecraft/core-build-tasks";
 import path from "path";
 import { GenerateContentsJsonParameters } from "@minecraft/core-build-tasks/lib/tasks/generateContentsJson";
@@ -47,6 +49,11 @@ const copyTaskOptions: CopyTaskParameters = {
   copyToScripts: ["./dist/scripts"],
 };
 
+const mcaddonTaskOptions: ZipTaskParameters = {
+  ...copyTaskOptions,
+  outputFile: "./dist/packages/buildchallenge.mcaddon",
+};
+
 // Setup env variables
 setupEnvironment(path.resolve(__dirname, ".env"));
 
@@ -66,11 +73,13 @@ task("clean", parallel("clean-local", "clean-collateral"));
 // Package
 task("generateContentsJsonBehaviorPack", generateContentsJsonTask(generateBehaviorPackContentsJsonOptions));
 task("generateContentsJsonResourcePack", generateContentsJsonTask(generateResourcePackContentsJsonOptions));
+task("generateJsonContentsFiles", parallel("generateContentsJsonBehaviorPack", "generateContentsJsonResourcePack"));
 task("copyArtifacts", copyTask(copyTaskOptions));
-task(
-  "package",
-  series("generateContentsJsonBehaviorPack", "generateContentsJsonResourcePack", "clean-collateral", "copyArtifacts")
-);
+task("package", series("generateJsonContentsFiles", "clean-collateral", "copyArtifacts"));
 
 // Local Deploy used for deploying local changes directly to output via the bundler. It does a full build and package first just in case.
 task("local-deploy", series("build", "package"));
+
+// Mcaddon
+task("createMcaddonFile", series("generateJsonContentsFiles", mcaddonTask(mcaddonTaskOptions)));
+task("mcaddon", series("clean-local", "build", "createMcaddonFile"));
