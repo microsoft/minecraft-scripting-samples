@@ -44,8 +44,8 @@ function initializeBreakTheTerracotta() {
     player.runCommand("scoreboard players set @s score 0");
 
     let inv = player.getComponent("inventory") as EntityInventoryComponent;
-    inv.container.addItem(new ItemStack("diamond_sword"));
-    inv.container.addItem(new ItemStack("dirt", 64));
+    inv.container?.addItem(new ItemStack("diamond_sword"));
+    inv.container?.addItem(new ItemStack("dirt", 64));
 
     player.teleport(
       {

@@ -35,7 +35,7 @@
     }
   },
   "dependencies": {
-    "@minecraft/server": "^1.5.0",
+    "@minecraft/server": "^1.8.0",
     "@minecraft/server-ui": "^1.1.0",
     "decode-uri-component": "^0.2.2"
   }
