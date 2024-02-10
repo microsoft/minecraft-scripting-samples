@@ -12,9 +12,10 @@ import {
   mcaddonTask,
   setupEnvironment,
   ZipTaskParameters,
+  GenerateContentsJsonParameters,
+  updateWorldTask,
 } from "@minecraft/core-build-tasks";
 import path from "path";
-import { GenerateContentsJsonParameters } from "@minecraft/core-build-tasks/lib/tasks/generateContentsJson";
 
 const buildTaskOptions: BundleTaskParams = {
   entryPoint: path.join(__dirname, "./scripts/main.ts"),
@@ -83,3 +84,6 @@ task("local-deploy", series("build", "package"));
 // Mcaddon
 task("createMcaddonFile", series("generateJsonContentsFiles", mcaddonTask(mcaddonTaskOptions)));
 task("mcaddon", series("clean-local", "build", "createMcaddonFile"));
+
+// Update world
+task("updateworld", updateWorldTask({ backupPath: "backups/worlds/", devWorldPath: "worlds/default" }));

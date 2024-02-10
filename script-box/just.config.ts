@@ -12,9 +12,9 @@ import {
   mcaddonTask,
   setupEnvironment,
   ZipTaskParameters,
+  GenerateContentsJsonParameters,
 } from "@minecraft/core-build-tasks";
 import path from "path";
-import { GenerateContentsJsonParameters } from "@minecraft/core-build-tasks/lib/tasks/generateContentsJson";
 
 const buildTaskOptions: BundleTaskParams = {
   entryPoint: path.join(__dirname, "./scripts/main.ts"),
