@@ -5,7 +5,7 @@
   "description": "Minecraft TypeScript How-to Gallery",
   "private": true,
   "devDependencies": {
-    "@minecraft/core-build-tasks": "../resources/minecraft-core-build-tasks-1.0.1-patch-29.tgz",
+    "@minecraft/core-build-tasks": "../resources/minecraft-core-build-tasks-1.0.1-patch-30.tgz",
     "eslint-plugin-minecraft-linting": "^1.0.1",
     "npm-watch": "^0.11.0",
     "source-map": "^0.7.4",
