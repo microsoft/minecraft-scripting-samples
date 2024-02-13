@@ -7,6 +7,8 @@
 **/dist/**
 **/lib/**
 *.tgz
+!ts-starter/resources/*.tgz
+!ts-starter-complete-cotta/resources/*.tgz
 
 # User-specific files
 *.rsuser
