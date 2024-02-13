@@ -40,7 +40,7 @@ const generateBehaviorPackContentsJsonOptions: GenerateContentsJsonParameters = 
 
 const generateResourcePackContentsJsonOptions: GenerateContentsJsonParameters = {
   targetPath: "./resource_packs/script-box",
-  outputFile: "./dist/resource_packs/contents.json",
+  outputFile: "./dist/resource_pack/contents.json",
   ignoreTargetFolderExists: true,
 };
 
