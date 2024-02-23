@@ -1708,7 +1708,7 @@ export default class Challenge {
   }
 
   ensurePlayerHas(player: Player, itemTypeId: string, amount?: number) {
-    const inventory = player.getComponent("inventory") as EntityInventoryComponent;
+    const inventory = player.getComponent("inventory");
 
     if (inventory) {
       const cont = inventory.container;
