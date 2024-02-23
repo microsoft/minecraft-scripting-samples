@@ -1,3 +1,4 @@
+import { Vector3Utils } from "@minecraft/math";
 import * as mc from "@minecraft/server";
 
 /**
@@ -32,9 +33,8 @@ export function createOldHorse(log: (message: string, status?: number) => void, 
   const overworld = mc.world.getDimension("overworld");
 
   log("Create a horse and triggering the 'ageable_grow_up' event, ensuring the horse is created as an adult");
-  overworld.spawnEntity("minecraft:horse<minecraft:ageable_grow_up>", {
-    x: targetLocation.x,
-    y: targetLocation.y + 1,
-    z: targetLocation.z,
-  });
+  overworld.spawnEntity(
+    "minecraft:horse<minecraft:ageable_grow_up>",
+    Vector3Utils.add(targetLocation, { x: 0, y: 1, z: 0 })
+  );
 }
