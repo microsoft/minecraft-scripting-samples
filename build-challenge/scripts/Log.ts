@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 import { world, system } from "@minecraft/server";
 
 export default class Log {

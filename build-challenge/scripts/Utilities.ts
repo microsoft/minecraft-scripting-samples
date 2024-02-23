@@ -1,4 +1,7 @@
-import { world, BlockType, BlockPermutation } from "@minecraft/server";
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+import { world, BlockPermutation } from "@minecraft/server";
 
 export const CHARFONT: { [index: string]: string[][] } = {
   a: [

@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 import * as mc from "@minecraft/server";
 import { MinecraftEnchantmentTypes } from "@minecraft/vanilla-data";
 

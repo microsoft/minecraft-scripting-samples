@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 import { argv, parallel, series, task, tscTask } from "just-scripts";
 import {
   CopyTaskParameters,

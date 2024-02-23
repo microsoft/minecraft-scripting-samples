@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 import { Player } from "@minecraft/server";
 import Challenge, { ChallengePhase } from "./Challenge.js";
 

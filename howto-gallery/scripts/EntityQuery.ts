@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 import * as mc from "@minecraft/server";
 
 const overworld = mc.world.getDimension("overworld");
