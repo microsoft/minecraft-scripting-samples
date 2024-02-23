@@ -1395,7 +1395,7 @@ export default class Challenge {
                     northBlock &&
                     northBlock.typeId.indexOf("chest") < 0
                   ) {
-                    let invComp = block.getComponent("inventory") as BlockInventoryComponent;
+                    let invComp = block.getComponent("inventory");
 
                     if (invComp) {
                       let cont = invComp.container;

@@ -70,9 +70,9 @@ function minibiomes(test: gt.Test) {
 
   test.setBlockType("minecraft:cobblestone", { x: 10, y: 7, z: 7 });
 
-  const minecartRideableComp = minecart.getComponent("minecraft:rideable") as mc.EntityRideableComponent;
+  const minecartRideableComp = minecart.getComponent("minecraft:rideable");
 
-  minecartRideableComp.addRider(pig);
+  minecartRideableComp?.addRider(pig);
 
   test.succeedWhenEntityPresent(pigEntityType, { x: 8, y: 3, z: 1 }, true);
 }

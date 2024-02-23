@@ -50,16 +50,16 @@ Within the root folder (howto-gallery) of this sample, run this command:
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
-Run this one, too.
+Run this one to deploy in the game.
 
 ```powershell
 npm run local-deploy
 ```
 
-Deploy a test world to your Minecraft instance.
+Create an addon file to share.
 
 ```powershell
-gulp updateworld
+npm run mcaddon
 ```
 
 ## Manifest

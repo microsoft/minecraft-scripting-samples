@@ -56,10 +56,10 @@ Run this one, too.
 npm run local-deploy
 ```
 
-Deploy a test world to your Minecraft instance.
+Create an addon file to share.
 
 ```powershell
-gulp updateworld
+npm run mcaddon
 ```
 
 ## Manifest

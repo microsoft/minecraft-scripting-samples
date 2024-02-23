@@ -1,6 +1,6 @@
 import * as mc from "@minecraft/server";
+import { MinecraftEnchantmentTypes } from "@minecraft/vanilla-data";
 
-const overworld = mc.world.getDimension("overworld");
 /**
  * Creates free-floating item stacks in the world.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
@@ -44,16 +44,11 @@ export function diamondAwesomeSword(log: (message: string, status?: number) => v
   // hover over/select the item in your inventory to see the lore.
   diamondAwesomeSword.setLore(["§c§lDiamond Sword of Awesome§r", "+10 coolness", "§p+4 shiny§r"]);
 
-  const enchants = diamondAwesomeSword.getComponent("minecraft:enchantments") as mc.ItemEnchantsComponent;
-  const enchantments = enchants.enchantments;
+  const enchants = diamondAwesomeSword.getComponent("minecraft:enchantable");
+  enchants?.addEnchantment({ type: MinecraftEnchantmentTypes.Knockback, level: 3 });
 
-  const knockbackEnchant = new mc.Enchantment("knockback", 3);
-  enchantments.addEnchantment(knockbackEnchant);
-
-  enchants.enchantments = enchantments;
-
-  const inventory = players[0].getComponent("inventory") as mc.EntityInventoryComponent;
-  inventory.container.setItem(0, diamondAwesomeSword);
+  const inventory = players[0].getComponent("inventory");
+  inventory?.container?.setItem(0, diamondAwesomeSword);
 }
 
 /**
@@ -68,19 +63,14 @@ export function ironFireSword(log: (message: string, status?: number) => void, t
   const ironFireSword = new mc.ItemStack("minecraft:iron_sword", 1);
   const players = mc.world.getAllPlayers();
 
-  const fireAspectEnchant = new mc.Enchantment("fire_aspect", 3);
-  const enchants = ironFireSword.getComponent("minecraft:enchantments") as mc.ItemEnchantsComponent;
-  const enchantments = enchants.enchantments;
+  const enchants = ironFireSword.getComponent("minecraft:enchantable");
+  enchants?.addEnchantment({ type: MinecraftEnchantmentTypes.FireAspect, level: 3 });
 
-  const addedFire = enchantments.addEnchantment(fireAspectEnchant);
-
-  enchants.enchantments = enchantments;
-
-  if (!addedFire) {
+  if (!enchants?.hasEnchantment(MinecraftEnchantmentTypes.FireAspect)) {
     log("Could not add fire aspect.");
     return -1;
   }
 
-  const inventory = players[0].getComponent("inventory") as mc.EntityInventoryComponent;
-  inventory.container.setItem(0, ironFireSword);
+  const inventory = players[0].getComponent("inventory");
+  inventory?.container?.setItem(0, ironFireSword);
 }

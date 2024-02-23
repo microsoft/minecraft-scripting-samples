@@ -492,7 +492,7 @@ You may wonder why the interval here is 29. The main idea was to select a number
 
 Now exit out and reload your game. As you run around, you should see new leaves get spawned. This should add a little bit more challenge to your gameplay!
 
-### Linting
+### Other Commands
 
 To run lint use this shortcut command:
 
@@ -504,6 +504,12 @@ To auto fix issues use this:
 
 ```powershell
    npm run lint -- --fix
+```
+
+Create an addon file to share.
+
+```powershell
+   npm run mcaddon
 ```
 
 ### Summary

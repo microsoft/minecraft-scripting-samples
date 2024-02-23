@@ -1,3 +1,4 @@
+import { Vector3Utils } from "@minecraft/math";
 import * as mc from "@minecraft/server";
 
 const overworld = mc.world.getDimension("overworld");
@@ -37,13 +38,11 @@ export function addBlockColorCube(log: (message: string, status?: number) => voi
     for (let y = 0; y <= cubeDim; y++) {
       for (let z = 0; z <= cubeDim; z++) {
         colorIndex++;
-        overworld
-          .getBlock({ x: targetLocation.x + x, y: targetLocation.y + y, z: targetLocation.z + z })
-          ?.setPermutation(
-            mc.BlockPermutation.resolve("minecraft:wool", {
-              color: allColorNames[colorIndex % allColorNames.length],
-            })
-          );
+        overworld.getBlock(Vector3Utils.add(targetLocation, { x, y, z }))?.setPermutation(
+          mc.BlockPermutation.resolve("minecraft:wool", {
+            color: allColorNames[colorIndex % allColorNames.length],
+          })
+        );
       }
     }
   }

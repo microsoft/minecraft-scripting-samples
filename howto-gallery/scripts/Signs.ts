@@ -21,9 +21,9 @@ export function addSign(log: (message: string, status?: number) => void, targetL
 
   signBlock.setPermutation(signPerm);
 
-  const signComponent = signBlock.getComponent("minecraft:sign") as mc.BlockSignComponent;
+  const signComponent = signBlock.getComponent("minecraft:sign");
 
-  signComponent.setText(`Basic sign!\nThis is green on the front.`);
+  signComponent?.setText(`Basic sign!\nThis is green on the front.`);
 }
 
 /**
@@ -49,9 +49,9 @@ export function addTranslatedSign(log: (message: string, status?: number) => voi
 
   signBlock.setPermutation(signPerm);
 
-  const signComponent = signBlock.getComponent("minecraft:sign") as mc.BlockSignComponent;
+  const signComponent = signBlock.getComponent("minecraft:sign");
 
-  signComponent.setText({ translate: "item.skull.player.name", with: [players[0].name] });
+  signComponent?.setText({ translate: "item.skull.player.name", with: [players[0].name] });
 }
 
 /**
@@ -75,13 +75,17 @@ export function addTwoSidedSign(log: (message: string, status?: number) => void,
 
   signBlock.setPermutation(signPerm);
 
-  const signComponent = signBlock.getComponent("minecraft:sign") as mc.BlockSignComponent;
+  const signComponent = signBlock.getComponent("minecraft:sign");
 
-  signComponent.setText(`Party Sign!\nThis is green on the front.`);
-  signComponent.setText(`Party Sign!\nThis is red on the back.`, mc.SignSide.Back);
-  signComponent.setTextDyeColor(mc.DyeColor.Green);
-  signComponent.setTextDyeColor(mc.DyeColor.Red, mc.SignSide.Back);
+  if (signComponent) {
+    signComponent.setText(`Party Sign!\nThis is green on the front.`);
+    signComponent.setText(`Party Sign!\nThis is red on the back.`, mc.SignSide.Back);
+    signComponent.setTextDyeColor(mc.DyeColor.Green);
+    signComponent.setTextDyeColor(mc.DyeColor.Red, mc.SignSide.Back);
 
-  // players cannot edit sign!
-  signComponent.setWaxed();
+    // players cannot edit sign!
+    signComponent.setWaxed(true);
+  } else {
+    log("Could not find sign component.");
+  }
 }

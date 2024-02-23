@@ -1,3 +1,4 @@
+import { Vector3Utils } from "@minecraft/math";
 import * as mc from "@minecraft/server";
 
 export default class SampleManager {
@@ -35,7 +36,7 @@ export default class SampleManager {
       }
 
       const nearbyBlockLoc = nearbyBlock.block.location;
-      const nearbyLoc = { x: nearbyBlockLoc.x, y: nearbyBlockLoc.y + 1, z: nearbyBlockLoc.z };
+      const nearbyLoc = Vector3Utils.add(nearbyBlockLoc, { x: 0, y: 1, z: 0 });
       let sampleId: string | undefined = undefined;
 
       let firstSpace = message.indexOf(" ");

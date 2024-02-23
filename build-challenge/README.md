@@ -29,6 +29,50 @@ There are also other phases:
 1. Pre phase. Players can gather and hang out before the Build phase begins.
 1. Post phase. Voting is over, and the world is in adventure mode.
 
+## Development Commands
+
+- Use NPM to install our tools:
+
+```powershell
+   npm i
+```
+
+- Run this one to deploy in the game.
+
+```powershell
+   npm run local-deploy
+```
+
+- To run lint use this shortcut command:
+
+```powershell
+   npm run lint
+```
+
+- To auto fix issues use this:
+
+```powershell
+   npm run lint -- --fix
+```
+
+- Create an addon file to share.
+
+```powershell
+   npm run mcaddon
+```
+
+- Deploy a test world to your Minecraft instance.
+
+```powershell
+   npm run update-world
+```
+
+- To create a world file to share run this.
+
+```powershell
+   npm run pack-world
+```
+
 ## How to play this content
 
 You'll likely want to host this on a shared dedicated server that is up for hours or days at a time.

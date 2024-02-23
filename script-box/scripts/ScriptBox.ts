@@ -1,5 +1,4 @@
 import * as mc from "@minecraft/server";
-import * as mcui from "@minecraft/server-ui";
 
 // When running a world with this behavior pack, type 'run' in chat to trigger this code.
 

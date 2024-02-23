@@ -60,10 +60,10 @@ export function applyDamageThenHeal(log: (message: string, status?: number) => v
   skelly.applyDamage(19); // skeletons have max damage of 20 so this is a near-death skeleton
 
   mc.system.runTimeout(() => {
-    let health = skelly.getComponent("health") as mc.EntityHealthComponent;
-    log("Skeleton health before heal: " + health.currentValue);
-    health.resetToMaxValue();
-    log("Skeleton health after heal: " + health.currentValue);
+    let health = skelly.getComponent("health");
+    log("Skeleton health before heal: " + health?.currentValue);
+    health?.resetToMaxValue();
+    log("Skeleton health after heal: " + health?.currentValue);
   }, 20);
 }
 
@@ -81,8 +81,8 @@ export function setOnFire(log: (message: string, status?: number) => void, targe
   skelly.setOnFire(20, true);
 
   mc.system.runTimeout(() => {
-    let onfire = skelly.getComponent("onfire") as mc.EntityOnFireComponent;
-    log(onfire.onFireTicksRemaining + " fire ticks remaining.");
+    let onfire = skelly.getComponent("onfire");
+    log(onfire?.onFireTicksRemaining + " fire ticks remaining.");
 
     skelly.extinguishFire(true);
     log("Never mind. Fire extinguished.");

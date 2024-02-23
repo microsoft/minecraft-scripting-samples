@@ -1,8 +1,8 @@
 { 
     "compilerOptions":{ 
        "target":"es6",
-       "moduleResolution":"NodeNext",
-       "module": "NodeNext",
+       "moduleResolution":"Node",
+       "module": "ES2020",
        "declaration":false,
        "noLib":false,
        "emitDecoratorMetadata":true,

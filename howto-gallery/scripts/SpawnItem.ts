@@ -36,7 +36,7 @@ export function testThatEntityIsFeatherItem(
   });
 
   for (const item of items) {
-    const itemComp = item.getComponent("item") as mc.EntityItemComponent;
+    const itemComp = item.getComponent("item");
 
     if (itemComp) {
       if (itemComp.itemStack.typeId.endsWith("feather")) {
