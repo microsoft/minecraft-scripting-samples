@@ -5,9 +5,8 @@
   "description": "Host a build challenge within a survival world",
   "private": true,
   "devDependencies": {
-    "@minecraft/core-build-tasks": "../resources/minecraft-core-build-tasks-1.0.2-patch-34.tgz",
+    "@minecraft/core-build-tasks": "../resources/minecraft-core-build-tasks-1.0.2-patch-35.tgz",
     "eslint-plugin-minecraft-linting": "^1.0.1",
-    "npm-watch": "^0.11.0",
     "source-map": "^0.7.4",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.2"
@@ -21,20 +20,8 @@
     "mcaddon": "just-scripts mcaddon",
     "update-world": "just-scripts update-world",
     "pack-world": "just-scripts pack-world",
-    "watch": "npm-watch",
     "enablemcloopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-1958404141-86561845-1752920682-3514627264-368642714-62675701-733520436",
     "enablemcpreviewloopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-424268864-5579737-879501358-346833251-474568803-887069379-4040235476"
-  },
-  "watch": {
-    "local-deploy": {
-      "patterns": [
-        "scripts",
-        "behavior_packs",
-        "resource_packs"
-      ],
-      "quiet": false,
-      "extensions": "ts,json,lang,png"
-    }
   },
   "dependencies": {
     "@minecraft/server": "1.10.0-beta.1.20.70-preview.24",

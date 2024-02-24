@@ -5,9 +5,9 @@
     "description": "My behavior pack description",
     "uuid": "14e467b4-e3aa-49d3-8352-f8439fd7b2ee",
     "version": [
+      1,
       0,
-      0,
-      1
+      0
     ],
     "min_engine_version": [
       1,
@@ -22,9 +22,9 @@
       "type": "script",
       "uuid": "7c7e693f-99f4-41a9-95e0-1f57b37e1e12",
       "version": [
+        1,
         0,
-        0,
-        1
+        0
       ],
       "entry": "scripts/main.js"
     }

@@ -215,15 +215,15 @@ Within the initialize function, we run commands that:
 - Give the current player a diamond sword and some dirty dirt
 - Use chat to give the player an instructional message
 
-Now, let's run the code. This time, we're going to run gulp in "watch mode" - meaning it will just sit in the background and watch for changes, and if they happen, they will automatically compile and deploy to the Minecraft folder. This way, we won't have to worry about separately compiling every time we make a change to code.
+Now, let's run the code. This time, we're going to run local-deploy task in "watch mode" - meaning it will just sit in the background and watch for changes, and if they happen, they will automatically compile and deploy to the Minecraft folder. This way, we won't have to worry about separately compiling every time we make a change to code.
 
 Go back to your PowerShell window, and enter:
 
 ```powershell
-npm run watch
+npm run local-deploy -- --watch
 ```
 
-You should see gulp compile and deploy to the Minecraft folder, and make a noise when it does that. From here, we don't need to tend to PowerShell except to see if there are any compilation errors down the road.
+You should see local-deploy task compiles and deploys to the Minecraft folder. From here, we don't need to tend to PowerShell except to see if there are any compilation errors down the road.
 
 When you are done coding for the day, either hit **ctrl-c** in the PowerShell Window to stop the watch mode or close the window.
 

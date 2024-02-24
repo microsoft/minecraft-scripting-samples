@@ -16,6 +16,7 @@ import {
   STANDARD_CLEAN_PATHS,
   DEFAULT_CLEAN_DIRECTORIES,
   getOrThrowFromProcess,
+  watchTask,
 } from "@minecraft/core-build-tasks";
 import path from "path";
 
@@ -59,7 +60,13 @@ task("copyArtifacts", copyTask(copyTaskOptions));
 task("package", series("clean-collateral", "copyArtifacts"));
 
 // Local Deploy used for deploying local changes directly to output via the bundler. It does a full build and package first just in case.
-task("local-deploy", series("clean-local", "build", "package"));
+task(
+  "local-deploy",
+  watchTask(
+    ["scripts/**/*.ts", "behavior_packs/**/*.{json,lang,png}", "resource_packs/**/*.{json,lang,png}"],
+    series("clean-local", "build", "package")
+  )
+);
 
 // Mcaddon
 task("createMcaddonFile", mcaddonTask(mcaddonTaskOptions));
