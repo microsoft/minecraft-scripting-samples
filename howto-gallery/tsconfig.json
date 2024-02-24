@@ -25,6 +25,6 @@
     "include":[ 
        "scripts/**/*"
     ],
-    "exclude": ["lib", "build", "node_modules"],
+    "exclude": ["build", "node_modules"],
     "compileOnSave":false
  }

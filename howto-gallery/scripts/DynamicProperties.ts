@@ -3,8 +3,6 @@
 
 import * as mc from "@minecraft/server";
 
-const overworld = mc.world.getDimension("overworld");
-
 /**
  * Increments a dynamic numeric persisted property.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.

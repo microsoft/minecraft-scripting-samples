@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import * as mc from "@minecraft/server";
+import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
 
 /**
  * Creates a single-sided simple sign
@@ -20,11 +21,11 @@ export function addSign(log: (message: string, status?: number) => void, targetL
     log("Could not find a block at specified location.");
     return -1;
   }
-  let signPerm = mc.BlockPermutation.resolve("minecraft:standing_sign", { ground_sign_direction: 8 });
+  let signPerm = mc.BlockPermutation.resolve(MinecraftBlockTypes.StandingSign, { ground_sign_direction: 8 });
 
   signBlock.setPermutation(signPerm);
 
-  const signComponent = signBlock.getComponent("minecraft:sign");
+  const signComponent = signBlock.getComponent(mc.BlockComponentTypes.Sign);
 
   signComponent?.setText(`Basic sign!\nThis is green on the front.`);
 }
@@ -48,11 +49,11 @@ export function addTranslatedSign(log: (message: string, status?: number) => voi
     log("Could not find a block at specified location.");
     return -1;
   }
-  let signPerm = mc.BlockPermutation.resolve("minecraft:standing_sign", { ground_sign_direction: 8 });
+  let signPerm = mc.BlockPermutation.resolve(MinecraftBlockTypes.StandingSign, { ground_sign_direction: 8 });
 
   signBlock.setPermutation(signPerm);
 
-  const signComponent = signBlock.getComponent("minecraft:sign");
+  const signComponent = signBlock.getComponent(mc.BlockComponentTypes.Sign);
 
   signComponent?.setText({ translate: "item.skull.player.name", with: [players[0].name] });
 }
@@ -74,11 +75,11 @@ export function addTwoSidedSign(log: (message: string, status?: number) => void,
     log("Could not find a block at specified location.");
     return -1;
   }
-  let signPerm = mc.BlockPermutation.resolve("minecraft:standing_sign", { ground_sign_direction: 8 });
+  let signPerm = mc.BlockPermutation.resolve(MinecraftBlockTypes.StandingSign, { ground_sign_direction: 8 });
 
   signBlock.setPermutation(signPerm);
 
-  const signComponent = signBlock.getComponent("minecraft:sign");
+  const signComponent = signBlock.getComponent(mc.BlockComponentTypes.Sign);
 
   if (signComponent) {
     signComponent.setText(`Party Sign!\nThis is green on the front.`);

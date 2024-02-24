@@ -2,8 +2,9 @@
 // Licensed under the MIT License.
 
 import * as mc from "@minecraft/server";
+import { MinecraftBlockTypes, MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
-const overworld = mc.world.getDimension("overworld");
+const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
 
 /**
  * A simple piston after activate event
@@ -22,8 +23,8 @@ export function pistonAfterEvent(log: (message: string, status?: number) => void
     return -1;
   }
 
-  piston.setPermutation(mc.BlockPermutation.resolve("piston").withState("facing_direction", 3));
-  button.setPermutation(mc.BlockPermutation.resolve("acacia_button").withState("facing_direction", 1));
+  piston.setPermutation(mc.BlockPermutation.resolve(MinecraftBlockTypes.Piston).withState("facing_direction", 3));
+  button.setPermutation(mc.BlockPermutation.resolve(MinecraftBlockTypes.AcaciaButton).withState("facing_direction", 1));
 
   mc.world.afterEvents.pistonActivate.subscribe((pistonEvent: mc.PistonActivateAfterEvent) => {
     let eventLoc = pistonEvent.piston.block.location;

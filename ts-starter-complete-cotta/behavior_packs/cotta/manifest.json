@@ -5,9 +5,9 @@
     "description": "My TypeScript Project",
     "uuid": "79587552-f454-4cee-855e-652b7675c507",
     "version": [
+      1,
       0,
-      0,
-      1
+      0
     ],
     "min_engine_version": [
       1,
@@ -22,9 +22,9 @@
       "type": "script",
       "uuid": "530a69a2-11cc-4e69-9b13-bb99535184f5",
       "version": [
+        1,
         0,
-        0,
-        1
+        0
       ],
       "entry": "scripts/main.js"
     }

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import * as mc from "@minecraft/server";
+import { MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
 /**
  * A simple tick timer that runs a command every minute.
@@ -11,7 +12,7 @@ import * as mc from "@minecraft/server";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/system#run
  */
 export function trapTick() {
-  const overworld = mc.world.getDimension("overworld");
+  const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
 
   try {
     // Minecraft runs at 20 ticks per second.

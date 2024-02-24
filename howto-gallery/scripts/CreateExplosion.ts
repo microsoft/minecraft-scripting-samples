@@ -3,6 +3,7 @@
 
 import * as mc from "@minecraft/server";
 import { Vector3Utils } from "@minecraft/math";
+import { MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
 /**
  * Creates an explosion in the world.
@@ -11,7 +12,7 @@ import { Vector3Utils } from "@minecraft/math";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#createexplosion
  */
 export function createExplosion(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const overworld = mc.world.getDimension("overworld");
+  const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
 
   log("Creating an explosion of radius 10.");
   overworld.createExplosion(targetLocation, 10);
@@ -25,7 +26,7 @@ export function createExplosion(log: (message: string, status?: number) => void,
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/explosionOptions
  */
 export function createNoBlockExplosion(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const overworld = mc.world.getDimension("overworld");
+  const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
 
   const explodeNoBlocksLoc = Vector3Utils.floor(Vector3Utils.add(targetLocation, { x: 1, y: 2, z: 1 }));
 
@@ -44,7 +45,7 @@ export function createFireAndWaterExplosions(
   log: (message: string, status?: number) => void,
   targetLocation: mc.Vector3
 ) {
-  const overworld = mc.world.getDimension("overworld");
+  const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
   const explosionLoc = Vector3Utils.add(targetLocation, { x: 0.5, y: 0.5, z: 0.5 });
 
   log("Creating an explosion of radius 15 that causes fire.");

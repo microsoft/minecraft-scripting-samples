@@ -3,8 +3,9 @@
 
 import { Vector3Utils } from "@minecraft/math";
 import * as mc from "@minecraft/server";
+import { MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
-const overworld = mc.world.getDimension("overworld");
+const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
 
 /**
  * Creates a multicolored block out of different colors of wool.

@@ -22,6 +22,7 @@ import {
 import Log from "./Log.js";
 import Utilities from "./Utilities.js";
 import { ModalFormData, MessageFormData } from "@minecraft/server-ui";
+import { MinecraftBlockTypes, MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
 export interface ITeamData {
   n: string;
@@ -229,7 +230,7 @@ export default class Team {
             x: this.nwbX + SPAWN_TEAM_X,
             y: this.nwbY + SPAWN_TEAM_Y,
             z: this.nwbZ + SPAWN_TEAM_Z,
-            dimension: world.getDimension("overworld"),
+            dimension: world.getDimension(MinecraftDimensionTypes.Overworld),
           });
         } catch (e) {}
       }
@@ -247,8 +248,8 @@ export default class Team {
   }
 
   addTeamName() {
-    const airBlock = BlockPermutation.resolve("minecraft:air");
-    const signBlock = BlockPermutation.resolve("minecraft:wooden_slab", { wood_type: "birch" });
+    const airBlock = BlockPermutation.resolve(MinecraftBlockTypes.Air);
+    const signBlock = BlockPermutation.resolve(MinecraftBlockTypes.WoodenSlab, { wood_type: "birch" });
 
     if (!airBlock || !signBlock) {
       return;
@@ -384,10 +385,10 @@ export default class Team {
   }
 
   ensurePad() {
-    const foundationSurroundBlock = BlockPermutation.resolve("minecraft:grass");
-    const foundationBlock = BlockPermutation.resolve("minecraft:sandstone");
-    const foundationLowerBlock = BlockPermutation.resolve("minecraft:bedrock");
-    const roadBlock = BlockPermutation.resolve("minecraft:red_sandstone");
+    const foundationSurroundBlock = BlockPermutation.resolve(MinecraftBlockTypes.Grass);
+    const foundationBlock = BlockPermutation.resolve(MinecraftBlockTypes.Sandstone);
+    const foundationLowerBlock = BlockPermutation.resolve(MinecraftBlockTypes.Bedrock);
+    const roadBlock = BlockPermutation.resolve(MinecraftBlockTypes.RedSandstone);
 
     if (!foundationSurroundBlock || !foundationBlock || !roadBlock || !foundationLowerBlock) {
       return;
@@ -512,7 +513,7 @@ export default class Team {
       this.nwbZ + PAD_SIZE_Z
     );
 
-    let ow = world.getDimension("overworld");
+    let ow = world.getDimension(MinecraftDimensionTypes.Overworld);
     let block = ow.getBlock({ x: this.nwbX + JOIN_TEAM_X, y: this.nwbY + JOIN_TEAM_Y, z: this.nwbZ + JOIN_TEAM_Z });
 
     let consoleType = "options";
@@ -533,7 +534,7 @@ export default class Team {
   }
 
   clearPad(index: number) {
-    let airBlock = BlockPermutation.resolve("minecraft:air");
+    let airBlock = BlockPermutation.resolve(MinecraftBlockTypes.Air);
 
     if (airBlock) {
       Utilities.fillBlock(

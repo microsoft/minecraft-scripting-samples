@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import { world, BlockPermutation } from "@minecraft/server";
+import { MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
 export const CHARFONT: { [index: string]: string[][] } = {
   a: [
@@ -274,7 +275,7 @@ export default class Utilities {
   ) {
     let textClean = text.toLowerCase();
 
-    let ow = world.getDimension("overworld");
+    let ow = world.getDimension(MinecraftDimensionTypes.Overworld);
 
     let xStart = nwb.x;
 
@@ -322,7 +323,7 @@ export default class Utilities {
     toY: number,
     toZ: number
   ) {
-    let overworld = world.getDimension("overworld");
+    let overworld = world.getDimension(MinecraftDimensionTypes.Overworld);
 
     const fromXa = Math.min(fromX, toX);
     const fromYa = Math.min(fromY, toY);

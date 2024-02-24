@@ -2,8 +2,9 @@
 // Licensed under the MIT License.
 
 import * as mc from "@minecraft/server";
+import { MinecraftBlockTypes, MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
-const overworld = mc.world.getDimension("overworld");
+const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
 
 /**
  * A simple button push before event
@@ -22,8 +23,10 @@ export function buttonPushEvent(log: (message: string, status?: number) => void,
     return -1;
   }
 
-  cobblestone.setPermutation(mc.BlockPermutation.resolve("cobblestone"));
-  button.setPermutation(mc.BlockPermutation.resolve("acacia_button").withState("facing_direction", 1 /* up */));
+  cobblestone.setPermutation(mc.BlockPermutation.resolve(MinecraftBlockTypes.Cobblestone));
+  button.setPermutation(
+    mc.BlockPermutation.resolve(MinecraftBlockTypes.AcaciaButton).withState("facing_direction", 1 /* up */)
+  );
 
   mc.world.afterEvents.buttonPush.subscribe((buttonPushEvent: mc.ButtonPushAfterEvent) => {
     let eventLoc = buttonPushEvent.block.location;
@@ -51,8 +54,10 @@ export function leverActionEvent(log: (message: string, status?: number) => void
     return -1;
   }
 
-  cobblestone.setPermutation(mc.BlockPermutation.resolve("cobblestone"));
-  lever.setPermutation(mc.BlockPermutation.resolve("lever").withState("lever_direction", "up_north_south" /* up */));
+  cobblestone.setPermutation(mc.BlockPermutation.resolve(MinecraftBlockTypes.Cobblestone));
+  lever.setPermutation(
+    mc.BlockPermutation.resolve(MinecraftBlockTypes.Lever).withState("lever_direction", "up_north_south" /* up */)
+  );
 
   mc.world.afterEvents.leverAction.subscribe((leverActionEvent: mc.LeverActionAfterEvent) => {
     let eventLoc = leverActionEvent.block.location;
@@ -82,8 +87,8 @@ export function tripWireTripEvent(log: (message: string, status?: number) => voi
     return -1;
   }
 
-  redstone.setPermutation(mc.BlockPermutation.resolve("redstone_block"));
-  tripwire.setPermutation(mc.BlockPermutation.resolve("tripwire"));
+  redstone.setPermutation(mc.BlockPermutation.resolve(MinecraftBlockTypes.RedstoneBlock));
+  tripwire.setPermutation(mc.BlockPermutation.resolve(MinecraftBlockTypes.TripWire));
 
   mc.world.afterEvents.tripWireTrip.subscribe((tripWireTripEvent: mc.TripWireTripAfterEvent) => {
     let eventLoc = tripWireTripEvent.block.location;

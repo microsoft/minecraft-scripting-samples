@@ -22,9 +22,9 @@
       "type": "script",
       "uuid": "7ae54230-1350-4347-aec5-763676ee41e0",
       "version": [
+        1,
         0,
-        0,
-        1
+        0
       ],
       "entry": "scripts/main.js"
     }

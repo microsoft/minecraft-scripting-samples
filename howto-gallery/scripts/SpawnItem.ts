@@ -2,8 +2,9 @@
 // Licensed under the MIT License.
 
 import * as mc from "@minecraft/server";
+import { MinecraftDimensionTypes, MinecraftItemTypes } from "@minecraft/vanilla-data";
 
-const overworld = mc.world.getDimension("overworld");
+const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
 
 /**
  * Creates a free-floating feather item in the world.
@@ -13,7 +14,7 @@ const overworld = mc.world.getDimension("overworld");
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#spawnitem
  */
 export function spawnItem(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const featherItem = new mc.ItemStack("minecraft:feather", 1);
+  const featherItem = new mc.ItemStack(MinecraftItemTypes.Feather, 1);
 
   overworld.spawnItem(featherItem, targetLocation);
   log(`New feather created at ${targetLocation.x}, ${targetLocation.y}, ${targetLocation.z}!`);
@@ -31,7 +32,7 @@ export function testThatEntityIsFeatherItem(
   log: (message: string, status?: number) => void,
   targetLocation: mc.Vector3
 ) {
-  const overworld = mc.world.getDimension("overworld");
+  const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
 
   const items = overworld.getEntities({
     location: targetLocation,
@@ -39,7 +40,7 @@ export function testThatEntityIsFeatherItem(
   });
 
   for (const item of items) {
-    const itemComp = item.getComponent("item");
+    const itemComp = item.getComponent(mc.EntityComponentTypes.Item);
 
     if (itemComp) {
       if (itemComp.itemStack.typeId.endsWith("feather")) {

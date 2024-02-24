@@ -3,6 +3,7 @@
 
 import { Vector3Utils } from "@minecraft/math";
 import * as mc from "@minecraft/server";
+import { MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
 /**
  * Registers and contains an entity spawned event handler.
@@ -33,7 +34,7 @@ export function runEntitySpawnEvent(log: (message: string, status?: number) => v
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#spawnentity
  */
 export function createOldHorse(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const overworld = mc.world.getDimension("overworld");
+  const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
 
   log("Create a horse and triggering the 'ageable_grow_up' event, ensuring the horse is created as an adult");
   overworld.spawnEntity(
