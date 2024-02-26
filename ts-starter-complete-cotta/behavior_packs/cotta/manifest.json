@@ -33,6 +33,14 @@
     {
       "module_name": "@minecraft/server",
       "version": "1.8.0"
+    },
+    {
+      "uuid": "f0cc5ac5-24ff-40b1-870b-77b7730c3f3f",
+      "version": [
+        1,
+        0,
+        0
+      ]
     }
   ]
 }
