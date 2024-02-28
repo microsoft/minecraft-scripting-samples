@@ -15,7 +15,6 @@
     "lint": "just-scripts lint",
     "build": "just-scripts build",
     "clean": "just-scripts clean",
-    "package": "just-scripts package",
     "local-deploy": "just-scripts local-deploy",
     "mcaddon": "just-scripts mcaddon",
     "enablemcloopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-1958404141-86561845-1752920682-3514627264-368642714-62675701-733520436",

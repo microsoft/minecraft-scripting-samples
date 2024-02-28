@@ -15,7 +15,6 @@
     "lint": "just-scripts lint",
     "build": "just-scripts build",
     "clean": "just-scripts clean",
-    "package": "just-scripts package",
     "local-deploy": "just-scripts local-deploy",
     "mcaddon": "just-scripts mcaddon",
     "update-world": "just-scripts update-world",
