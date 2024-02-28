@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
 import * as mc from "@minecraft/server";
 import * as mcnet from "@minecraft/server-net";
 

@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
 import { Vector3Utils } from "@minecraft/math";
 import * as mc from "@minecraft/server";
 

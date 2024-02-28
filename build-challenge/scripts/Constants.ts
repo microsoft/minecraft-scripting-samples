@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
 export const POST_INIT_TICK = 20;
 export const TEAM_INIT_TICK = 40;
 export const TEAM_SIZE_X = 6;
