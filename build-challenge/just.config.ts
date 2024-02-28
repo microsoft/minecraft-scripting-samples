@@ -52,7 +52,7 @@ task("bundle", bundleTask(bundleTaskOptions));
 task("build", series("typescript", "bundle"));
 
 // Clean
-task("clean-local", cleanTask([...DEFAULT_CLEAN_DIRECTORIES, "build"]));
+task("clean-local", cleanTask([...DEFAULT_CLEAN_DIRECTORIES]));
 task("clean-collateral", cleanCollateralTask(STANDARD_CLEAN_PATHS));
 task("clean", parallel("clean-local", "clean-collateral"));
 
