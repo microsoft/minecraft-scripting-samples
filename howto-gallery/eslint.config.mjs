@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
 import minecraftLinting from "eslint-plugin-minecraft-linting";
 import header from "eslint-plugin-header";
 import tsParser from "@typescript-eslint/parser";
@@ -20,7 +17,6 @@ export default [
     },
     rules: {
       "minecraft-linting/avoid-unnecessary-command": "error",
-      "header/header": [2, "line", [" Copyright (c) Microsoft Corporation.", ` Licensed under the MIT License.`], 1],
     },
   },
 ];
