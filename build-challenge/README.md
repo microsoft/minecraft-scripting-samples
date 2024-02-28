@@ -79,6 +79,11 @@ Note that this can only be set while the phase is in setup. Also, it is only sup
 * build - This is the build phase of the game. Players are actively playing and can modify the world and are generally running in Survival mode
 * vote - This is the voting phase of the game. Players can apply two votes to the pad of their choice (not including their own team pad)
 
+`!setscoring [blockvalues/votes]` - Sets the scoring mode of the game.
+        
+* blockvalues - Uses block values as the primary scoring tool of the game, with bonuses for votes and more
+* votes - Derives a score purely based on the number of votes.
+
 `!setrole [player name] [role]` - Sets the role of the current player.
 
 * spectator - Places the player on a "camera track" above the play area

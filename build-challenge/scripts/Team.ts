@@ -1,5 +1,5 @@
 import { world, Player, BlockTypes, BlockPermutation } from "@minecraft/server";
-import Challenge, { ChallengeFlavor, ChallengePhase } from "./Challenge.js";
+import Challenge, { ChallengeFlavor, ChallengePhase, ChallengeScoring } from "./Challenge.js";
 import ChallengePlayer from "./ChallengePlayer.js";
 import {
   PAD_SURROUND_X as PAD_SURROUND_X,
@@ -79,7 +79,11 @@ export default class Team {
   }
 
   get effectiveScore() {
-    let effectiveScore = this.score;
+    if (this.challenge.scoringMode === ChallengeScoring.votesOnly) {
+      return this.votes;
+    }
+
+    let effectiveScore = this.blockTallyScore;
 
     if (effectiveScore < 0) {
       return 0;
@@ -87,11 +91,11 @@ export default class Team {
 
     if (this.challenge.teams.length >= 4) {
       if (this.teamUsageQuartile == 1) {
-        effectiveScore += this.score / 4;
+        effectiveScore += this.blockTallyScore / 4;
       } else if (this.teamUsageQuartile == 2) {
-        effectiveScore += this.score / 2;
+        effectiveScore += this.blockTallyScore / 2;
       } else if (this.teamUsageQuartile == 3) {
-        effectiveScore += this.score;
+        effectiveScore += this.blockTallyScore;
       }
     }
 
@@ -100,11 +104,11 @@ export default class Team {
       this.challenge.teams.length >= 3
     ) {
       if (this.rankByVote == 0) {
-        effectiveScore += this.score * 2; // 3x bonus for first vote winner.
+        effectiveScore += this.blockTallyScore * 2; // 3x bonus for first vote winner.
       } else if (this.rankByVote == 1) {
-        effectiveScore += this.score;
+        effectiveScore += this.blockTallyScore;
       } else if (this.rankByVote == 2) {
-        effectiveScore += this.score / 2;
+        effectiveScore += this.blockTallyScore / 2;
       }
     }
 
@@ -121,11 +125,11 @@ export default class Team {
     }
   }
 
-  get score() {
+  get blockTallyScore() {
     return this.#score;
   }
 
-  set score(newScore: number) {
+  set blockTallyScore(newScore: number) {
     if (this.#score !== newScore) {
       this.#score = newScore;
     }
@@ -160,6 +164,10 @@ export default class Team {
   }
 
   applyScore() {
+    if (!this.challenge.shouldShowScores()) {
+      return;
+    }
+
     let teamName = this.name;
 
     if (this.challenge.teams.length >= 4) {
@@ -346,7 +354,7 @@ export default class Team {
           teamMembers += this.players[i].name;
         }
 
-        let bodyStr = "Team members: " + teamMembers + "\r\nScore (before bonuses): " + this.score + "\r\n";
+        let bodyStr = "Team members: " + teamMembers + "\r\nScore (before bonuses): " + this.blockTallyScore + "\r\n";
 
         if (this.challenge.phase === ChallengePhase.vote || this.challenge.phase === ChallengePhase.post) {
           if (this.rankByVote === 0) {
@@ -548,7 +556,7 @@ export default class Team {
   getSaveData() {
     let td = {
       n: this.name,
-      s: this.score,
+      s: this.blockTallyScore,
       t: this.#playerTocks,
     };
 
