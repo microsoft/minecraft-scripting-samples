@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
 import SampleManager from "./SampleManager";
 import * as mcsl from "./ServerSampleLibrary";
 import * as mcgtsl from "./Server-GameTestSampleLibrary";

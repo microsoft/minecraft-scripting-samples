@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
 module.exports = {
   root: true,
   parser: "@typescript-eslint/parser",
@@ -12,6 +9,5 @@ module.exports = {
   },
   rules: {
     "minecraft-linting/avoid-unnecessary-command": "error",
-    "header/header": [2, "line", [" Copyright (c) Microsoft Corporation.", ` Licensed under the MIT License.`], 1],
   },
 };

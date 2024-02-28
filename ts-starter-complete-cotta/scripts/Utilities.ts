@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
 import { world, BlockPermutation } from "@minecraft/server";
 
 export default class Utilities {

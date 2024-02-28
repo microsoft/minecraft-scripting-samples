@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
 import { world, Player, BlockPermutation } from "@minecraft/server";
 import Challenge, { ChallengeFlavor, ChallengePhase } from "./Challenge.js";
 import ChallengePlayer from "./ChallengePlayer.js";
