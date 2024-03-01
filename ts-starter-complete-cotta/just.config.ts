@@ -27,6 +27,7 @@ const bundleTaskOptions: BundleTaskParameters = {
   outfile: path.resolve(__dirname, "./dist/scripts/main.js"),
   minifyWhitespace: false,
   sourcemap: true,
+  outputSourcemapPath: path.resolve(__dirname, "./dist/debug"),
 };
 
 const copyTaskOptions: CopyTaskParameters = {

@@ -7,7 +7,7 @@
         "name": "Debug with Minecraft",
         "mode": "listen",
         "preLaunchTask": "build",
-        "sourceMapRoot": "${workspaceFolder}/dist/scripts/",
+        "sourceMapRoot": "${workspaceFolder}/dist/debug/",
         "generatedSourceRoot": "${workspaceFolder}/dist/scripts/",
         "port": 19144
       }

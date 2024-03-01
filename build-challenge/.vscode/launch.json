@@ -8,7 +8,7 @@
         "mode": "listen",
         "preLaunchTask": "build",
         "localRoot": "${workspaceFolder}/scripts/",
-        "sourceMapRoot": "${workspaceFolder}/dist/scripts/",
+        "sourceMapRoot": "${workspaceFolder}/dist/debug/",
         "generatedSourceRoot": "${workspaceFolder}/dist/scripts/",
         "port": 19144
       }

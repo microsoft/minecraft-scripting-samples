@@ -5,7 +5,7 @@
   "description": "Minecraft Script Box Playground",
   "private": true,
   "devDependencies": {
-    "@minecraft/core-build-tasks": "^1.1.1",
+    "@minecraft/core-build-tasks": "../resources/minecraft-core-build-tasks-1.1.1-patch-001.tgz",
     "eslint-plugin-minecraft-linting": "^1.1.1",
     "source-map": "^0.7.4",
     "ts-node": "^10.9.1",
