@@ -1,5 +1,6 @@
 import * as mc from "@minecraft/server";
 import * as gt from "@minecraft/server-gametest";
+import { MinecraftBlockTypes, MinecraftEntityTypes } from "@minecraft/vanilla-data";
 
 /**
  * A simple mob test - the fox should attack the chicken.
@@ -12,8 +13,8 @@ import * as gt from "@minecraft/server-gametest";
  */
 export function simpleMobTest(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   gt.register("StarterTests", "simpleMobTest", (test: gt.Test) => {
-    const attackerId = "fox";
-    const victimId = "chicken";
+    const attackerId = MinecraftEntityTypes.Fox;
+    const victimId = MinecraftEntityTypes.Chicken;
 
     test.spawn(attackerId, { x: 5, y: 2, z: 5 });
     test.spawn(victimId, { x: 2, y: 2, z: 2 });
@@ -39,13 +40,10 @@ export function simpleMobTest(log: (message: string, status?: number) => void, t
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-gametest/test#succeedwhenentitypresent
  */
 function phantomsShouldFlyFromCats(test: gt.Test) {
-  const catEntityType = "cat";
-  const phantomEntityType = "phantom";
+  test.spawn(MinecraftEntityTypes.Cat, { x: 4, y: 3, z: 3 });
+  test.spawn(MinecraftEntityTypes.Phantom, { x: 4, y: 3, z: 3 });
 
-  test.spawn(catEntityType, { x: 4, y: 3, z: 3 });
-  test.spawn(phantomEntityType, { x: 4, y: 3, z: 3 });
-
-  test.succeedWhenEntityPresent(phantomEntityType, { x: 4, y: 6, z: 3 }, true);
+  test.succeedWhenEntityPresent(MinecraftEntityTypes.Phantom, { x: 4, y: 6, z: 3 }, true);
 }
 gt.register("MobBehaviorTests", "phantoms_should_fly_from_cats", phantomsShouldFlyFromCats)
   .structureName("gametests:glass_cells")
@@ -62,18 +60,15 @@ gt.register("MobBehaviorTests", "phantoms_should_fly_from_cats", phantomsShouldF
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entityrideablecomponent#addrider
  */
 function minibiomes(test: gt.Test) {
-  const minecartEntityType = "minecart";
-  const pigEntityType = "pig";
+  const minecart = test.spawn(MinecraftEntityTypes.Minecart, { x: 9, y: 7, z: 7 });
+  const pig = test.spawn(MinecraftEntityTypes.Pig, { x: 9, y: 7, z: 7 });
 
-  const minecart = test.spawn(minecartEntityType, { x: 9, y: 7, z: 7 });
-  const pig = test.spawn(pigEntityType, { x: 9, y: 7, z: 7 });
+  test.setBlockType(MinecraftBlockTypes.Cobblestone, { x: 10, y: 7, z: 7 });
 
-  test.setBlockType("minecraft:cobblestone", { x: 10, y: 7, z: 7 });
+  const minecartRideableComp = minecart.getComponent(mc.EntityComponentTypes.Rideable);
 
-  const minecartRideableComp = minecart.getComponent("minecraft:rideable") as mc.EntityRideableComponent;
+  minecartRideableComp?.addRider(pig);
 
-  minecartRideableComp.addRider(pig);
-
-  test.succeedWhenEntityPresent(pigEntityType, { x: 8, y: 3, z: 1 }, true);
+  test.succeedWhenEntityPresent(MinecraftEntityTypes.Pig, { x: 8, y: 3, z: 1 }, true);
 }
 gt.register("ChallengeTests", "minibiomes", minibiomes).structureName("gametests:minibiomes").maxTicks(160);

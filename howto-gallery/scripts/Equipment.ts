@@ -1,6 +1,5 @@
 import * as mc from "@minecraft/server";
-
-const overworld = mc.world.getDimension("overworld");
+import { MinecraftItemTypes } from "@minecraft/vanilla-data";
 
 /**
  * Give a player elytra.
@@ -11,8 +10,8 @@ const overworld = mc.world.getDimension("overworld");
 export function givePlayerElytra(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
   let players = mc.world.getAllPlayers();
 
-  const equipment = players[0].getComponent("equippable") as mc.EntityEquippableComponent;
-  equipment.setEquipment(mc.EquipmentSlot.Chest, new mc.ItemStack("minecraft:elytra"));
+  const equipment = players[0].getComponent(mc.EntityComponentTypes.Equippable);
+  equipment?.setEquipment(mc.EquipmentSlot.Chest, new mc.ItemStack(MinecraftItemTypes.Elytra));
 
   log("Player given Elytra");
 }
@@ -28,23 +27,25 @@ export function givePlayerEquipment(log: (message: string, status?: number) => v
   let players = mc.world.getAllPlayers();
 
   const armorStandLoc = { x: targetLocation.x, y: targetLocation.y, z: targetLocation.z + 4 };
-  let armorStand = players[0].dimension.spawnEntity("armor_stand", armorStandLoc);
+  let armorStand = players[0].dimension.spawnEntity(MinecraftItemTypes.ArmorStand, armorStandLoc);
 
-  const equipmentCompPlayer = players[0].getComponent("equippable") as mc.EntityEquippableComponent;
-  equipmentCompPlayer.setEquipment(mc.EquipmentSlot.Head, new mc.ItemStack("minecraft:golden_helmet"));
-  equipmentCompPlayer.setEquipment(mc.EquipmentSlot.Chest, new mc.ItemStack("minecraft:iron_chestplate"));
-  equipmentCompPlayer.setEquipment(mc.EquipmentSlot.Legs, new mc.ItemStack("minecraft:diamond_leggings"));
-  equipmentCompPlayer.setEquipment(mc.EquipmentSlot.Feet, new mc.ItemStack("minecraft:netherite_boots"));
-  equipmentCompPlayer.setEquipment(mc.EquipmentSlot.Mainhand, new mc.ItemStack("minecraft:wooden_sword"));
-  equipmentCompPlayer.setEquipment(mc.EquipmentSlot.Offhand, new mc.ItemStack("minecraft:shield"));
+  const equipmentCompPlayer = players[0].getComponent(mc.EntityComponentTypes.Equippable);
+  if (equipmentCompPlayer) {
+    equipmentCompPlayer.setEquipment(mc.EquipmentSlot.Head, new mc.ItemStack(MinecraftItemTypes.GoldenHelmet));
+    equipmentCompPlayer.setEquipment(mc.EquipmentSlot.Chest, new mc.ItemStack(MinecraftItemTypes.IronChestplate));
+    equipmentCompPlayer.setEquipment(mc.EquipmentSlot.Legs, new mc.ItemStack(MinecraftItemTypes.DiamondLeggings));
+    equipmentCompPlayer.setEquipment(mc.EquipmentSlot.Feet, new mc.ItemStack(MinecraftItemTypes.NetheriteBoots));
+    equipmentCompPlayer.setEquipment(mc.EquipmentSlot.Mainhand, new mc.ItemStack(MinecraftItemTypes.WoodenSword));
+    equipmentCompPlayer.setEquipment(mc.EquipmentSlot.Offhand, new mc.ItemStack(MinecraftItemTypes.Shield));
+  }
 
-  const equipmentCompArmorStand = armorStand.getComponent(
-    "equippable"
-  ) as mc.EntityEquippableComponent;
-  equipmentCompArmorStand.setEquipment(mc.EquipmentSlot.Head, new mc.ItemStack("minecraft:golden_helmet"));
-  equipmentCompArmorStand.setEquipment(mc.EquipmentSlot.Chest, new mc.ItemStack("minecraft:iron_chestplate"));
-  equipmentCompArmorStand.setEquipment(mc.EquipmentSlot.Legs, new mc.ItemStack("minecraft:diamond_leggings"));
-  equipmentCompArmorStand.setEquipment(mc.EquipmentSlot.Feet, new mc.ItemStack("minecraft:netherite_boots"));
-  equipmentCompArmorStand.setEquipment(mc.EquipmentSlot.Mainhand, new mc.ItemStack("minecraft:wooden_sword"));
-  equipmentCompArmorStand.setEquipment(mc.EquipmentSlot.Offhand, new mc.ItemStack("minecraft:shield"));
+  const equipmentCompArmorStand = armorStand.getComponent(mc.EntityComponentTypes.Equippable);
+  if (equipmentCompArmorStand) {
+    equipmentCompArmorStand.setEquipment(mc.EquipmentSlot.Head, new mc.ItemStack(MinecraftItemTypes.GoldenHelmet));
+    equipmentCompArmorStand.setEquipment(mc.EquipmentSlot.Chest, new mc.ItemStack(MinecraftItemTypes.IronChestplate));
+    equipmentCompArmorStand.setEquipment(mc.EquipmentSlot.Legs, new mc.ItemStack(MinecraftItemTypes.DiamondLeggings));
+    equipmentCompArmorStand.setEquipment(mc.EquipmentSlot.Feet, new mc.ItemStack(MinecraftItemTypes.NetheriteBoots));
+    equipmentCompArmorStand.setEquipment(mc.EquipmentSlot.Mainhand, new mc.ItemStack(MinecraftItemTypes.WoodenSword));
+    equipmentCompArmorStand.setEquipment(mc.EquipmentSlot.Offhand, new mc.ItemStack(MinecraftItemTypes.Shield));
+  }
 }

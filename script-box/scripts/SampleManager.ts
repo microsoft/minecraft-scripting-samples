@@ -1,3 +1,4 @@
+import { Vector3Utils } from "@minecraft/math";
 import * as mc from "@minecraft/server";
 
 export default class SampleManager {
@@ -35,7 +36,7 @@ export default class SampleManager {
       }
 
       const nearbyBlockLoc = nearbyBlock.block.location;
-      const nearbyLoc = { x: nearbyBlockLoc.x, y: nearbyBlockLoc.y + 1, z: nearbyBlockLoc.z };
+      const nearbyLoc = Vector3Utils.add(nearbyBlockLoc, { x: 0, y: 1, z: 0 });
       let sampleId: string | undefined = undefined;
 
       let firstSpace = message.indexOf(" ");
@@ -49,7 +50,8 @@ export default class SampleManager {
       }
 
       if (message.startsWith("help")) {
-        let availableFuncStr = "You can run a sample by typing `run <sample name>` in chat. Here is a list of available samples:";
+        let availableFuncStr =
+          "You can run a sample by typing `run <sample name>` in chat. Here is a list of available samples:";
 
         for (const sampleFuncKey in this._availableFuncs) {
           availableFuncStr += " " + sampleFuncKey;
@@ -108,7 +110,7 @@ export default class SampleManager {
     mc.world.afterEvents.chatSend.subscribe(this.newChatMessage.bind(this));
 
     mc.system.run(this.worldTick);
-    
+
     mc.world.sendMessage("Type 'run <sample name>' in chat to run a sample, and type 'help' to see a list of samples.");
   }
 

@@ -36,12 +36,6 @@ Visit the [Visual Studio Code website](https://code.visualstudio.com) and instal
    npm i
    ```
 
-1. When that's done, enter:
-
-   ```powershell
-   npm i gulp-cli --global
-   ```
-
 1. Use this shortcut command to open the project in Visual Studio Code:
 
    ```powershell
@@ -56,21 +50,20 @@ Within the root folder (howto-gallery) of this sample, run this command:
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
-Run this one, too.
+Run this one to deploy in the game.
 
 ```powershell
-gulp
+npm run local-deploy
 ```
 
-Deploy a test world to your Minecraft instance.
+Create an addon file to share.
 
 ```powershell
-gulp updateworld
+npm run mcaddon
 ```
-
 
 ## Manifest
 
-- [gulpfile.js](https://github.com/microsoft/minecraft-scripting-samples/blob/main/howto-gallery/gulpfile.js): This file contains build instructions for Gulp, for building out TypeScript code.
+- [just.config.ts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/howto-gallery/just.config.ts): This file contains build instructions for just-scripts, for building out TypeScript code.
 - [scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/howto-gallery/scripts): This contains How to Gallery TypeScript files, that will be compiled and built into your projects.
 - [behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/howto-gallery/behavior_packs): This contains resources and JSON files that define your behavior pack.

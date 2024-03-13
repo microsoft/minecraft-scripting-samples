@@ -7,18 +7,16 @@ import {
   LeverActionAfterEvent,
   TitleDisplayOptions,
   Player,
-  BlockInventoryComponent,
   ChatSendBeforeEvent,
   Vector,
   DisplaySlotId,
   BlockPermutation,
   ScriptEventCommandMessageAfterEvent,
-  EntityInventoryComponent,
   ItemStack,
   ItemUseOnAfterEvent,
   Block,
-  System,
   TicksPerSecond,
+  BlockComponentTypes,
 } from "@minecraft/server";
 import ChallengePlayer, { ChallengePlayerRole, IPlayerData } from "./ChallengePlayer.js";
 import Log from "./Log.js";
@@ -52,6 +50,7 @@ import {
 } from "./Constants.js";
 import Utilities from "./Utilities.js";
 import Track from "./Track.js";
+import { MinecraftBlockTypes, MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
 export enum ChallengePhase {
   setup = 1,
@@ -444,8 +443,6 @@ export default class Challenge {
     system.run(this.tick);
     system.run(this.applyPhase);
     system.run(this.applyFlavor);
-
-    const overworld = world.getDimension("overworld");
 
     world.afterEvents.playerSpawn.subscribe(this.playerSpawned);
     world.afterEvents.playerLeave.subscribe(this.playerLeft);
@@ -860,13 +857,13 @@ export default class Challenge {
 
     this.nwbLocation = { x: x, y: y, z: z };
 
-    let ow = world.getDimension("overworld");
+    let ow = world.getDimension(MinecraftDimensionTypes.Overworld);
 
     const centerX = x + Math.floor((PAD_SIZE_X + PAD_SURROUND_X) * 2.5);
     const centerY = y + 1;
     const centerZ = z + Math.floor((PAD_SIZE_Z + PAD_SURROUND_Z) * 2.5);
 
-    const airBlock = BlockPermutation.resolve("minecraft:air");
+    const airBlock = BlockPermutation.resolve(MinecraftBlockTypes.Air);
 
     if (airBlock) {
       Utilities.fillBlock(airBlock, centerX - 2, centerY - 2, centerZ - 2, centerX + 2, centerY + 2, centerZ + 2);
@@ -973,7 +970,7 @@ export default class Challenge {
 
           let vec = Vector.lerp(track.from, track.to, (trackSequence % STANDARD_TRACK_TIME) / STANDARD_TRACK_TIME);
           player.teleport(vec, {
-            dimension: world.getDimension("overworld"),
+            dimension: world.getDimension(MinecraftDimensionTypes.Overworld),
             facingLocation: {
               x: vec.x + track.facingAdjust.x,
               y: vec.y + track.facingAdjust.y,
@@ -1054,7 +1051,7 @@ export default class Challenge {
   }
 
   postInit() {
-    let ow = world.getDimension("overworld");
+    let ow = world.getDimension(MinecraftDimensionTypes.Overworld);
 
     if (this.#motdTitle) {
       world.sendMessage({ rawtext: [{ text: "§l" + this.#motdTitle }] });
@@ -1077,8 +1074,6 @@ export default class Challenge {
   }
 
   addScores() {
-    let ow = world.getDimension("overworld");
-
     // adding main team score
     let mainObj = world.scoreboard.addObjective("main", "Team Score");
     world.scoreboard.setObjectiveAtDisplaySlot(DisplaySlotId.Sidebar, { objective: mainObj });
@@ -1093,7 +1088,7 @@ export default class Challenge {
   applyFlavor() {}
 
   applyPhase() {
-    let ow = world.getDimension("overworld");
+    let ow = world.getDimension(MinecraftDimensionTypes.Overworld);
 
     switch (this.phase) {
       case ChallengePhase.setup:
@@ -1165,7 +1160,6 @@ export default class Challenge {
   }
 
   sendMessageToAdminsPlus(message: string, additionalPlayer?: Player) {
-    let ow = world.getDimension("overworld");
     Log.debug(message);
 
     for (let player of world.getPlayers()) {
@@ -1183,8 +1177,6 @@ export default class Challenge {
   }
 
   applyRoleToAllPlayers() {
-    let ow = world.getDimension("overworld");
-
     for (let player of world.getPlayers()) {
       let challPlayer = this.ensurePlayer(player);
 
@@ -1342,7 +1334,7 @@ export default class Challenge {
       this.activeTeamScore = 0;
     }
 
-    let ow = world.getDimension("overworld");
+    let ow = world.getDimension(MinecraftDimensionTypes.Overworld);
     if (this.activeTeamScore >= 0) {
       let canaryLoc = { x: team.padNwbX, y: team.padNwbY, z: team.padNwbZ + (PAD_SIZE_Z / 16) * area };
 
@@ -1395,7 +1387,7 @@ export default class Challenge {
                     northBlock &&
                     northBlock.typeId.indexOf("chest") < 0
                   ) {
-                    let invComp = block.getComponent("inventory") as BlockInventoryComponent;
+                    let invComp = block.getComponent(BlockComponentTypes.Inventory);
 
                     if (invComp) {
                       let cont = invComp.container;
@@ -1708,7 +1700,7 @@ export default class Challenge {
   }
 
   ensurePlayerHas(player: Player, itemTypeId: string, amount?: number) {
-    const inventory = player.getComponent("inventory") as EntityInventoryComponent;
+    const inventory = player.getComponent(BlockComponentTypes.Inventory);
 
     if (inventory) {
       const cont = inventory.container;

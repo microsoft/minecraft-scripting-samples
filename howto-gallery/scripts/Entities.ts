@@ -1,6 +1,7 @@
 import * as mc from "@minecraft/server";
+import { MinecraftDimensionTypes, MinecraftEntityTypes } from "@minecraft/vanilla-data";
 
-const overworld = mc.world.getDimension("overworld");
+const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
 
 /**
  * Creates a creeper and then triggers an explosion.
@@ -10,7 +11,7 @@ const overworld = mc.world.getDimension("overworld");
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#triggerevent
  */
 export function triggerEvent(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const creeper = overworld.spawnEntity("minecraft:creeper", targetLocation);
+  const creeper = overworld.spawnEntity(MinecraftEntityTypes.Creeper, targetLocation);
 
   creeper.triggerEvent("minecraft:start_exploding_forced");
 }
@@ -23,7 +24,7 @@ export function triggerEvent(log: (message: string, status?: number) => void, ta
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#clearvelocity
  */
 export function applyImpulse(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const zombie = overworld.spawnEntity("minecraft:zombie", targetLocation);
+  const zombie = overworld.spawnEntity(MinecraftEntityTypes.Zombie, targetLocation);
 
   zombie.clearVelocity();
 
@@ -38,7 +39,7 @@ export function applyImpulse(log: (message: string, status?: number) => void, ta
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#getvelocity
  */
 export function getFireworkVelocity(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const fireworkRocket = overworld.spawnEntity("minecraft:fireworks_rocket", targetLocation);
+  const fireworkRocket = overworld.spawnEntity(MinecraftEntityTypes.FireworksRocket, targetLocation);
 
   mc.system.runTimeout(() => {
     let velocity = fireworkRocket.getVelocity();
@@ -55,15 +56,15 @@ export function getFireworkVelocity(log: (message: string, status?: number) => v
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/EntityHealthComponent
  */
 export function applyDamageThenHeal(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const skelly = overworld.spawnEntity("minecraft:skeleton", targetLocation);
+  const skelly = overworld.spawnEntity(MinecraftEntityTypes.Skeleton, targetLocation);
 
   skelly.applyDamage(19); // skeletons have max damage of 20 so this is a near-death skeleton
 
   mc.system.runTimeout(() => {
-    let health = skelly.getComponent("health") as mc.EntityHealthComponent;
-    log("Skeleton health before heal: " + health.currentValue);
-    health.resetToMaxValue();
-    log("Skeleton health after heal: " + health.currentValue);
+    let health = skelly.getComponent(mc.EntityComponentTypes.Health);
+    log("Skeleton health before heal: " + health?.currentValue);
+    health?.resetToMaxValue();
+    log("Skeleton health after heal: " + health?.currentValue);
   }, 20);
 }
 
@@ -76,13 +77,13 @@ export function applyDamageThenHeal(log: (message: string, status?: number) => v
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/EntityOnFireComponent
  */
 export function setOnFire(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const skelly = overworld.spawnEntity("minecraft:skeleton", targetLocation);
+  const skelly = overworld.spawnEntity(MinecraftEntityTypes.Skeleton, targetLocation);
 
   skelly.setOnFire(20, true);
 
   mc.system.runTimeout(() => {
-    let onfire = skelly.getComponent("onfire") as mc.EntityOnFireComponent;
-    log(onfire.onFireTicksRemaining + " fire ticks remaining.");
+    let onfire = skelly.getComponent(mc.EntityComponentTypes.OnFire);
+    log(onfire?.onFireTicksRemaining + " fire ticks remaining.");
 
     skelly.extinguishFire(true);
     log("Never mind. Fire extinguished.");
@@ -97,7 +98,7 @@ export function setOnFire(log: (message: string, status?: number) => void, targe
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/TeleportOptions
  */
 export function teleport(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const cow = overworld.spawnEntity("minecraft:cow", targetLocation);
+  const cow = overworld.spawnEntity(MinecraftEntityTypes.Cow, targetLocation);
 
   mc.system.runTimeout(() => {
     cow.teleport(
@@ -117,7 +118,7 @@ export function teleport(log: (message: string, status?: number) => void, target
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/TeleportOptions
  */
 export function teleportMovement(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const pig = overworld.spawnEntity("minecraft:pig", targetLocation);
+  const pig = overworld.spawnEntity(MinecraftEntityTypes.Pig, targetLocation);
 
   let inc = 1;
   let runId = mc.system.runInterval(() => {

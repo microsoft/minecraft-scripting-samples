@@ -1,0 +1,40 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Cotta resource pack",
+    "description": "Cotta resource pack description",
+    "uuid": "f0cc5ac5-24ff-40b1-870b-77b7730c3f3f",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      20,
+      30
+    ]
+  },
+  "modules": [
+    {
+      "description": "Cotta Resource Pack",
+      "type": "resources",
+      "uuid": "0c6c678e-367d-402a-80a0-53847181cd16",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "79587552-f454-4cee-855e-652b7675c507",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

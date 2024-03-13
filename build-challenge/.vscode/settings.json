@@ -16,15 +16,13 @@
   "search.exclude": {
     "**/.git": true,
     "**/node_modules": true,
-    "**/build": true,
-    "**/dist": true
+    "**/dist": true,
+    "**/lib": true
   },
   "files.exclude": {
     "**/.git": true,
     "**/.DS_Store": true,
-    "**/node_modules": true,
-    "**/build": true,
-    "**/dist": true
+    "**/node_modules": true
   },
   "cSpell.words": [
     "cand",
@@ -45,5 +43,6 @@
     "xtralarge",
     "zoglin"
   ],
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "eslint.experimental.useFlatConfig": true
 }

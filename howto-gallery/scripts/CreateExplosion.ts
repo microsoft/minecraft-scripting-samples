@@ -1,4 +1,6 @@
 import * as mc from "@minecraft/server";
+import { Vector3Utils } from "@minecraft/math";
+import { MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
 /**
  * Creates an explosion in the world.
@@ -7,7 +9,7 @@ import * as mc from "@minecraft/server";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#createexplosion
  */
 export function createExplosion(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const overworld = mc.world.getDimension("overworld");
+  const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
 
   log("Creating an explosion of radius 10.");
   overworld.createExplosion(targetLocation, 10);
@@ -21,13 +23,9 @@ export function createExplosion(log: (message: string, status?: number) => void,
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/explosionOptions
  */
 export function createNoBlockExplosion(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const overworld = mc.world.getDimension("overworld");
+  const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
 
-  const explodeNoBlocksLoc = {
-    x: Math.floor(targetLocation.x + 1),
-    y: Math.floor(targetLocation.y + 2),
-    z: Math.floor(targetLocation.z + 1)
-  };
+  const explodeNoBlocksLoc = Vector3Utils.floor(Vector3Utils.add(targetLocation, { x: 1, y: 2, z: 1 }));
 
   log("Creating an explosion of radius 15 that does not break blocks.");
   overworld.createExplosion(explodeNoBlocksLoc, 15, { breaksBlocks: false });
@@ -44,14 +42,13 @@ export function createFireAndWaterExplosions(
   log: (message: string, status?: number) => void,
   targetLocation: mc.Vector3
 ) {
-  const overworld = mc.world.getDimension("overworld");
-
-  const explosionLoc = { x: targetLocation.x + 0.5, y: targetLocation.y + 0.5, z: targetLocation.z + 0.5};
+  const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
+  const explosionLoc = Vector3Utils.add(targetLocation, { x: 0.5, y: 0.5, z: 0.5 });
 
   log("Creating an explosion of radius 15 that causes fire.");
   overworld.createExplosion(explosionLoc, 15, { causesFire: true });
 
-  const belowWaterLoc = { x: targetLocation.x + 3, y: targetLocation.y + 1,z: targetLocation.z + 3};
+  const belowWaterLoc = Vector3Utils.add(targetLocation, { x: 3, y: 1, z: 3 });
 
   log("Creating an explosion of radius 10 that can go underwater.");
   overworld.createExplosion(belowWaterLoc, 10, { allowUnderwater: true });

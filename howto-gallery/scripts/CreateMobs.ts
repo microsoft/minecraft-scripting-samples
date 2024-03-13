@@ -1,6 +1,5 @@
 import * as mc from "@minecraft/server";
-
-const overworld = mc.world.getDimension("overworld");
+import { MinecraftDimensionTypes, MinecraftEffectTypes, MinecraftEntityTypes } from "@minecraft/vanilla-data";
 
 /**
  * Creates a fox and, well, a wolf with effects applied.
@@ -10,25 +9,25 @@ const overworld = mc.world.getDimension("overworld");
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#addeffect
  */
 export function quickFoxLazyDog(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const overworld = mc.world.getDimension("overworld");
+  const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
 
-  const fox = overworld.spawnEntity("minecraft:fox", {
+  const fox = overworld.spawnEntity(MinecraftEntityTypes.Fox, {
     x: targetLocation.x + 1,
     y: targetLocation.y + 2,
     z: targetLocation.z + 3,
   });
 
-  fox.addEffect("speed", 10, {
+  fox.addEffect(MinecraftEffectTypes.Speed, 10, {
     amplifier: 2,
   });
   log("Created a fox.");
 
-  const wolf = overworld.spawnEntity("minecraft:wolf", {
+  const wolf = overworld.spawnEntity(MinecraftEntityTypes.Wolf, {
     x: targetLocation.x + 4,
     y: targetLocation.y + 2,
     z: targetLocation.z + 3,
   });
-  wolf.addEffect("slowness", 10, {
+  wolf.addEffect(MinecraftEffectTypes.Slowness, 10, {
     amplifier: 2,
   });
   wolf.isSneaking = true;
