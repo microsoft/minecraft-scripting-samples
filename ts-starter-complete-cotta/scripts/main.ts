@@ -1,4 +1,12 @@
-import { world, system, BlockPermutation, EntityInventoryComponent, ItemStack, DisplaySlotId } from "@minecraft/server";
+import {
+  world,
+  system,
+  BlockPermutation,
+  EntityInventoryComponent,
+  ItemStack,
+  DisplaySlotId,
+  ScoreboardIdentity,
+} from "@minecraft/server";
 import Utilities from "./Utilities.js";
 
 const START_TICK = 100;
@@ -41,7 +49,7 @@ function initializeBreakTheTerracotta() {
   let players = world.getAllPlayers();
 
   for (let player of players) {
-    player.runCommand("scoreboard players set @s score 0");
+    scoreObjective.setScore(player.scoreboardIdentity as ScoreboardIdentity, 0);
 
     let inv = player.getComponent("inventory") as EntityInventoryComponent;
     inv.container?.addItem(new ItemStack("diamond_sword"));
