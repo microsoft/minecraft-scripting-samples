@@ -49,7 +49,10 @@ function initializeBreakTheTerracotta() {
   let players = world.getAllPlayers();
 
   for (let player of players) {
-    scoreObjective.setScore(player.scoreboardIdentity as ScoreboardIdentity, 0);
+    if (player.scoreboardIdentity === undefined) {
+      continue;
+    }
+    scoreObjective.setScore(player.scoreboardIdentity, 0);
 
     let inv = player.getComponent("inventory") as EntityInventoryComponent;
     inv.container?.addItem(new ItemStack("diamond_sword"));
