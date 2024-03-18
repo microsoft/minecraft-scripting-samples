@@ -246,7 +246,7 @@ export default class Team {
 
   addTeamName() {
     const airBlock = BlockPermutation.resolve(MinecraftBlockTypes.Air);
-    const signBlock = BlockPermutation.resolve(MinecraftBlockTypes.WoodenSlab, { wood_type: "birch" });
+    const signBlock = BlockPermutation.resolve(MinecraftBlockTypes.BirchSlab);
 
     if (!airBlock || !signBlock) {
       return;
@@ -382,7 +382,7 @@ export default class Team {
   }
 
   ensurePad() {
-    const foundationSurroundBlock = BlockPermutation.resolve(MinecraftBlockTypes.Grass);
+    const foundationSurroundBlock = BlockPermutation.resolve(MinecraftBlockTypes.GrassBlock);
     const foundationBlock = BlockPermutation.resolve(MinecraftBlockTypes.Sandstone);
     const foundationLowerBlock = BlockPermutation.resolve(MinecraftBlockTypes.Bedrock);
     const roadBlock = BlockPermutation.resolve(MinecraftBlockTypes.RedSandstone);
