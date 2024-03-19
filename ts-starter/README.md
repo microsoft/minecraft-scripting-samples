@@ -215,7 +215,7 @@ Within the initialize function, we run commands that:
 - Give the current player a diamond sword and some dirty dirt
 - Use chat to give the player an instructional message
 
-Now, let's run the code. This time, we're going to run local-deploy task in "watch mode" - meaning it will just sit in the background and watch for changes, and if they happen, they will automatically compile and deploy to the Minecraft folder. This way, we won't have to worry about separately compiling every time we make a change to code.
+Now, let's run the code. This time, we're going to run the local-deploy task in "watch mode" - meaning it will just sit in the background and watch for changes, and if they happen, they will automatically compile and deploy to the Minecraft folder. This way, we won't have to worry about separately compiling every time we make a change to code.
 
 Go back to your PowerShell window, and enter:
 
@@ -223,7 +223,7 @@ Go back to your PowerShell window, and enter:
 npm run local-deploy -- --watch
 ```
 
-You should see local-deploy task compiles and deploys to the Minecraft folder. From here, we don't need to tend to PowerShell except to see if there are any compilation errors down the road.
+You should see that the local-deploy task compiles and deploys to the Minecraft folder. From here, we don't need to tend to PowerShell except to see if there are any compilation errors down the road.
 
 When you are done coding for the day, either hit **ctrl-c** in the PowerShell Window to stop the watch mode or close the window.
 
@@ -233,7 +233,7 @@ Save and Quit to exit out of the world. We'll want to reload the world from here
 
 Now load the world. You should see your initialization changes: a new scoreboard, new items in your inventory, and a script message.
 
-Note that as you work through this tutorial, we are going to run the initialization code more than once, so your player is going to get multiples of these items during this development and test phase. If that bothers you, feel free to toss out these items before you close the world.
+Note that as you work through this tutorial, we are going to run the initialization code more than once, so your player is going to get multiples of these items during this development and test phase.
 
 #### Build your arena with some helper code
 
@@ -494,19 +494,19 @@ Now exit out and reload your game. As you run around, you should see new leaves 
 
 ### Other Commands
 
-To run lint use this shortcut command:
+To run a lint operation (that is, scan your code for errors) use this shortcut command:
 
 ```powershell
    npm run lint
 ```
 
-To auto fix issues use this:
+To auto-fix lint issues, you can use this:
 
 ```powershell
    npm run lint -- --fix
 ```
 
-Create an addon file to share.
+To create an addon file you can share, run:
 
 ```powershell
    npm run mcaddon
