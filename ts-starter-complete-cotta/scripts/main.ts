@@ -38,10 +38,10 @@ function initializeBreakTheTerracotta() {
     objective: scoreObjective,
   });
 
-  let players = world.getAllPlayers();
+  const players = world.getAllPlayers();
 
-  for (let player of players) {
-    player.runCommand("scoreboard players set @s score 0");
+  for (const player of players) {
+    scoreObjective.setScore(player, 0);
 
     let inv = player.getComponent("inventory") as EntityInventoryComponent;
     inv.container?.addItem(new ItemStack("diamond_sword"));
