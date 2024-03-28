@@ -1,12 +1,4 @@
-import {
-  world,
-  system,
-  BlockPermutation,
-  EntityInventoryComponent,
-  ItemStack,
-  DisplaySlotId,
-  ScoreboardIdentity,
-} from "@minecraft/server";
+import { world, system, BlockPermutation, EntityInventoryComponent, ItemStack, DisplaySlotId } from "@minecraft/server";
 import Utilities from "./Utilities.js";
 
 const START_TICK = 100;
