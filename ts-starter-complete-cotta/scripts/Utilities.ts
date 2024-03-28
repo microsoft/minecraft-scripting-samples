@@ -1,4 +1,5 @@
 import { world, BlockPermutation } from "@minecraft/server";
+import { MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
 export default class Utilities {
   static fillBlock(
@@ -10,7 +11,7 @@ export default class Utilities {
     yTo: number,
     zTo: number
   ) {
-    const overworld = world.getDimension("overworld");
+    const overworld = world.getDimension(MinecraftDimensionTypes.Overworld);
 
     for (let i = xFrom; i <= xTo; i++) {
       for (let j = yFrom; j <= yTo; j++) {
@@ -30,7 +31,7 @@ export default class Utilities {
     yTo: number,
     zTo: number
   ) {
-    const overworld = world.getDimension("overworld");
+    const overworld = world.getDimension(MinecraftDimensionTypes.Overworld);
 
     for (let i = xFrom; i <= xTo; i++) {
       for (let k = yFrom; k <= yTo; k++) {
