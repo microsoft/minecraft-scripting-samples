@@ -20,7 +20,8 @@
        "rootDir": ".",
        "baseUrl":"behavior_packs/",
        "listFiles":false,
-       "noEmitHelpers":true
+       "noEmitHelpers":true,
+       "skipLibCheck": true
     },
     "include":[ 
        "scripts/**/*"
