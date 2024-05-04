@@ -6,7 +6,7 @@ import SampleManager from "./SampleManager";
 import * as sdf1 from "./ServerUserInterface";
 
 const mojangMinecraftUIFuncs: {
-  [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>;
+  [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>;
 } = {
   showActionForm: [sdf1.showActionForm],
   showFavoriteMonth: [sdf1.showFavoriteMonth],

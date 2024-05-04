@@ -4,16 +4,16 @@ export default class SampleManager {
   tickCount = 0;
 
   _availableFuncs: {
-    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>;
+    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>;
   };
 
   pendingFuncs: Array<{
     name: string;
-    func: (log: (message: string, status?: number) => void, location: mc.Vector3) => void;
-    location: mc.Vector3;
+    func: (log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void;
+    location: mc.DimensionLocation;
   }> = [];
 
-  gameplayLogger(message: string, status?: number) {
+  gamePlayLogger(message: string, status?: number) {
     if (status !== undefined && status > 0) {
       message = "SUCCESS: " + message;
     } else if (status !== undefined && status < 0) {
@@ -24,13 +24,16 @@ export default class SampleManager {
     console.warn(message);
   }
 
-  newChatMessage(chatEvent: mc.ChatSendAfterEvent) {
-    const message = chatEvent.message.toLowerCase();
+  newScriptEvent(scriptEvent: mc.ScriptEventCommandMessageAfterEvent) {
+    const message = scriptEvent.message.toLowerCase();
 
-    if ((message.startsWith("howto") || message.startsWith("help") || message.startsWith("run")) && chatEvent.sender) {
-      const nearbyBlock = chatEvent.sender.getBlockFromViewDirection();
+    if (
+      (message.startsWith("howto") || message.startsWith("help") || message.startsWith("run")) &&
+      scriptEvent.sourceEntity
+    ) {
+      const nearbyBlock = scriptEvent.sourceEntity.getBlockFromViewDirection();
       if (!nearbyBlock) {
-        this.gameplayLogger("Please look at the block where you want me to run this.");
+        this.gamePlayLogger("Please look at the block where you want me to run this.");
         return;
       }
 
@@ -58,7 +61,10 @@ export default class SampleManager {
           if (sampleFuncKey.toLowerCase() === sampleId) {
             const sampleFunc = this._availableFuncs[sampleFuncKey];
 
-            this.runSample(sampleFuncKey + this.tickCount, sampleFunc, nearbyLoc);
+            this.runSample(sampleFuncKey + this.tickCount, sampleFunc, {
+              ...nearbyLoc,
+              dimension: scriptEvent.sourceEntity.dimension,
+            });
 
             return;
           }
@@ -71,8 +77,8 @@ export default class SampleManager {
 
   runSample(
     sampleId: string,
-    snippetFunctions: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>,
-    targetLocation: mc.Vector3
+    snippetFunctions: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>,
+    targetLocation: mc.DimensionLocation
   ) {
     for (let i = snippetFunctions.length - 1; i >= 0; i--) {
       this.pendingFuncs.push({ name: sampleId, func: snippetFunctions[i], location: targetLocation });
@@ -85,7 +91,7 @@ export default class SampleManager {
         const funcSet = this.pendingFuncs.pop();
 
         if (funcSet) {
-          funcSet.func(this.gameplayLogger, funcSet.location);
+          funcSet.func(this.gamePlayLogger, funcSet.location);
         }
       }
     }
@@ -98,18 +104,18 @@ export default class SampleManager {
   constructor() {
     this._availableFuncs = {};
 
-    this.gameplayLogger = this.gameplayLogger.bind(this);
+    this.gamePlayLogger = this.gamePlayLogger.bind(this);
 
     this.worldTick = this.worldTick.bind(this);
 
-    mc.world.afterEvents.chatSend.subscribe(this.newChatMessage.bind(this));
+    mc.system.afterEvents.scriptEventReceive.subscribe(this.newScriptEvent.bind(this));
 
     mc.system.run(this.worldTick);
     mc.world.sendMessage("Type 'run <sample name>' in chat to run a sample, and type 'help' to see a list of samples.");
   }
 
   registerSamples(sampleSet: {
-    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>;
+    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>;
   }) {
     for (const sampleKey in sampleSet) {
       if (sampleKey.length > 1 && sampleSet[sampleKey]) {

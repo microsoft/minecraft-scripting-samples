@@ -1,17 +1,15 @@
 import * as mc from "@minecraft/server";
-import { MinecraftDimensionTypes, MinecraftEntityTypes } from "@minecraft/vanilla-data";
-
-const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
+import { MinecraftEntityTypes } from "@minecraft/vanilla-data";
 
 /**
  * Creates a creeper and then triggers an explosion.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.Location} location Location to center this sample code around.
+ * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#spawnentity
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#triggerevent
  */
-export function triggerEvent(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const creeper = overworld.spawnEntity(MinecraftEntityTypes.Creeper, targetLocation);
+export function triggerEvent(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
+  const creeper = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.Creeper, targetLocation);
 
   creeper.triggerEvent("minecraft:start_exploding_forced");
 }
@@ -19,12 +17,12 @@ export function triggerEvent(log: (message: string, status?: number) => void, ta
 /**
  * Creates a zombie and then applies an impulse.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.Location} location Location to center this sample code around.
+ * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#applyimpulse
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#clearvelocity
  */
-export function applyImpulse(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const zombie = overworld.spawnEntity(MinecraftEntityTypes.Zombie, targetLocation);
+export function applyImpulse(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
+  const zombie = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.Zombie, targetLocation);
 
   zombie.clearVelocity();
 
@@ -35,11 +33,14 @@ export function applyImpulse(log: (message: string, status?: number) => void, ta
 /**
  * Gets a velocity of a firework
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.Location} location Location to center this sample code around.
+ * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#getvelocity
  */
-export function getFireworkVelocity(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const fireworkRocket = overworld.spawnEntity(MinecraftEntityTypes.FireworksRocket, targetLocation);
+export function getFireworkVelocity(
+  log: (message: string, status?: number) => void,
+  targetLocation: mc.DimensionLocation
+) {
+  const fireworkRocket = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.FireworksRocket, targetLocation);
 
   mc.system.runTimeout(() => {
     let velocity = fireworkRocket.getVelocity();
@@ -51,17 +52,20 @@ export function getFireworkVelocity(log: (message: string, status?: number) => v
 /**
  * Applies damage then heals an entity.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.Location} location Location to center this sample code around.
+ * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#applydamage
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/EntityHealthComponent
  */
-export function applyDamageThenHeal(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const skelly = overworld.spawnEntity(MinecraftEntityTypes.Skeleton, targetLocation);
+export function applyDamageThenHeal(
+  log: (message: string, status?: number) => void,
+  targetLocation: mc.DimensionLocation
+) {
+  const skelly = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.Skeleton, targetLocation);
 
   skelly.applyDamage(19); // skeletons have max damage of 20 so this is a near-death skeleton
 
   mc.system.runTimeout(() => {
-    let health = skelly.getComponent(mc.EntityComponentTypes.Health);
+    let health = skelly.getComponent(mc.EntityComponentTypes.Health) as mc.EntityHealthComponent;
     log("Skeleton health before heal: " + health?.currentValue);
     health?.resetToMaxValue();
     log("Skeleton health after heal: " + health?.currentValue);
@@ -71,18 +75,18 @@ export function applyDamageThenHeal(log: (message: string, status?: number) => v
 /**
  * Applies damage then heals an entity.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.Location} location Location to center this sample code around.
+ * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#setOnFire
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#extinguishFire
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/EntityOnFireComponent
  */
-export function setOnFire(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const skelly = overworld.spawnEntity(MinecraftEntityTypes.Skeleton, targetLocation);
+export function setOnFire(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
+  const skelly = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.Skeleton, targetLocation);
 
   skelly.setOnFire(20, true);
 
   mc.system.runTimeout(() => {
-    let onfire = skelly.getComponent(mc.EntityComponentTypes.OnFire);
+    let onfire = skelly.getComponent(mc.EntityComponentTypes.OnFire) as mc.EntityOnFireComponent;
     log(onfire?.onFireTicksRemaining + " fire ticks remaining.");
 
     skelly.extinguishFire(true);
@@ -93,12 +97,12 @@ export function setOnFire(log: (message: string, status?: number) => void, targe
 /**
  * Does a basic teleport action.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.Location} location Location to center this sample code around.
+ * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#teleport
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/TeleportOptions
  */
-export function teleport(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const cow = overworld.spawnEntity(MinecraftEntityTypes.Cow, targetLocation);
+export function teleport(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
+  const cow = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.Cow, targetLocation);
 
   mc.system.runTimeout(() => {
     cow.teleport(
@@ -113,12 +117,15 @@ export function teleport(log: (message: string, status?: number) => void, target
 /**
  * Does a basic movements with frequent teleport actions.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.Location} location Location to center this sample code around.
+ * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#teleport
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/TeleportOptions
  */
-export function teleportMovement(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const pig = overworld.spawnEntity(MinecraftEntityTypes.Pig, targetLocation);
+export function teleportMovement(
+  log: (message: string, status?: number) => void,
+  targetLocation: mc.DimensionLocation
+) {
+  const pig = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.Pig, targetLocation);
 
   let inc = 1;
   let runId = mc.system.runInterval(() => {

@@ -1,19 +1,17 @@
 import * as mc from "@minecraft/server";
 import { MinecraftBlockTypes, MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
-const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
-
 /**
  * A simple button push before event
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.Location} location Location to center this sample code around.
+ * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/buttonpushaftereventsignal
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/buttonpushafterevent
  */
-export function buttonPushEvent(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
+export function buttonPushEvent(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
   // set up a button on cobblestone
-  let cobblestone = overworld.getBlock(targetLocation);
-  let button = overworld.getBlock({ x: targetLocation.x, y: targetLocation.y + 1, z: targetLocation.z });
+  let cobblestone = targetLocation.dimension.getBlock(targetLocation);
+  let button = targetLocation.dimension.getBlock({ x: targetLocation.x, y: targetLocation.y + 1, z: targetLocation.z });
 
   if (cobblestone === undefined || button === undefined) {
     log("Could not find block at location.");
@@ -29,7 +27,7 @@ export function buttonPushEvent(log: (message: string, status?: number) => void,
     let eventLoc = buttonPushEvent.block.location;
 
     if (eventLoc.x === targetLocation.x && eventLoc.y === targetLocation.y + 1 && eventLoc.z === targetLocation.z) {
-      log("Button push event at tick " + mc.system.currentTick + " Power:" + buttonPushEvent.block.getRedstonePower());
+      log("Button push event at tick " + mc.system.currentTick);
     }
   });
 }
@@ -37,14 +35,17 @@ export function buttonPushEvent(log: (message: string, status?: number) => void,
 /**
  * A simple lever activate event
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.Location} location Location to center this sample code around.
+ * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/leveractionaftereventsignal
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/leveractionafterevent
  */
-export function leverActionEvent(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
+export function leverActionEvent(
+  log: (message: string, status?: number) => void,
+  targetLocation: mc.DimensionLocation
+) {
   // set up a lever
-  let cobblestone = overworld.getBlock(targetLocation);
-  let lever = overworld.getBlock({ x: targetLocation.x, y: targetLocation.y + 1, z: targetLocation.z });
+  let cobblestone = targetLocation.dimension.getBlock(targetLocation);
+  let lever = targetLocation.dimension.getBlock({ x: targetLocation.x, y: targetLocation.y + 1, z: targetLocation.z });
 
   if (cobblestone === undefined || lever === undefined) {
     log("Could not find block at location.");
@@ -60,9 +61,7 @@ export function leverActionEvent(log: (message: string, status?: number) => void
     let eventLoc = leverActionEvent.block.location;
 
     if (eventLoc.x === targetLocation.x && eventLoc.y === targetLocation.y + 1 && eventLoc.z === targetLocation.z) {
-      log(
-        "Lever activate event at tick " + mc.system.currentTick + " Power:" + leverActionEvent.block.getRedstonePower()
-      );
+      log("Lever activate event at tick " + mc.system.currentTick);
     }
   });
 }
@@ -70,14 +69,21 @@ export function leverActionEvent(log: (message: string, status?: number) => void
 /**
  * A basic tripwire event
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.Location} location Location to center this sample code around.
+ * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/tripwiretripaftereventsignal
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/tripwiretripafterevent
  */
-export function tripWireTripEvent(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
+export function tripWireTripEvent(
+  log: (message: string, status?: number) => void,
+  targetLocation: mc.DimensionLocation
+) {
   // set up a tripwire
-  let redstone = overworld.getBlock({ x: targetLocation.x, y: targetLocation.y - 1, z: targetLocation.z });
-  let tripwire = overworld.getBlock(targetLocation);
+  let redstone = targetLocation.dimension.getBlock({
+    x: targetLocation.x,
+    y: targetLocation.y - 1,
+    z: targetLocation.z,
+  });
+  let tripwire = targetLocation.dimension.getBlock(targetLocation);
 
   if (redstone === undefined || tripwire === undefined) {
     log("Could not find block at location.");

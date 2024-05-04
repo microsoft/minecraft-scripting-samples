@@ -1,19 +1,20 @@
 import * as mc from "@minecraft/server";
 import { MinecraftBlockTypes, MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
-const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
-
 /**
  * A simple piston after activate event
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.Location} location Location to center this sample code around.
+ * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/pistonactivateaftereventsignal#subscribe
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/pistonactivateafterevent
  */
-export function pistonAfterEvent(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
+export function pistonAfterEvent(
+  log: (message: string, status?: number) => void,
+  targetLocation: mc.DimensionLocation
+) {
   // set up a couple of piston blocks
-  let piston = overworld.getBlock(targetLocation);
-  let button = overworld.getBlock({ x: targetLocation.x, y: targetLocation.y + 1, z: targetLocation.z });
+  let piston = targetLocation.dimension.getBlock(targetLocation);
+  let button = targetLocation.dimension.getBlock({ x: targetLocation.x, y: targetLocation.y + 1, z: targetLocation.z });
 
   if (piston === undefined || button === undefined) {
     log("Could not find block at location.");

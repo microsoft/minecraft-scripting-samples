@@ -22,7 +22,7 @@ import * as sdf18 from "./DynamicProperties";
 import * as sdf19 from "./Equipment";
 
 const mojangMinecraftFuncs: {
-  [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>;
+  [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>;
 } = {
   runEntitySpawnEvent: [sdf1.runEntitySpawnEvent, sdf1.createOldHorse],
   createOldHorse: [sdf1.createOldHorse],
@@ -32,8 +32,6 @@ const mojangMinecraftFuncs: {
   createFireAndWaterExplosions: [sdf3.createFireAndWaterExplosions],
   createExplosion: [sdf3.createExplosion],
   itemStacks: [sdf4.itemStacks],
-  diamondAwesomeSword: [sdf4.diamondAwesomeSword],
-  ironFireSword: [sdf4.ironFireSword],
   quickFoxLazyDog: [sdf5.quickFoxLazyDog],
   pistonAfterEvent: [sdf6.pistonAfterEvent],
   trapTick: [sdf7.trapTick],

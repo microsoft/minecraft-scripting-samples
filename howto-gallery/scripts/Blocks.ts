@@ -1,34 +1,35 @@
 import { Vector3Utils } from "@minecraft/math";
 import * as mc from "@minecraft/server";
-import { MinecraftDimensionTypes } from "@minecraft/vanilla-data";
-
-const overworld = mc.world.getDimension(MinecraftDimensionTypes.Overworld);
+import { MinecraftBlockTypes, MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
 /**
  * Creates a multicolored block out of different colors of wool.
  * This sample uses only stable APIs.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.Location} location Location to center this sample code around.
+ * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/BlockPermutation#resolve
  */
-export function addBlockColorCube(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
-  const allColorNames: string[] = [
-    "white",
-    "orange",
-    "magenta",
-    "light_blue",
-    "yellow",
-    "lime",
-    "pink",
-    "gray",
-    "silver",
-    "cyan",
-    "purple",
-    "blue",
-    "brown",
-    "green",
-    "red",
-    "black",
+export function addBlockColorCube(
+  log: (message: string, status?: number) => void,
+  targetLocation: mc.DimensionLocation
+) {
+  const allWoolBlocks: string[] = [
+    MinecraftBlockTypes.WhiteWool,
+    MinecraftBlockTypes.OrangeWool,
+    MinecraftBlockTypes.MagentaWool,
+    MinecraftBlockTypes.LightBlueWool,
+    MinecraftBlockTypes.YellowWool,
+    MinecraftBlockTypes.LimeWool,
+    MinecraftBlockTypes.PinkWool,
+    MinecraftBlockTypes.GrayWool,
+    MinecraftBlockTypes.LightGrayWool,
+    MinecraftBlockTypes.CyanWool,
+    MinecraftBlockTypes.PurpleWool,
+    MinecraftBlockTypes.BlueWool,
+    MinecraftBlockTypes.BrownWool,
+    MinecraftBlockTypes.GreenWool,
+    MinecraftBlockTypes.RedWool,
+    MinecraftBlockTypes.BlackWool,
   ];
 
   const cubeDim = 7;
@@ -39,11 +40,9 @@ export function addBlockColorCube(log: (message: string, status?: number) => voi
     for (let y = 0; y <= cubeDim; y++) {
       for (let z = 0; z <= cubeDim; z++) {
         colorIndex++;
-        overworld.getBlock(Vector3Utils.add(targetLocation, { x, y, z }))?.setPermutation(
-          mc.BlockPermutation.resolve("minecraft:wool", {
-            color: allColorNames[colorIndex % allColorNames.length],
-          })
-        );
+        targetLocation.dimension
+          .getBlock(Vector3Utils.add(targetLocation, { x, y, z }))
+          ?.setPermutation(mc.BlockPermutation.resolve(allWoolBlocks[colorIndex % allWoolBlocks.length]));
       }
     }
   }
