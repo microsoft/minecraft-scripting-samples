@@ -10,8 +10,12 @@ import { MinecraftBlockTypes, MinecraftDimensionTypes } from "@minecraft/vanilla
  */
 export function buttonPushEvent(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
   // set up a button on cobblestone
-  let cobblestone = targetLocation.dimension.getBlock(targetLocation);
-  let button = targetLocation.dimension.getBlock({ x: targetLocation.x, y: targetLocation.y + 1, z: targetLocation.z });
+  const cobblestone = targetLocation.dimension.getBlock(targetLocation);
+  const button = targetLocation.dimension.getBlock({
+    x: targetLocation.x,
+    y: targetLocation.y + 1,
+    z: targetLocation.z,
+  });
 
   if (cobblestone === undefined || button === undefined) {
     log("Could not find block at location.");
@@ -24,7 +28,7 @@ export function buttonPushEvent(log: (message: string, status?: number) => void,
   );
 
   mc.world.afterEvents.buttonPush.subscribe((buttonPushEvent: mc.ButtonPushAfterEvent) => {
-    let eventLoc = buttonPushEvent.block.location;
+    const eventLoc = buttonPushEvent.block.location;
 
     if (eventLoc.x === targetLocation.x && eventLoc.y === targetLocation.y + 1 && eventLoc.z === targetLocation.z) {
       log("Button push event at tick " + mc.system.currentTick);
@@ -44,8 +48,12 @@ export function leverActionEvent(
   targetLocation: mc.DimensionLocation
 ) {
   // set up a lever
-  let cobblestone = targetLocation.dimension.getBlock(targetLocation);
-  let lever = targetLocation.dimension.getBlock({ x: targetLocation.x, y: targetLocation.y + 1, z: targetLocation.z });
+  const cobblestone = targetLocation.dimension.getBlock(targetLocation);
+  const lever = targetLocation.dimension.getBlock({
+    x: targetLocation.x,
+    y: targetLocation.y + 1,
+    z: targetLocation.z,
+  });
 
   if (cobblestone === undefined || lever === undefined) {
     log("Could not find block at location.");
@@ -58,7 +66,7 @@ export function leverActionEvent(
   );
 
   mc.world.afterEvents.leverAction.subscribe((leverActionEvent: mc.LeverActionAfterEvent) => {
-    let eventLoc = leverActionEvent.block.location;
+    const eventLoc = leverActionEvent.block.location;
 
     if (eventLoc.x === targetLocation.x && eventLoc.y === targetLocation.y + 1 && eventLoc.z === targetLocation.z) {
       log("Lever activate event at tick " + mc.system.currentTick);
@@ -78,12 +86,12 @@ export function tripWireTripEvent(
   targetLocation: mc.DimensionLocation
 ) {
   // set up a tripwire
-  let redstone = targetLocation.dimension.getBlock({
+  const redstone = targetLocation.dimension.getBlock({
     x: targetLocation.x,
     y: targetLocation.y - 1,
     z: targetLocation.z,
   });
-  let tripwire = targetLocation.dimension.getBlock(targetLocation);
+  const tripwire = targetLocation.dimension.getBlock(targetLocation);
 
   if (redstone === undefined || tripwire === undefined) {
     log("Could not find block at location.");
@@ -94,7 +102,7 @@ export function tripWireTripEvent(
   tripwire.setPermutation(mc.BlockPermutation.resolve(MinecraftBlockTypes.TripWire));
 
   mc.world.afterEvents.tripWireTrip.subscribe((tripWireTripEvent: mc.TripWireTripAfterEvent) => {
-    let eventLoc = tripWireTripEvent.block.location;
+    const eventLoc = tripWireTripEvent.block.location;
 
     if (eventLoc.x === targetLocation.x && eventLoc.y === targetLocation.y && eventLoc.z === targetLocation.z) {
       log(

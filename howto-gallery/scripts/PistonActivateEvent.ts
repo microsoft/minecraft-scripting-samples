@@ -13,8 +13,12 @@ export function pistonAfterEvent(
   targetLocation: mc.DimensionLocation
 ) {
   // set up a couple of piston blocks
-  let piston = targetLocation.dimension.getBlock(targetLocation);
-  let button = targetLocation.dimension.getBlock({ x: targetLocation.x, y: targetLocation.y + 1, z: targetLocation.z });
+  const piston = targetLocation.dimension.getBlock(targetLocation);
+  const button = targetLocation.dimension.getBlock({
+    x: targetLocation.x,
+    y: targetLocation.y + 1,
+    z: targetLocation.z,
+  });
 
   if (piston === undefined || button === undefined) {
     log("Could not find block at location.");
@@ -25,7 +29,7 @@ export function pistonAfterEvent(
   button.setPermutation(mc.BlockPermutation.resolve(MinecraftBlockTypes.AcaciaButton).withState("facing_direction", 1));
 
   mc.world.afterEvents.pistonActivate.subscribe((pistonEvent: mc.PistonActivateAfterEvent) => {
-    let eventLoc = pistonEvent.piston.block.location;
+    const eventLoc = pistonEvent.piston.block.location;
 
     if (eventLoc.x === targetLocation.x && eventLoc.y === targetLocation.y && eventLoc.z === targetLocation.z) {
       log(

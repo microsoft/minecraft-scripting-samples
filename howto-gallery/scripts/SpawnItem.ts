@@ -8,7 +8,10 @@ import { MinecraftItemTypes } from "@minecraft/vanilla-data";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/itemStack
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#spawnitem
  */
-export function spawnItem(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
+export function spawnFeatherItem(
+  log: (message: string, status?: number) => void,
+  targetLocation: mc.DimensionLocation
+) {
   const featherItem = new mc.ItemStack(MinecraftItemTypes.Feather, 1);
 
   targetLocation.dimension.spawnItem(featherItem, targetLocation);

@@ -24,7 +24,7 @@ export function setTitleAndSubtitle(
   log: (message: string, status?: number) => void,
   targetLocation: mc.DimensionLocation
 ) {
-  let players = mc.world.getPlayers();
+  const players = mc.world.getPlayers();
 
   players[0].onScreenDisplay.setTitle("Chapter 1", {
     stayDuration: 100,
@@ -43,7 +43,7 @@ export function setTitleAndSubtitle(
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/ScreenDisplay#updateSubtitle
  */
 export function countdown(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
-  let players = mc.world.getPlayers();
+  const players = mc.world.getPlayers();
 
   players[0].onScreenDisplay.setTitle("Get ready!", {
     stayDuration: 220,
@@ -54,7 +54,7 @@ export function countdown(log: (message: string, status?: number) => void, targe
 
   let countdown = 10;
 
-  let intervalId = mc.system.runInterval(() => {
+  const intervalId = mc.system.runInterval(() => {
     countdown--;
     players[0].onScreenDisplay.updateSubtitle(countdown.toString());
 

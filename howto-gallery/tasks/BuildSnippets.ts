@@ -18,7 +18,7 @@ class CodeSnippet {
 class SnippetsBuilder {
   _targetFolderPath: string;
   _snippets: CodeSnippet[] = [];
-  _snippetsByModules: object = {};
+  _snippetsByModules: { [moduleName: string]: { [snippetName: string]: CodeSnippet[] } } = {};
   _scriptLibraryMainCode = "";
   _libraryCode: object = {};
 
@@ -54,6 +54,16 @@ class SnippetsBuilder {
         this.resolve(filePath, content);
       }
     });
+  }
+
+  fixupScriptCode(code: string) {
+    code = code.replace(/mcui\./gi, "");
+    code = code.replace(/mcnet\./gi, "");
+    code = code.replace(/mcadmin\./gi, "");
+    code = code.replace(/mcgt\./gi, "");
+    code = code.replace(/mc\./gi, "");
+
+    return code;
   }
 
   resolve(filePath: string, content: string) {
@@ -147,7 +157,8 @@ class SnippetsBuilder {
                         .replace("log: (message: string, status?: number) => void,\r\n", "");
                     }
 
-                    console.log("LEN" + nextFunction + "|" + functionCode.length + "|" + codeSampleInterior);
+                    codeSampleFull = this.fixupScriptCode(codeSampleFull);
+                    codeSampleInterior = this.fixupScriptCode(codeSampleInterior);
 
                     let cs = new CodeSnippet();
                     cs.name = name;
@@ -162,47 +173,94 @@ class SnippetsBuilder {
                     let moduleKey = urlSegments[0] + "/" + urlSegments[1];
 
                     if (!this._snippetsByModules[moduleKey]) {
-                      this._snippetsByModules[moduleKey] = [];
+                      this._snippetsByModules[moduleKey] = {};
                     }
 
-                    this._snippetsByModules[moduleKey].push(cs);
+                    if (!this._snippetsByModules[moduleKey][name]) {
+                      this._snippetsByModules[moduleKey][name] = [];
+                    }
+
+                    this._snippetsByModules[moduleKey][name].push(cs);
 
                     console.log("Snippet '" + name + "' discovered for " + urlSegments.join(".") + " in " + moduleKey);
-
-                    let localUrlSegments = Array.from(urlSegments);
-
-                    if (localUrlSegments[0] === localUrlSegments[1]) {
-                      localUrlSegments.shift();
-                    }
-
-                    this.writeFile(
-                      "docsnips/" + localUrlSegments.join("/") + "/_examples/" + name + ".ts",
-                      codeSampleFull
-                    );
                   }
                 }
               }
             }
           }
         }
-      }
 
-      seeLinkStart = content.indexOf("@see ", seeLinkStart + 5);
+        seeLinkStart = content.indexOf("@see ", seeLinkStart + 5);
+      }
+    }
+  }
+
+  writeSnippetFiles() {
+    for (let moduleKey in this._snippetsByModules) {
+      let snippetsByName = this._snippetsByModules[moduleKey];
+
+      for (let snippetKey in snippetsByName) {
+        const snippets = snippetsByName[snippetKey];
+
+        if (snippets.length <= 1) {
+          let snippet = snippets[0];
+
+          let localUrlSegments = Array.from(snippet.segments);
+
+          if (localUrlSegments[0] === localUrlSegments[1]) {
+            localUrlSegments.shift();
+          }
+
+          this.writeFile(
+            "docsnips/" + localUrlSegments.join("/") + "/_examples/" + snippet.name + ".ts",
+            snippet.codeSampleFull
+          );
+        } else {
+          let snippet = snippets[0];
+
+          let localUrlSegments = Array.from(snippet.segments);
+
+          if (localUrlSegments[0] === localUrlSegments[1]) {
+            localUrlSegments.shift();
+          }
+
+          if (localUrlSegments.length >= 2) {
+            this.writeFile(
+              "docsnips/" +
+                localUrlSegments[0] +
+                "/" +
+                localUrlSegments[1] +
+                "/_shared_examples/" +
+                snippet.name +
+                ".ts",
+              snippet.codeSampleFull
+            );
+          } else {
+            this.writeFile(
+              "docsnips/" + localUrlSegments[0] + "/_shared_examples/" + snippet.name + ".ts",
+              snippet.codeSampleFull
+            );
+          }
+        }
+      }
     }
   }
 
   writeCatalogFiles() {
     for (let moduleKey in this._snippetsByModules) {
-      let snippets = this._snippetsByModules[moduleKey];
       let moduleType: string[] = [];
       let samplesWritten: { [snippetName: string]: CodeSnippet } = {};
+      let snippetsByName = this._snippetsByModules[moduleKey];
 
-      for (let i = 0; i < snippets.length; i++) {
-        let snippet = snippets[i];
+      for (let snippetKey in snippetsByName) {
+        const snippets = snippetsByName[snippetKey];
+        for (let i = 0; i < snippets.length; i++) {
+          let snippet = snippets[i];
 
-        if (!samplesWritten[snippet.name]) {
-          samplesWritten[snippet.name] = snippet;
-          moduleType.push(snippets[i].function);
+          if (!samplesWritten[snippet.name]) {
+            samplesWritten[snippet.name] = snippet;
+            moduleType.push(snippets[i].function);
+          }
         }
       }
 
@@ -302,6 +360,7 @@ export function buildSnippets(params: BuildSnippetsParameters) {
       snippetsBuilder.processFolder(scriptPath);
     }
 
+    snippetsBuilder.writeSnippetFiles();
     snippetsBuilder.writeCatalogFiles();
   };
 }

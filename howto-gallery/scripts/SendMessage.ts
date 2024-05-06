@@ -10,7 +10,7 @@ export function sendBasicMessage(
   log: (message: string, status?: number) => void,
   targetLocation: mc.DimensionLocation
 ) {
-  let players = mc.world.getPlayers();
+  const players = mc.world.getPlayers();
 
   players[0].sendMessage("Hello World!");
 }
@@ -25,7 +25,7 @@ export function sendTranslatedMessage(
   log: (message: string, status?: number) => void,
   targetLocation: mc.DimensionLocation
 ) {
-  let players = mc.world.getPlayers();
+  const players = mc.world.getPlayers();
 
   players[0].sendMessage({ translate: "authentication.welcome", with: ["Amazing Player 1"] });
 }

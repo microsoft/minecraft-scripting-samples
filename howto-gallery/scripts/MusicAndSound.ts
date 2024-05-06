@@ -13,7 +13,7 @@ export function playMusicAndSound(
   log: (message: string, status?: number) => void,
   targetLocation: mc.DimensionLocation
 ) {
-  let players = mc.world.getPlayers();
+  const players = mc.world.getPlayers();
 
   const musicOptions: mc.MusicOptions = {
     fade: 0.5,

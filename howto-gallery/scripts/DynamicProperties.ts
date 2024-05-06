@@ -7,7 +7,7 @@ import * as mc from "@minecraft/server";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/world#getDynamicProperty
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/world#setDynamicProperty
  */
-export function incrementProperty(
+export function incrementDynamicProperty(
   log: (message: string, status?: number) => void,
   targetLocation: mc.DimensionLocation
 ) {
@@ -34,7 +34,7 @@ export function incrementProperty(
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/world#getDynamicProperty
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/world#setDynamicProperty
  */
-export function incrementPropertyInJsonBlob(
+export function incrementDynamicPropertyInJsonBlob(
   log: (message: string, status?: number) => void,
   targetLocation: mc.DimensionLocation
 ) {

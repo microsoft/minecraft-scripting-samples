@@ -31,10 +31,12 @@
     "gametests",
     "knockback",
     "mcaddon",
+    "mcui",
     "minecart",
     "molang",
     "onfire",
     "samplelibrary",
+    "scriptevent",
     "shulker",
     "skelly",
     "zoglin"

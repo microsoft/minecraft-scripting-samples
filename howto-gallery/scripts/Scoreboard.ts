@@ -14,7 +14,7 @@ export function updateScoreboard(
   const scoreboardObjectiveId = "scoreboard_demo_objective";
   const scoreboardObjectiveDisplayName = "Demo Objective";
 
-  let players = mc.world.getPlayers();
+  const players = mc.world.getPlayers();
 
   // Ensure a new objective.
   let objective = mc.world.scoreboard.getObjective(scoreboardObjectiveId);
@@ -24,7 +24,7 @@ export function updateScoreboard(
   }
 
   // get the scoreboard identity for player 0
-  let player0Identity = players[0].scoreboardIdentity;
+  const player0Identity = players[0].scoreboardIdentity;
 
   if (player0Identity === undefined) {
     log("Could not get a scoreboard identity for player 0.");

@@ -37,7 +37,7 @@ export function createNoBlockExplosion(
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#createexplosion
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/explosionOptions
  */
-export function createFireAndWaterExplosions(
+export function createExplosions(
   log: (message: string, status?: number) => void,
   targetLocation: mc.DimensionLocation
 ) {

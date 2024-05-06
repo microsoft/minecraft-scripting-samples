@@ -43,7 +43,7 @@ export function getFireworkVelocity(
   const fireworkRocket = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.FireworksRocket, targetLocation);
 
   mc.system.runTimeout(() => {
-    let velocity = fireworkRocket.getVelocity();
+    const velocity = fireworkRocket.getVelocity();
 
     log("Velocity of firework is: (x: " + velocity.x + ", y:" + velocity.y + ", z:" + velocity.z + ")");
   }, 5);
@@ -65,7 +65,7 @@ export function applyDamageThenHeal(
   skelly.applyDamage(19); // skeletons have max damage of 20 so this is a near-death skeleton
 
   mc.system.runTimeout(() => {
-    let health = skelly.getComponent(mc.EntityComponentTypes.Health) as mc.EntityHealthComponent;
+    const health = skelly.getComponent(mc.EntityComponentTypes.Health) as mc.EntityHealthComponent;
     log("Skeleton health before heal: " + health?.currentValue);
     health?.resetToMaxValue();
     log("Skeleton health after heal: " + health?.currentValue);
@@ -86,7 +86,7 @@ export function setOnFire(log: (message: string, status?: number) => void, targe
   skelly.setOnFire(20, true);
 
   mc.system.runTimeout(() => {
-    let onfire = skelly.getComponent(mc.EntityComponentTypes.OnFire) as mc.EntityOnFireComponent;
+    const onfire = skelly.getComponent(mc.EntityComponentTypes.OnFire) as mc.EntityOnFireComponent;
     log(onfire?.onFireTicksRemaining + " fire ticks remaining.");
 
     skelly.extinguishFire(true);
@@ -128,7 +128,7 @@ export function teleportMovement(
   const pig = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.Pig, targetLocation);
 
   let inc = 1;
-  let runId = mc.system.runInterval(() => {
+  const runId = mc.system.runInterval(() => {
     pig.teleport(
       { x: targetLocation.x + inc / 4, y: targetLocation.y + inc / 4, z: targetLocation.z + inc / 4 },
       {

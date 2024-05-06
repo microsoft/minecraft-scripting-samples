@@ -9,7 +9,7 @@ import { MinecraftDimensionTypes } from "@minecraft/vanilla-data";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entityspawnaftereventsignal#subscribe
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entityspawnafterevent
  */
-export function runEntitySpawnEvent(
+export function logEntitySpawnEvent(
   log: (message: string, status?: number) => void,
   targetLocation: mc.DimensionLocation
 ) {
@@ -23,7 +23,7 @@ export function runEntitySpawnEvent(
   });
 
   mc.system.runTimeout(() => {
-    createOldHorse(log, targetLocation);
+    spawnAdultHorse(log, targetLocation);
   }, 20);
 }
 
@@ -33,7 +33,7 @@ export function runEntitySpawnEvent(
  * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#spawnentity
  */
-export function createOldHorse(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
+export function spawnAdultHorse(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
   log("Create a horse and triggering the 'ageable_grow_up' event, ensuring the horse is created as an adult");
   targetLocation.dimension.spawnEntity(
     "minecraft:horse<minecraft:ageable_grow_up>",
