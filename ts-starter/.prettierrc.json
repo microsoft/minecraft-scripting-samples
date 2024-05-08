@@ -6,5 +6,5 @@
   "bracketSpacing": true,
   "arrowParens": "always",
   "printWidth": 120,
-  "endOfLine": "auto"
+  "endOfLine": "crlf"
 }
