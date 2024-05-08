@@ -1,0 +1,20 @@
+{
+    "eslint.experimental.useFlatConfig": true,
+    "eslint.workingDirectories": [
+        {
+            "pattern": "./build-challenge/*/"
+        },
+        {
+            "pattern": "./howto-gallery/*/"
+        },
+        {
+            "pattern": "./script-box/*/"
+        },
+        {
+            "pattern": "./ts-starter/*/"
+        },
+        {
+            "pattern": "./ts-starter-complete-cotta/*/"
+        },
+    ]
+}
