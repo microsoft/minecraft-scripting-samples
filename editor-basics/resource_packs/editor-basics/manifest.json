@@ -1,8 +1,8 @@
 {
   "format_version": 2,
   "header": {
-    "name": "Minecraft Editor How-to Gallery",
-    "description": "A gallery of editor code snippets",
+    "name": "Minecraft Editor Basics",
+    "description": "A simple list of editor code snippets.",
     "uuid": "b3d35b27-1827-4bff-bdf5-694942cfdd25",
     "version": [1, 0, 0],
     "min_engine_version": [1, 20, 0]
@@ -10,10 +10,16 @@
   "capabilities": ["editorExtension"],
   "modules": [
     {
-      "description": "Editor How-to Gallery Resource",
+      "description": "Editor Basics",
       "type": "resources",
       "uuid": "9f6d66d2-5373-4798-a729-3bc154d4a81b",
-      "version": [0, 0, 1]
+      "version": [1, 0, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "2fb88d39-e589-4e49-a69f-f575f8705e5c",
+      "version": [1, 0, 0]
     }
   ]
 }

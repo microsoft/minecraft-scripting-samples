@@ -306,11 +306,24 @@ class SnippetsBuilder {
     }
   }
 
-  getQuoteSafeContent(content: string) {
-    content = content.replace(/"/g, '\\"');
+  getQuoteSafeContent(content : string) {
+    var newContent = "";
 
-    return content;
+    for (const chr of content) {
+      if (chr === "\\") {
+        newContent += "/";
+      } else if (chr === '"') {
+        newContent += "'";
+      } else {
+        newContent += chr;
+      }
+    }
+
+    // eslint-disable-next-line no-control-regex
+    newContent = newContent.replace(/[\r\n\x0B\x0C\u0085\u2028\u2029]+/g, '",\n"');
+    return newContent;
   }
+
 
   stripLinesContaining(content: string, containing: string) {
     let i = content.indexOf(containing);

@@ -18,8 +18,6 @@ import {
   watchTask,
 } from "@minecraft/core-build-tasks";
 
-import { BuildSnippetsParameters, buildSnippets } from "./tasks/BuildSnippets";
-
 // Setup env variables
 setupEnvironment(path.resolve(__dirname, ".env"));
 const projectName = getOrThrowFromProcess("PROJECT_NAME");
@@ -73,11 +71,3 @@ task(
 // Mcaddon
 task("createMcaddonFile", mcaddonTask(mcaddonTaskOptions));
 task("mcaddon", series("clean-local", "build", "createMcaddonFile"));
-
-task(
-  "buildSnippets",
-  buildSnippets({
-    scriptPaths: [`./scripts/`],
-    targetFolderPath: "dist/snippets",
-  })
-);
