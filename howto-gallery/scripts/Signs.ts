@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
+import * as vanilla from "@minecraft/vanilla-data";
 
 /**
  * Creates a single-sided simple sign
@@ -18,7 +18,7 @@ export function addSign(log: (message: string, status?: number) => void, targetL
     log("Could not find a block at specified location.");
     return -1;
   }
-  let signPerm = mc.BlockPermutation.resolve(MinecraftBlockTypes.StandingSign, { ground_sign_direction: 8 });
+  let signPerm = mc.BlockPermutation.resolve(vanilla.MinecraftBlockTypes.StandingSign, { ground_sign_direction: 8 });
 
   signBlock.setPermutation(signPerm);
 
@@ -49,7 +49,7 @@ export function addTranslatedSign(
     log("Could not find a block at specified location.");
     return -1;
   }
-  let signPerm = mc.BlockPermutation.resolve(MinecraftBlockTypes.StandingSign, { ground_sign_direction: 8 });
+  let signPerm = mc.BlockPermutation.resolve(vanilla.MinecraftBlockTypes.StandingSign, { ground_sign_direction: 8 });
 
   signBlock.setPermutation(signPerm);
 
@@ -71,7 +71,7 @@ export function addTwoSidedSign(log: (message: string, status?: number) => void,
     log("Could not find a block at specified location.");
     return -1;
   }
-  let signPerm = mc.BlockPermutation.resolve(MinecraftBlockTypes.StandingSign, { ground_sign_direction: 8 });
+  let signPerm = mc.BlockPermutation.resolve(vanilla.MinecraftBlockTypes.StandingSign, { ground_sign_direction: 8 });
 
   signBlock.setPermutation(signPerm);
 

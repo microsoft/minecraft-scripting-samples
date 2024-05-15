@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { MinecraftBlockTypes, MinecraftDimensionTypes } from "@minecraft/vanilla-data";
+import * as vanilla from "@minecraft/vanilla-data";
 
 /**
  * A simple button push before event
@@ -22,9 +22,9 @@ export function buttonPushEvent(log: (message: string, status?: number) => void,
     return -1;
   }
 
-  cobblestone.setPermutation(mc.BlockPermutation.resolve(MinecraftBlockTypes.Cobblestone));
+  cobblestone.setPermutation(mc.BlockPermutation.resolve(vanilla.MinecraftBlockTypes.Cobblestone));
   button.setPermutation(
-    mc.BlockPermutation.resolve(MinecraftBlockTypes.AcaciaButton).withState("facing_direction", 1 /* up */)
+    mc.BlockPermutation.resolve(vanilla.MinecraftBlockTypes.AcaciaButton).withState("facing_direction", 1 /* up */)
   );
 
   mc.world.afterEvents.buttonPush.subscribe((buttonPushEvent: mc.ButtonPushAfterEvent) => {
@@ -60,9 +60,12 @@ export function leverActionEvent(
     return -1;
   }
 
-  cobblestone.setPermutation(mc.BlockPermutation.resolve(MinecraftBlockTypes.Cobblestone));
+  cobblestone.setPermutation(mc.BlockPermutation.resolve(vanilla.MinecraftBlockTypes.Cobblestone));
   lever.setPermutation(
-    mc.BlockPermutation.resolve(MinecraftBlockTypes.Lever).withState("lever_direction", "up_north_south" /* up */)
+    mc.BlockPermutation.resolve(vanilla.MinecraftBlockTypes.Lever).withState(
+      "lever_direction",
+      "up_north_south" /* up */
+    )
   );
 
   mc.world.afterEvents.leverAction.subscribe((leverActionEvent: mc.LeverActionAfterEvent) => {
@@ -98,8 +101,8 @@ export function tripWireTripEvent(
     return -1;
   }
 
-  redstone.setPermutation(mc.BlockPermutation.resolve(MinecraftBlockTypes.RedstoneBlock));
-  tripwire.setPermutation(mc.BlockPermutation.resolve(MinecraftBlockTypes.TripWire));
+  redstone.setPermutation(mc.BlockPermutation.resolve(vanilla.MinecraftBlockTypes.RedstoneBlock));
+  tripwire.setPermutation(mc.BlockPermutation.resolve(vanilla.MinecraftBlockTypes.TripWire));
 
   mc.world.afterEvents.tripWireTrip.subscribe((tripWireTripEvent: mc.TripWireTripAfterEvent) => {
     const eventLoc = tripWireTripEvent.block.location;

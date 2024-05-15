@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { MinecraftEntityTypes } from "@minecraft/vanilla-data";
+import * as vanilla from "@minecraft/vanilla-data";
 
 /**
  * Creates a creeper and then triggers an explosion.
@@ -9,7 +9,7 @@ import { MinecraftEntityTypes } from "@minecraft/vanilla-data";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#triggerevent
  */
 export function triggerEvent(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
-  const creeper = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.Creeper, targetLocation);
+  const creeper = targetLocation.dimension.spawnEntity(vanilla.MinecraftEntityTypes.Creeper, targetLocation);
 
   creeper.triggerEvent("minecraft:start_exploding_forced");
 }
@@ -22,7 +22,7 @@ export function triggerEvent(log: (message: string, status?: number) => void, ta
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#clearvelocity
  */
 export function applyImpulse(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
-  const zombie = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.Zombie, targetLocation);
+  const zombie = targetLocation.dimension.spawnEntity(vanilla.MinecraftEntityTypes.Zombie, targetLocation);
 
   zombie.clearVelocity();
 
@@ -40,7 +40,10 @@ export function getFireworkVelocity(
   log: (message: string, status?: number) => void,
   targetLocation: mc.DimensionLocation
 ) {
-  const fireworkRocket = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.FireworksRocket, targetLocation);
+  const fireworkRocket = targetLocation.dimension.spawnEntity(
+    vanilla.MinecraftEntityTypes.FireworksRocket,
+    targetLocation
+  );
 
   mc.system.runTimeout(() => {
     const velocity = fireworkRocket.getVelocity();
@@ -60,7 +63,7 @@ export function applyDamageThenHeal(
   log: (message: string, status?: number) => void,
   targetLocation: mc.DimensionLocation
 ) {
-  const skelly = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.Skeleton, targetLocation);
+  const skelly = targetLocation.dimension.spawnEntity(vanilla.MinecraftEntityTypes.Skeleton, targetLocation);
 
   skelly.applyDamage(19); // skeletons have max damage of 20 so this is a near-death skeleton
 
@@ -81,7 +84,7 @@ export function applyDamageThenHeal(
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/EntityOnFireComponent
  */
 export function setOnFire(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
-  const skelly = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.Skeleton, targetLocation);
+  const skelly = targetLocation.dimension.spawnEntity(vanilla.MinecraftEntityTypes.Skeleton, targetLocation);
 
   skelly.setOnFire(20, true);
 
@@ -102,7 +105,7 @@ export function setOnFire(log: (message: string, status?: number) => void, targe
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/TeleportOptions
  */
 export function teleport(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
-  const cow = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.Cow, targetLocation);
+  const cow = targetLocation.dimension.spawnEntity(vanilla.MinecraftEntityTypes.Cow, targetLocation);
 
   mc.system.runTimeout(() => {
     cow.teleport(
@@ -125,7 +128,7 @@ export function teleportMovement(
   log: (message: string, status?: number) => void,
   targetLocation: mc.DimensionLocation
 ) {
-  const pig = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.Pig, targetLocation);
+  const pig = targetLocation.dimension.spawnEntity(vanilla.MinecraftEntityTypes.Pig, targetLocation);
 
   let inc = 1;
   const runId = mc.system.runInterval(() => {

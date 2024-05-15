@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { MinecraftItemTypes } from "@minecraft/vanilla-data";
+import * as vanilla from "@minecraft/vanilla-data";
 
 /**
  * Creates free-floating item stacks in the world.
@@ -13,9 +13,9 @@ export function itemStacks(log: (message: string, status?: number) => void, targ
   const fiveItemsLoc = { x: targetLocation.x + 1, y: targetLocation.y + 2, z: targetLocation.z + 1 };
   const diamondPickaxeLoc = { x: targetLocation.x + 2, y: targetLocation.y + 2, z: targetLocation.z + 4 };
 
-  const oneEmerald = new mc.ItemStack(MinecraftItemTypes.Emerald, 1);
-  const onePickaxe = new mc.ItemStack(MinecraftItemTypes.DiamondPickaxe, 1);
-  const fiveEmeralds = new mc.ItemStack(MinecraftItemTypes.Emerald, 5);
+  const oneEmerald = new mc.ItemStack(vanilla.MinecraftItemTypes.Emerald, 1);
+  const onePickaxe = new mc.ItemStack(vanilla.MinecraftItemTypes.DiamondPickaxe, 1);
+  const fiveEmeralds = new mc.ItemStack(vanilla.MinecraftItemTypes.Emerald, 5);
 
   log(`Spawning an emerald at (${oneItemLoc.x}, ${oneItemLoc.y}, ${oneItemLoc.z})`);
   targetLocation.dimension.spawnItem(oneEmerald, oneItemLoc);

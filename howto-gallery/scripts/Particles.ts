@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { MinecraftDimensionTypes } from "@minecraft/vanilla-data";
+import * as vanilla from "@minecraft/vanilla-data";
 
 /**
  * Spawns a cloud of colored flame particles.

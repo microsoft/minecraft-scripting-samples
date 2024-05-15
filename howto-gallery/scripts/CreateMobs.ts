@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { MinecraftEffectTypes, MinecraftEntityTypes } from "@minecraft/vanilla-data";
+import * as vanilla from "@minecraft/vanilla-data";
 
 /**
  * Creates a fox and, well, a wolf with effects applied.
@@ -9,23 +9,23 @@ import { MinecraftEffectTypes, MinecraftEntityTypes } from "@minecraft/vanilla-d
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#addeffect
  */
 export function quickFoxLazyDog(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
-  const fox = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.Fox, {
+  const fox = targetLocation.dimension.spawnEntity(vanilla.MinecraftEntityTypes.Fox, {
     x: targetLocation.x + 1,
     y: targetLocation.y + 2,
     z: targetLocation.z + 3,
   });
 
-  fox.addEffect(MinecraftEffectTypes.Speed, 10, {
+  fox.addEffect(vanilla.MinecraftEffectTypes.Speed, 10, {
     amplifier: 2,
   });
   log("Created a fox.");
 
-  const wolf = targetLocation.dimension.spawnEntity(MinecraftEntityTypes.Wolf, {
+  const wolf = targetLocation.dimension.spawnEntity(vanilla.MinecraftEntityTypes.Wolf, {
     x: targetLocation.x + 4,
     y: targetLocation.y + 2,
     z: targetLocation.z + 3,
   });
-  wolf.addEffect(MinecraftEffectTypes.Slowness, 10, {
+  wolf.addEffect(vanilla.MinecraftEffectTypes.Slowness, 10, {
     amplifier: 2,
   });
   wolf.isSneaking = true;

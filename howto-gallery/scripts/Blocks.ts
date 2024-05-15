@@ -1,6 +1,6 @@
-import { Vector3Utils } from "@minecraft/math";
+import * as math from "@minecraft/math";
 import * as mc from "@minecraft/server";
-import { MinecraftBlockTypes, MinecraftDimensionTypes } from "@minecraft/vanilla-data";
+import * as vanilla from "@minecraft/vanilla-data";
 
 /**
  * Creates a multicolored block out of different colors of wool.
@@ -14,22 +14,22 @@ export function addBlockColorCube(
   targetLocation: mc.DimensionLocation
 ) {
   const allWoolBlocks: string[] = [
-    MinecraftBlockTypes.WhiteWool,
-    MinecraftBlockTypes.OrangeWool,
-    MinecraftBlockTypes.MagentaWool,
-    MinecraftBlockTypes.LightBlueWool,
-    MinecraftBlockTypes.YellowWool,
-    MinecraftBlockTypes.LimeWool,
-    MinecraftBlockTypes.PinkWool,
-    MinecraftBlockTypes.GrayWool,
-    MinecraftBlockTypes.LightGrayWool,
-    MinecraftBlockTypes.CyanWool,
-    MinecraftBlockTypes.PurpleWool,
-    MinecraftBlockTypes.BlueWool,
-    MinecraftBlockTypes.BrownWool,
-    MinecraftBlockTypes.GreenWool,
-    MinecraftBlockTypes.RedWool,
-    MinecraftBlockTypes.BlackWool,
+    vanilla.MinecraftBlockTypes.WhiteWool,
+    vanilla.MinecraftBlockTypes.OrangeWool,
+    vanilla.MinecraftBlockTypes.MagentaWool,
+    vanilla.MinecraftBlockTypes.LightBlueWool,
+    vanilla.MinecraftBlockTypes.YellowWool,
+    vanilla.MinecraftBlockTypes.LimeWool,
+    vanilla.MinecraftBlockTypes.PinkWool,
+    vanilla.MinecraftBlockTypes.GrayWool,
+    vanilla.MinecraftBlockTypes.LightGrayWool,
+    vanilla.MinecraftBlockTypes.CyanWool,
+    vanilla.MinecraftBlockTypes.PurpleWool,
+    vanilla.MinecraftBlockTypes.BlueWool,
+    vanilla.MinecraftBlockTypes.BrownWool,
+    vanilla.MinecraftBlockTypes.GreenWool,
+    vanilla.MinecraftBlockTypes.RedWool,
+    vanilla.MinecraftBlockTypes.BlackWool,
   ];
 
   const cubeDim = 7;
@@ -41,7 +41,7 @@ export function addBlockColorCube(
       for (let z = 0; z <= cubeDim; z++) {
         colorIndex++;
         targetLocation.dimension
-          .getBlock(Vector3Utils.add(targetLocation, { x, y, z }))
+          .getBlock(math.Vector3Utils.add(targetLocation, { x, y, z }))
           ?.setPermutation(mc.BlockPermutation.resolve(allWoolBlocks[colorIndex % allWoolBlocks.length]));
       }
     }

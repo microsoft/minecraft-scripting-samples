@@ -1,6 +1,5 @@
-import { Vector3Utils } from "@minecraft/math";
+import * as math from "@minecraft/math";
 import * as mc from "@minecraft/server";
-import { MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
 /**
  * Registers and contains an entity spawned event handler.
@@ -37,6 +36,6 @@ export function spawnAdultHorse(log: (message: string, status?: number) => void,
   log("Create a horse and triggering the 'ageable_grow_up' event, ensuring the horse is created as an adult");
   targetLocation.dimension.spawnEntity(
     "minecraft:horse<minecraft:ageable_grow_up>",
-    Vector3Utils.add(targetLocation, { x: 0, y: 1, z: 0 })
+    math.Vector3Utils.add(targetLocation, { x: 0, y: 1, z: 0 })
   );
 }

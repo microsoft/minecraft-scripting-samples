@@ -1,6 +1,4 @@
 import * as mc from "@minecraft/server";
-import { MinecraftDimensionTypes } from "@minecraft/vanilla-data";
-
 /**
  * Amongst a set of entities, uses entity query to find specific entities and bounce them with applyKnockback.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.

@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { MinecraftBlockTypes, MinecraftDimensionTypes } from "@minecraft/vanilla-data";
+import * as vanilla from "@minecraft/vanilla-data";
 
 /**
  * A simple piston after activate event
@@ -25,8 +25,12 @@ export function pistonAfterEvent(
     return -1;
   }
 
-  piston.setPermutation(mc.BlockPermutation.resolve(MinecraftBlockTypes.Piston).withState("facing_direction", 3));
-  button.setPermutation(mc.BlockPermutation.resolve(MinecraftBlockTypes.AcaciaButton).withState("facing_direction", 1));
+  piston.setPermutation(
+    mc.BlockPermutation.resolve(vanilla.MinecraftBlockTypes.Piston).withState("facing_direction", 3)
+  );
+  button.setPermutation(
+    mc.BlockPermutation.resolve(vanilla.MinecraftBlockTypes.AcaciaButton).withState("facing_direction", 1)
+  );
 
   mc.world.afterEvents.pistonActivate.subscribe((pistonEvent: mc.PistonActivateAfterEvent) => {
     const eventLoc = pistonEvent.piston.block.location;

@@ -6,6 +6,50 @@ export class BuildSnippetsParameters {
   targetFolderPath: string;
 }
 
+const ImportTypes = {
+  vanilla: ["MinecraftDimensionTypes", "MinecraftBlockTypes", "MinecraftItemTypes", "MinecraftEntityTypes"],
+  math: ["Vector3Utils"],
+  mcui: [
+    "MessageFormResponse",
+    "MessageFormData",
+    "ActionFormData",
+    "ActionFormResponse",
+    "ModalFormData",
+    "ModalFormResponse",
+  ],
+  mc: [
+    "world",
+    "system",
+    "BlockPermutation",
+    "BlockSignComponent",
+    "SignSide",
+    "DyeColor",
+    "EntityQueryOptions",
+    "ButtonPushAfterEvent",
+    "ItemStack",
+    "MolangVariableMap",
+    "EntityInventoryComponent",
+    "Enchantment",
+    "ItemEnchantsComponent",
+    "EntityHealthComponent",
+    "EntityOnFireComponent",
+    "EntityEquippableComponent",
+    "EquipmentSlot",
+    "EntityItemComponent",
+    "EntitySpawnAfterEvent",
+    "PistonActivateBeforeEvent",
+    "PistonActivateAfterEvent",
+    "MusicOptions",
+    "WorldSoundOptions",
+    "PlayerSoundOptions",
+    "DisplaySlotId",
+    "ObjectiveSortOrder",
+    "TripWireAfterEvent",
+    "Vector3",
+    "DimensionLocation",
+  ],
+};
+
 class CodeSnippet {
   name: string;
   description?: string;
@@ -56,12 +100,55 @@ class SnippetsBuilder {
     });
   }
 
-  fixupScriptCode(code: string) {
+  addImports(code: string) {
+    code = "\r\n" + code;
+
+    for (const shortHand in ImportTypes) {
+      const arr = ImportTypes[shortHand];
+
+      let importStr = "";
+
+      if (arr) {
+        for (const str of arr) {
+          if (code.indexOf(shortHand + "." + str) >= 0) {
+            if (importStr.length > 0) {
+              importStr += ", ";
+            }
+
+            importStr += str;
+          }
+        }
+      }
+
+      if (importStr.length > 0) {
+        switch (shortHand) {
+          case "mc":
+            code = "import { " + importStr + ' } from "@minecraft/server";\r\n' + code;
+            break;
+          case "mcui":
+            code = "import { " + importStr + ' } from "@minecraft/server-ui";\r\n' + code;
+            break;
+          case "vanilla":
+            code = "import { " + importStr + ' } from "@minecraft/vanilla-data";\r\n' + code;
+            break;
+          case "math":
+            code = "import { " + importStr + ' } from "@minecraft/math";\r\n' + code;
+            break;
+        }
+      }
+    }
+
+    return code;
+  }
+
+  removeNamespaceAliases(code: string) {
     code = code.replace(/mcui\./gi, "");
     code = code.replace(/mcnet\./gi, "");
     code = code.replace(/mcadmin\./gi, "");
     code = code.replace(/mcgt\./gi, "");
     code = code.replace(/mc\./gi, "");
+    code = code.replace(/vanilla\./gi, "");
+    code = code.replace(/math\./gi, "");
 
     return code;
   }
@@ -157,8 +244,9 @@ class SnippetsBuilder {
                         .replace("log: (message: string, status?: number) => void,\r\n", "");
                     }
 
-                    codeSampleFull = this.fixupScriptCode(codeSampleFull);
-                    codeSampleInterior = this.fixupScriptCode(codeSampleInterior);
+                    codeSampleFull = this.addImports(codeSampleFull);
+                    codeSampleFull = this.removeNamespaceAliases(codeSampleFull);
+                    codeSampleInterior = this.removeNamespaceAliases(codeSampleInterior);
 
                     let cs = new CodeSnippet();
                     cs.name = name;
@@ -199,29 +287,32 @@ class SnippetsBuilder {
     for (let moduleKey in this._snippetsByModules) {
       let snippetsByName = this._snippetsByModules[moduleKey];
 
+      const snippetNamesByPath: { [path: string]: string[] } = {};
+
       for (let snippetKey in snippetsByName) {
         const snippets = snippetsByName[snippetKey];
+        let snippet = snippets[0];
+
+        let localUrlSegments = Array.from(snippet.segments);
+
+        if (localUrlSegments[0] === localUrlSegments[1]) {
+          localUrlSegments.shift();
+        }
 
         if (snippets.length <= 1) {
-          let snippet = snippets[0];
-
-          let localUrlSegments = Array.from(snippet.segments);
-
-          if (localUrlSegments[0] === localUrlSegments[1]) {
-            localUrlSegments.shift();
-          }
-
           this.writeFile(
             "docsnips/" + localUrlSegments.join("/") + "/_examples/" + snippet.name + ".ts",
             snippet.codeSampleFull
           );
         } else {
-          let snippet = snippets[0];
+          const path = localUrlSegments.join("/");
 
-          let localUrlSegments = Array.from(snippet.segments);
+          if (snippetNamesByPath[path] === undefined) {
+            snippetNamesByPath[path] = [];
+          }
 
-          if (localUrlSegments[0] === localUrlSegments[1]) {
-            localUrlSegments.shift();
+          if (!snippetNamesByPath[path].includes(snippet.name + ".ts")) {
+            snippetNamesByPath[path].push(snippet.name + ".ts");
           }
 
           if (localUrlSegments.length >= 2) {
@@ -242,6 +333,15 @@ class SnippetsBuilder {
             );
           }
         }
+      }
+
+      for (const sharedSnippetPath in snippetNamesByPath) {
+        const snippetList = snippetNamesByPath[sharedSnippetPath];
+
+        this.writeFile(
+          "docsnips/" + sharedSnippetPath + "/_example_files.json",
+          JSON.stringify(snippetList, undefined, 2)
+        );
       }
     }
   }
@@ -306,7 +406,7 @@ class SnippetsBuilder {
     }
   }
 
-  getQuoteSafeContent(content : string) {
+  getQuoteSafeContent(content: string) {
     var newContent = "";
 
     for (const chr of content) {
@@ -323,7 +423,6 @@ class SnippetsBuilder {
     newContent = newContent.replace(/[\r\n\x0B\x0C\u0085\u2028\u2029]+/g, '",\n"');
     return newContent;
   }
-
 
   stripLinesContaining(content: string, containing: string) {
     let i = content.indexOf(containing);

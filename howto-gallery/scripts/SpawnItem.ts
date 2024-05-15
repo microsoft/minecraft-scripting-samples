@@ -1,5 +1,5 @@
 import * as mc from "@minecraft/server";
-import { MinecraftItemTypes } from "@minecraft/vanilla-data";
+import * as vanilla from "@minecraft/vanilla-data";
 
 /**
  * Creates a free-floating feather item in the world.
@@ -12,7 +12,7 @@ export function spawnFeatherItem(
   log: (message: string, status?: number) => void,
   targetLocation: mc.DimensionLocation
 ) {
-  const featherItem = new mc.ItemStack(MinecraftItemTypes.Feather, 1);
+  const featherItem = new mc.ItemStack(vanilla.MinecraftItemTypes.Feather, 1);
 
   targetLocation.dimension.spawnItem(featherItem, targetLocation);
   log(`New feather created at ${targetLocation.x}, ${targetLocation.y}, ${targetLocation.z}!`);

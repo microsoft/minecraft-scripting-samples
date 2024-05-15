@@ -1,6 +1,5 @@
 import * as mc from "@minecraft/server";
-import { Vector3Utils } from "@minecraft/math";
-import { MinecraftDimensionTypes } from "@minecraft/vanilla-data";
+import * as math from "@minecraft/math";
 
 /**
  * Creates an explosion in the world.
@@ -24,7 +23,7 @@ export function createNoBlockExplosion(
   log: (message: string, status?: number) => void,
   targetLocation: mc.DimensionLocation
 ) {
-  const explodeNoBlocksLoc = Vector3Utils.floor(Vector3Utils.add(targetLocation, { x: 1, y: 2, z: 1 }));
+  const explodeNoBlocksLoc = math.Vector3Utils.floor(math.Vector3Utils.add(targetLocation, { x: 1, y: 2, z: 1 }));
 
   log("Creating an explosion of radius 15 that does not break blocks.");
   targetLocation.dimension.createExplosion(explodeNoBlocksLoc, 15, { breaksBlocks: false });
@@ -41,12 +40,12 @@ export function createExplosions(
   log: (message: string, status?: number) => void,
   targetLocation: mc.DimensionLocation
 ) {
-  const explosionLoc = Vector3Utils.add(targetLocation, { x: 0.5, y: 0.5, z: 0.5 });
+  const explosionLoc = math.Vector3Utils.add(targetLocation, { x: 0.5, y: 0.5, z: 0.5 });
 
   log("Creating an explosion of radius 15 that causes fire.");
   targetLocation.dimension.createExplosion(explosionLoc, 15, { causesFire: true });
 
-  const belowWaterLoc = Vector3Utils.add(targetLocation, { x: 3, y: 1, z: 3 });
+  const belowWaterLoc = math.Vector3Utils.add(targetLocation, { x: 3, y: 1, z: 3 });
 
   log("Creating an explosion of radius 10 that can go underwater.");
   targetLocation.dimension.createExplosion(belowWaterLoc, 10, { allowUnderwater: true });
