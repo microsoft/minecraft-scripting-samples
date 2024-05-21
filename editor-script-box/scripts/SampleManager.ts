@@ -27,7 +27,7 @@ export default class SampleManager {
   newScriptEvent(scriptEvent: mc.ScriptEventCommandMessageAfterEvent) {
     const messageId = scriptEvent.id.toLowerCase();
 
-    if (messageId.startsWith("sample") && scriptEvent.sourceEntity) {
+    if (messageId.startsWith("esb") && scriptEvent.sourceEntity) {
       const nearbyBlock = scriptEvent.sourceEntity.getBlockFromViewDirection();
       if (!nearbyBlock) {
         this.gamePlayLogger("Please look at the block where you want me to run this.");
@@ -37,7 +37,7 @@ export default class SampleManager {
       const nearbyBlockLoc = nearbyBlock.block.location;
       const nearbyLoc = { x: nearbyBlockLoc.x, y: nearbyBlockLoc.y + 1, z: nearbyBlockLoc.z };
 
-      if (messageId === "sample:run") {
+      if (messageId === "esb:run") {
         for (const sampleFuncKey in this._availableFuncs) {
           const sampleFunc = this._availableFuncs[sampleFuncKey];
 

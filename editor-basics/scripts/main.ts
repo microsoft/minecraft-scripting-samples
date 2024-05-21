@@ -1,6 +1,3 @@
-import { registerHowToGalleryExtension as registerBasicsExtension } from "./Basics";
-import SampleManager from "./SampleManager";
-
-const sm = new SampleManager();
+import { registerBasicsExtension as registerBasicsExtension } from "./Basics";
 
 registerBasicsExtension();

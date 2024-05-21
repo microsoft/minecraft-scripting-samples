@@ -10,9 +10,9 @@ products:
   - minecraft
 ---
 
-# Minecraft Script Box
+# Minecraft Editor Script Box
 
-This sample makes it easy to experiment with JavaScript code. Just add your code in the function at ScriptBox.ts, and this sample will add some infrastructure around it.
+This sample makes it easy to experiment with JavaScript code in the context of the Minecraft Edutir. Just add your code in the function at ScriptBox.ts, and this sample will add some infrastructure around it to make it easy to run that sample in within the editor experience.
 
 ## Prerequisites
 
@@ -64,6 +64,6 @@ npm run mcaddon
 
 ## Manifest
 
-- [just.config.ts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/script-box/just.config.ts): This file contains build instructions for just-scripts, for building out TypeScript code.
-- [scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/script-box/scripts): This contains Script Box TypeScript files, that will be compiled and built into your projects.
-- [behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/script-box/behavior_packs): This contains resources and JSON files that define your behavior pack.
+- [just.config.ts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/editor-script-box/just.config.ts): This file contains build instructions for just-scripts, for building out TypeScript code.
+- [scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/editor-script-box/scripts): This contains Script Box TypeScript files for the Editor, that will be compiled and built into your projects.
+- [behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/editor-script-box/behavior_packs): This contains resources and JSON files that define your behavior pack.

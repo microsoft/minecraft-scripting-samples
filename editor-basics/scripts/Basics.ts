@@ -39,7 +39,7 @@ function incrementClickValue(storage: PerPlayerStorage) {
  * Provides a sample extension registration function
  * @public
  */
-export function registerHowToGalleryExtension() {
+export function registerBasicsExtension() {
   registerEditorExtension<PerPlayerStorage>(
     "minimal-template-sample",
 
