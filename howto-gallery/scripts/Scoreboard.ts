@@ -3,15 +3,18 @@ import * as mc from "@minecraft/server";
 /**
  * Creates and updates a scoreboard objective, plus a player score.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.Location} location Location to center this sample code around.
+ * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/Scoreboard
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/Scoreboard#addobjective
  */
-export function updateScoreboard(log: (message: string, status?: number) => void, targetLocation: mc.Vector3) {
+export function updateScoreboard(
+  log: (message: string, status?: number) => void,
+  targetLocation: mc.DimensionLocation
+) {
   const scoreboardObjectiveId = "scoreboard_demo_objective";
   const scoreboardObjectiveDisplayName = "Demo Objective";
 
-  let players = mc.world.getPlayers();
+  const players = mc.world.getPlayers();
 
   // Ensure a new objective.
   let objective = mc.world.scoreboard.getObjective(scoreboardObjectiveId);
@@ -21,7 +24,7 @@ export function updateScoreboard(log: (message: string, status?: number) => void
   }
 
   // get the scoreboard identity for player 0
-  let player0Identity = players[0].scoreboardIdentity;
+  const player0Identity = players[0].scoreboardIdentity;
 
   if (player0Identity === undefined) {
     log("Could not get a scoreboard identity for player 0.");

@@ -1,20 +1,19 @@
-import { Vector3Utils } from "@minecraft/math";
 import * as mc from "@minecraft/server";
 
 export default class SampleManager {
   tickCount = 0;
 
   _availableFuncs: {
-    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>;
+    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>;
   };
 
   pendingFuncs: Array<{
     name: string;
-    func: (log: (message: string, status?: number) => void, location: mc.Vector3) => void;
-    location: mc.Vector3;
+    func: (log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void;
+    location: mc.DimensionLocation;
   }> = [];
 
-  gameplayLogger(message: string, status?: number) {
+  gamePlayLogger(message: string, status?: number) {
     if (status !== undefined && status > 0) {
       message = "SUCCESS: " + message;
     } else if (status !== undefined && status < 0) {
@@ -25,59 +24,38 @@ export default class SampleManager {
     console.warn(message);
   }
 
-  newChatMessage(chatEvent: mc.ChatSendAfterEvent) {
-    const message = chatEvent.message.toLowerCase();
+  newScriptEvent(scriptEvent: mc.ScriptEventCommandMessageAfterEvent) {
+    const messageId = scriptEvent.id.toLowerCase();
 
-    if ((message.startsWith("howto") || message.startsWith("help") || message.startsWith("run")) && chatEvent.sender) {
-      const nearbyBlock = chatEvent.sender.getBlockFromViewDirection();
+    if (messageId.startsWith("sample") && scriptEvent.sourceEntity) {
+      const nearbyBlock = scriptEvent.sourceEntity.getBlockFromViewDirection();
       if (!nearbyBlock) {
-        this.gameplayLogger("Please look at the block where you want me to run this.");
+        this.gamePlayLogger("Please look at the block where you want me to run this.");
         return;
       }
 
       const nearbyBlockLoc = nearbyBlock.block.location;
-      const nearbyLoc = Vector3Utils.add(nearbyBlockLoc, { x: 0, y: 1, z: 0 });
-      let sampleId: string | undefined = undefined;
+      const nearbyLoc = { x: nearbyBlockLoc.x, y: nearbyBlockLoc.y + 1, z: nearbyBlockLoc.z };
 
-      let firstSpace = message.indexOf(" ");
-
-      if (firstSpace > 0) {
-        sampleId = message.substring(firstSpace + 1).trim();
-      }
-
-      if (!sampleId || sampleId.length < 2) {
-        sampleId = "scriptbox";
-      }
-
-      if (message.startsWith("help")) {
-        let availableFuncStr =
-          "You can run a sample by typing `run <sample name>` in chat. Here is a list of available samples:";
-
+      if (messageId === "sample:run") {
         for (const sampleFuncKey in this._availableFuncs) {
-          availableFuncStr += " " + sampleFuncKey;
+          const sampleFunc = this._availableFuncs[sampleFuncKey];
+
+          this.runSample(sampleFuncKey + this.tickCount, sampleFunc, {
+            ...nearbyLoc,
+            dimension: scriptEvent.sourceEntity.dimension,
+          });
+
+          return;
         }
-
-        mc.world.sendMessage(availableFuncStr);
-      } else {
-        for (const sampleFuncKey in this._availableFuncs) {
-          if (sampleFuncKey.toLowerCase() === sampleId) {
-            const sampleFunc = this._availableFuncs[sampleFuncKey];
-
-            this.runSample(sampleFuncKey + this.tickCount, sampleFunc, nearbyLoc);
-
-            return;
-          }
-        }
-
-        mc.world.sendMessage(`I couldn't find the sample '${sampleId}'. Type help in chat to see a list of samples.`);
       }
     }
   }
 
   runSample(
     sampleId: string,
-    snippetFunctions: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>,
-    targetLocation: mc.Vector3
+    snippetFunctions: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>,
+    targetLocation: mc.DimensionLocation
   ) {
     for (let i = snippetFunctions.length - 1; i >= 0; i--) {
       this.pendingFuncs.push({ name: sampleId, func: snippetFunctions[i], location: targetLocation });
@@ -90,9 +68,16 @@ export default class SampleManager {
         const funcSet = this.pendingFuncs.pop();
 
         if (funcSet) {
-          funcSet.func(this.gameplayLogger, funcSet.location);
+          try {
+            funcSet.func(this.gamePlayLogger, funcSet.location);
+          } catch (e: any) {
+            mc.world.sendMessage("Could not run sample function. Error: " + e.toString());
+          }
         }
       }
+    }
+    if (this.tickCount === 200) {
+      mc.world.sendMessage("Type '/scriptevent sample:run' in chat to run this sample.");
     }
 
     this.tickCount++;
@@ -103,19 +88,17 @@ export default class SampleManager {
   constructor() {
     this._availableFuncs = {};
 
-    this.gameplayLogger = this.gameplayLogger.bind(this);
+    this.gamePlayLogger = this.gamePlayLogger.bind(this);
 
     this.worldTick = this.worldTick.bind(this);
 
-    mc.world.afterEvents.chatSend.subscribe(this.newChatMessage.bind(this));
+    mc.system.afterEvents.scriptEventReceive.subscribe(this.newScriptEvent.bind(this));
 
     mc.system.run(this.worldTick);
-
-    mc.world.sendMessage("Type 'run <sample name>' in chat to run a sample, and type 'help' to see a list of samples.");
   }
 
   registerSamples(sampleSet: {
-    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>;
+    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>;
   }) {
     for (const sampleKey in sampleSet) {
       if (sampleKey.length > 1 && sampleSet[sampleKey]) {

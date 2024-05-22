@@ -1,4 +1,6 @@
 import { argv, parallel, series, task, tscTask } from "just-scripts";
+import path from "path";
+
 import {
   bundleTask,
   BundleTaskParameters,
@@ -15,7 +17,8 @@ import {
   getOrThrowFromProcess,
   watchTask,
 } from "@minecraft/core-build-tasks";
-import path from "path";
+
+import { BuildSnippetsParameters, buildSnippets } from "./tasks/BuildSnippets";
 
 // Setup env variables
 setupEnvironment(path.resolve(__dirname, ".env"));
@@ -69,3 +72,11 @@ task(
 // Mcaddon
 task("createMcaddonFile", mcaddonTask(mcaddonTaskOptions));
 task("mcaddon", series("clean-local", "build", "createMcaddonFile"));
+
+task(
+  "buildSnippets",
+  buildSnippets({
+    scriptPaths: [`./scripts/`],
+    targetFolderPath: "dist/snippets",
+  })
+);

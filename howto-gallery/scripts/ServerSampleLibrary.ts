@@ -22,18 +22,16 @@ import * as sdf18 from "./DynamicProperties";
 import * as sdf19 from "./Equipment";
 
 const mojangMinecraftFuncs: {
-  [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.Vector3) => void>;
+  [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>;
 } = {
-  runEntitySpawnEvent: [sdf1.runEntitySpawnEvent, sdf1.createOldHorse],
-  createOldHorse: [sdf1.createOldHorse],
-  spawnItem: [sdf2.spawnItem, sdf2.spawnItem],
-  testThatEntityIsFeatherItem: [sdf2.spawnItem, sdf2.testThatEntityIsFeatherItem],
+  logEntitySpawnEvent: [sdf1.logEntitySpawnEvent, sdf1.spawnAdultHorse],
+  spawnAdultHorse: [sdf1.spawnAdultHorse],
+  spawnFeatherItem: [sdf2.spawnFeatherItem],
+  testThatEntityIsFeatherItem: [sdf2.spawnFeatherItem, sdf2.testThatEntityIsFeatherItem],
   createNoBlockExplosion: [sdf3.createNoBlockExplosion],
-  createFireAndWaterExplosions: [sdf3.createFireAndWaterExplosions],
+  createExplosions: [sdf3.createExplosions],
   createExplosion: [sdf3.createExplosion],
   itemStacks: [sdf4.itemStacks],
-  diamondAwesomeSword: [sdf4.diamondAwesomeSword],
-  ironFireSword: [sdf4.ironFireSword],
   quickFoxLazyDog: [sdf5.quickFoxLazyDog],
   pistonAfterEvent: [sdf6.pistonAfterEvent],
   trapTick: [sdf7.trapTick],
@@ -62,8 +60,8 @@ const mojangMinecraftFuncs: {
   buttonPushEvent: [sdf17.buttonPushEvent],
   leverActionEvent: [sdf17.leverActionEvent],
   tripWireTripEvent: [sdf17.tripWireTripEvent],
-  incrementProperty: [sdf18.incrementProperty],
-  incrementPropertyInJsonBlob: [sdf18.incrementPropertyInJsonBlob],
+  incrementDynamicProperty: [sdf18.incrementDynamicProperty],
+  incrementDynamicPropertyInJsonBlob: [sdf18.incrementDynamicPropertyInJsonBlob],
   givePlayerElytra: [sdf19.givePlayerElytra],
   givePlayerEquipment: [sdf19.givePlayerEquipment],
 };
