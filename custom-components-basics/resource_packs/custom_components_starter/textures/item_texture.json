@@ -1,0 +1,21 @@
+{
+  "resource_pack_name": "starter",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "strawberry": {
+      "textures": "textures/items/strawberry"
+    },
+    "strawberry_rotten": {
+      "textures": "textures/items/strawberry_rotten"
+    },
+    "strawberry_seeds": {
+      "textures": "textures/items/strawberry_seeds"
+    },
+    "spray_can_empty": {
+      "textures": "textures/items/spray_can_empty"
+    },
+    "spray_can_full": {
+      "textures": "textures/items/spray_can_full"
+    }
+  }
+}

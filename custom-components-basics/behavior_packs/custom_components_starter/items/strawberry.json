@@ -1,0 +1,29 @@
+{
+  "format_version": "1.21.10",
+  "minecraft:item": {
+    "description": {
+      "menu_category": {
+        "group": "itemGroup.name.crop",
+        "category": "nature"
+      },
+      "identifier": "starter:strawberry"
+    },
+    "components": {
+      "minecraft:icon": "strawberry",
+      "minecraft:max_stack_size": 64,
+      "minecraft:use_modifiers": {
+        "use_duration": 1.6,
+        "movement_modifier": 0.35
+      },
+      "minecraft:food": {
+        "can_always_eat": true,
+        "nutrition": 1,
+        "saturation_modifier": 0.5
+      },
+      "minecraft:use_animation": "eat",
+      "minecraft:custom_components": [
+        "starter:add_night_vision_on_consume"
+      ]
+    }
+  }
+}
