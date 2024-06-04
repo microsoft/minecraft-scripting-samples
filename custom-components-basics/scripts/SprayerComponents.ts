@@ -56,10 +56,16 @@ function getConePoints(origin: Vector3, forward: Vector3, distance: number, spre
   return points;
 }
 
-function getBlocksAtPoints(dimension: Dimension, points: Vector3[]) {
+function getBlocksBelowPoints(dimension: Dimension, points: Vector3[], maxOffset: number) {
   const blocks = new Map<string, Block>();
   for (const point of points) {
-    const block = dimension.getBlock(point);
+    let offset = 0;
+    let block = dimension.getBlock(point);
+    while (block && block.matches(MinecraftBlockTypes.Air) && offset < 10) {
+      offset++;
+      const offsetPoint = add(point, { x: 0, y: -offset, z: 0 });
+      block = dimension.getBlock(offsetPoint);
+    }
     if (!block) {
       continue;
     }
@@ -79,10 +85,9 @@ function sprayAnimation(
 }
 
 function tryWetFarmland(dimension: Dimension, points: Vector3[]) {
-  const blocks = getBlocksAtPoints(dimension, points);
+  const blocks = getBlocksBelowPoints(dimension, points, 10);
   for (const block of blocks) {
     if (block && block.permutation.matches(MinecraftBlockTypes.Farmland)) {
-      world.sendMessage("hit");
       block.setPermutation(block.permutation.withState("moisturized_amount", 7));
     }
   }
@@ -108,7 +113,7 @@ export function sprayWater(arg: ItemComponentCompleteUseEvent) {
     "minecraft:water_splash_particle_manual",
     waterVariables
   );
-  tryWetFarmland(dimension, getConePoints(arg.source.location, forward, 9, 9, 2));
+  tryWetFarmland(dimension, getConePoints(arg.source.getHeadLocation(), forward, 9, 9, 10));
   setPlayerItem("starter:spray_can_empty", arg.source);
 }
 
