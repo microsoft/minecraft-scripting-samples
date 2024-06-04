@@ -1,5 +1,5 @@
 import { BlockComponentPlayerInteractEvent, BlockComponentTickEvent, BlockCustomComponent } from "@minecraft/server";
-import { CropGrowthComponent } from './CropGrowthComponent'
+import { CropGrowthComponent } from "./CropGrowthComponent";
 
 export class GrownStrawberryCropComponent implements BlockCustomComponent {
   onTick(arg: BlockComponentTickEvent) {
@@ -18,7 +18,7 @@ export class GrownStrawberryCropComponent implements BlockCustomComponent {
 
     // otherwise harvest the block and replant it
     const pos = arg.block.location;
-    arg.dimension.runCommand('loot spawn ' + pos.x + ' ' + pos.y + ' ' + pos.z + ' loot strawberry_grown_crop');
-    arg.block.setPermutation(arg.block.permutation.withState('starter:crop_age', 0));
+    arg.dimension.runCommand("loot spawn " + pos.x + " " + pos.y + " " + pos.z + " loot strawberry_grown_crop");
+    arg.block.setPermutation(arg.block.permutation.withState("starter:crop_age", 0));
   }
 }

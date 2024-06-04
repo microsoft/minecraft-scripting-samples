@@ -4,14 +4,14 @@ import {
   BlockComponentRandomTickEvent,
   BlockCustomComponent,
   EntityInventoryComponent,
-  Player
+  Player,
 } from "@minecraft/server";
 
 export class CropGrowthComponent implements BlockCustomComponent {
   static tryGrowBlock(block: Block) {
     const perm = block.permutation;
-    const age = perm.getState('starter:crop_age');
-    if (age === undefined || typeof age !== 'number') {
+    const age = perm.getState("starter:crop_age");
+    if (age === undefined || typeof age !== "number") {
       return;
     }
 
@@ -19,20 +19,20 @@ export class CropGrowthComponent implements BlockCustomComponent {
       return; // already at max age
     }
 
-    block.setPermutation(perm.withState('starter:crop_age', age + 1));
+    block.setPermutation(perm.withState("starter:crop_age", age + 1));
   }
 
-  static tryFertilize(block: Block, player: Player) : boolean {
+  static tryFertilize(block: Block, player: Player): boolean {
     const inventory = player.getComponent(EntityInventoryComponent.componentId);
     if (inventory === undefined) {
       return false;
     }
 
-    if (inventory.container?.getItem(player.selectedSlotIndex)?.typeId === 'minecraft:bone_meal') {
+    if (inventory.container?.getItem(player.selectedSlotIndex)?.typeId === "minecraft:bone_meal") {
       CropGrowthComponent.tryGrowBlock(block);
       return true;
     }
-    return false
+    return false;
   }
 
   onRandomTick(arg: BlockComponentRandomTickEvent) {
