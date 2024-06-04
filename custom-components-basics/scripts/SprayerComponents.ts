@@ -1,3 +1,4 @@
+import { VECTOR3_DOWN, VECTOR3_EAST, VECTOR3_NORTH, VECTOR3_SOUTH, VECTOR3_UP, VECTOR3_WEST } from "@minecraft/math";
 import {
   Block,
   Dimension,
@@ -120,14 +121,36 @@ export function sprayWater(arg: ItemComponentCompleteUseEvent) {
 export function gatherWater(arg: ItemComponentUseOnEvent) {
   let loc = arg.block.location;
   let isWater = false;
-  if (arg.usedOnBlockPermutation.type.id === "minecraft:water") {
+  if (arg.usedOnBlockPermutation.matches(MinecraftBlockTypes.Water)) {
     isWater = true;
-  } else if (arg.blockFace == Direction.Up) {
-    const newLoc: Vector3 = { x: arg.block.location.x, y: arg.block.location.y + 1, z: arg.block.location.z };
-    const block = arg.source.dimension.getBlock(newLoc);
-    if (block && block.typeId === "minecraft:water") {
+  } else {
+    world.sendMessage(arg.blockFace);
+    switch (arg.blockFace) {
+      case Direction.Down:
+        loc = add(loc, VECTOR3_DOWN);
+        break;
+      case Direction.East:
+        loc = add(loc, VECTOR3_EAST);
+        break;
+      case Direction.North:
+        loc = add(loc, VECTOR3_SOUTH);
+        break;
+      case Direction.South:
+        loc = add(loc, VECTOR3_NORTH);
+        break;
+      case Direction.Up:
+        loc = add(loc, VECTOR3_UP);
+        break;
+      case Direction.West:
+        loc = add(loc, VECTOR3_WEST);
+        break;
+    }
+    const block = arg.source.dimension.getBlock(loc);
+    if (block) {
+      world.sendMessage(block.typeId);
+    }
+    if (block && block.matches(MinecraftBlockTypes.Water)) {
       isWater = true;
-      loc = newLoc;
     }
   }
 
