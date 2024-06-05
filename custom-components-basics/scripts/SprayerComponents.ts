@@ -124,7 +124,6 @@ export function gatherWater(arg: ItemComponentUseOnEvent) {
   if (arg.usedOnBlockPermutation.matches(MinecraftBlockTypes.Water)) {
     isWater = true;
   } else {
-    world.sendMessage(arg.blockFace);
     switch (arg.blockFace) {
       case Direction.Down:
         loc = add(loc, VECTOR3_DOWN);
@@ -146,9 +145,6 @@ export function gatherWater(arg: ItemComponentUseOnEvent) {
         break;
     }
     const block = arg.source.dimension.getBlock(loc);
-    if (block) {
-      world.sendMessage(block.typeId);
-    }
     if (block && block.matches(MinecraftBlockTypes.Water)) {
       isWater = true;
     }
