@@ -25,5 +25,10 @@
     "@minecraft/server": "^1.13.0-beta",
     "@minecraft/server-ui": "^1.1.0",
     "@minecraft/vanilla-data": "^1.20.60"
+  },
+  "overrides": {
+    "@minecraft/math": {
+      "@minecraft/server": "$@minecraft/server"
+    }
   }
 }

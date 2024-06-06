@@ -16,5 +16,8 @@
         {
             "pattern": "./ts-starter-complete-cotta/*/"
         },
+        {
+            "pattern": "./custom-components-sample/*/"
+        },
     ]
 }
