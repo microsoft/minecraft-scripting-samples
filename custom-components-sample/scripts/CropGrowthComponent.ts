@@ -28,8 +28,11 @@ export class CropGrowthComponent implements BlockCustomComponent {
       return false;
     }
 
-    if (inventory.container?.getItem(player.selectedSlotIndex)?.typeId === "minecraft:bone_meal") {
+    const selectedItem = inventory.container?.getItem(player.selectedSlotIndex);
+    if (selectedItem && selectedItem.typeId === "minecraft:bone_meal") {
       CropGrowthComponent.tryGrowBlock(block);
+      selectedItem.amount--;
+      inventory.container?.setItem(player.selectedSlotIndex, selectedItem);
       return true;
     }
     return false;

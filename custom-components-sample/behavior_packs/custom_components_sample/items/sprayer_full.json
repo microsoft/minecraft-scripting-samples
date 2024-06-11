@@ -7,9 +7,9 @@
 		"components": {
 			"minecraft:icon": "spray_can_full",
 			"minecraft:liquid_clipped": true,
-      "minecraft:custom_components": [
-        "starter:spray_water"
-      ],
+			"minecraft:custom_components": [
+				"starter:spray_water"
+			],
 			"minecraft:use_modifiers": {
 				"use_duration": 1,
 				"movement_modifier": 0.35

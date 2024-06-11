@@ -1,4 +1,12 @@
-import { VECTOR3_DOWN, VECTOR3_EAST, VECTOR3_NORTH, VECTOR3_SOUTH, VECTOR3_UP, VECTOR3_WEST } from "@minecraft/math";
+import {
+  VECTOR3_DOWN,
+  VECTOR3_EAST,
+  VECTOR3_NORTH,
+  VECTOR3_SOUTH,
+  VECTOR3_UP,
+  VECTOR3_WEST,
+  Vector3Utils,
+} from "@minecraft/math";
 import {
   Block,
   Dimension,
@@ -14,42 +22,17 @@ import {
 } from "@minecraft/server";
 import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
 
-const up: Vector3 = { x: 0, y: 1, z: 0 };
-const down: Vector3 = { x: 0, y: -1, z: 0 };
-
-function add(v1: Vector3, v2: Vector3): Vector3 {
-  return { x: v1.x + v2.x, y: v1.y + v2.y, z: v1.z + v2.z };
-}
-
-function scale(a: Vector3, s: number): Vector3 {
-  return { x: a.x * s, y: a.y * s, z: a.z * s };
-}
-
-function toString(v: Vector3, options?: { decimals?: number; delimiter?: string }): string {
-  const decimals = options?.decimals ?? 2;
-  const str: string[] = [v.x.toFixed(decimals), v.y.toFixed(decimals), v.z.toFixed(decimals)];
-  return str.join(options?.delimiter ?? ", ");
-}
-
-function cross(a: Vector3, b: Vector3): Vector3 {
-  return {
-    x: a.y * b.z - a.z * b.y,
-    y: a.z * b.x - a.x * b.z,
-    z: a.x * b.y - a.y * b.x,
-  };
-}
-
 function getConePoints(origin: Vector3, forward: Vector3, distance: number, spread: number, density: number) {
-  const right = cross(forward, up);
+  const right = Vector3Utils.cross(forward, VECTOR3_UP);
 
   const points: Vector3[] = [];
   for (let row = 0; row <= distance * density; row++) {
     for (let column = 0; column <= spread * density; column++) {
       const rowOffset = row / density;
-      let point = add(origin, scale(forward, rowOffset));
+      let point = Vector3Utils.add(origin, Vector3Utils.scale(forward, rowOffset));
       const columnWidth = rowOffset / distance;
       const columnOffset = ((spread - 1) / -2) * columnWidth + (column / density) * columnWidth;
-      point = add(point, scale(right, columnOffset));
+      point = Vector3Utils.add(point, Vector3Utils.scale(right, columnOffset));
       points.push(point);
     }
   }
@@ -58,19 +41,19 @@ function getConePoints(origin: Vector3, forward: Vector3, distance: number, spre
 }
 
 function getBlocksBelowPoints(dimension: Dimension, points: Vector3[], maxOffset: number) {
-  const blocks = new Map<string, Block>();
+  const blocks: Block[] = [];
   for (const point of points) {
     let offset = 0;
     let block = dimension.getBlock(point);
     while (block && block.matches(MinecraftBlockTypes.Air) && offset < 10) {
       offset++;
-      const offsetPoint = add(point, { x: 0, y: -offset, z: 0 });
+      const offsetPoint = Vector3Utils.add(point, { x: 0, y: -offset, z: 0 });
       block = dimension.getBlock(offsetPoint);
     }
     if (!block) {
       continue;
     }
-    blocks.set(toString(block.location), block);
+    blocks.push(block);
   }
 
   return blocks.values();
@@ -105,7 +88,7 @@ export function sprayWater(arg: ItemComponentCompleteUseEvent) {
   const viewDir = arg.source.getViewDirection();
   const forward: Vector3 = { x: viewDir.x, y: 0, z: viewDir.z };
   const waterVariables = new MolangVariableMap();
-  waterVariables.setVector3("direction", down);
+  waterVariables.setVector3("direction", VECTOR3_DOWN);
 
   world.playSound("mob.llama.spit", arg.source.location);
   sprayAnimation(
@@ -126,22 +109,22 @@ export function gatherWater(arg: ItemComponentUseOnEvent) {
   } else {
     switch (arg.blockFace) {
       case Direction.Down:
-        loc = add(loc, VECTOR3_DOWN);
+        loc = Vector3Utils.add(loc, VECTOR3_DOWN);
         break;
       case Direction.East:
-        loc = add(loc, VECTOR3_EAST);
+        loc = Vector3Utils.add(loc, VECTOR3_EAST);
         break;
       case Direction.North:
-        loc = add(loc, VECTOR3_SOUTH);
+        loc = Vector3Utils.add(loc, VECTOR3_SOUTH);
         break;
       case Direction.South:
-        loc = add(loc, VECTOR3_NORTH);
+        loc = Vector3Utils.add(loc, VECTOR3_NORTH);
         break;
       case Direction.Up:
-        loc = add(loc, VECTOR3_UP);
+        loc = Vector3Utils.add(loc, VECTOR3_UP);
         break;
       case Direction.West:
-        loc = add(loc, VECTOR3_WEST);
+        loc = Vector3Utils.add(loc, VECTOR3_WEST);
         break;
     }
     const block = arg.source.dimension.getBlock(loc);

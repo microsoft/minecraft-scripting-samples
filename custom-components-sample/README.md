@@ -1,9 +1,9 @@
 ---
 page_type: sample
-author: mammerla
-description: A comprehensive gallery of different samples of Minecraft coding behaviors.
-ms.author: mikeam@microsoft.com
-ms.date: 05/05/2022
+author: agriffin
+description: A sample pack using block and item custom components to add a new strawberry crop and watering tool.
+ms.author: agriffin@microsoft.com
+ms.date: 06/11/2024
 languages:
   - typescript
 products:
@@ -12,7 +12,7 @@ products:
 
 # Minecraft How-to Gallery
 
-This sample contains many code snippets that show how you can manipulate basic Minecraft behaviors.
+This sample contains many code snippets that show how you can use custom components to create new logic for custom blocks and items.
 
 ## Prerequisites
 
