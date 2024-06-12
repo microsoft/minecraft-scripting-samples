@@ -8,7 +8,7 @@ This project contains samples of [@minecraft/server](https://learn.microsoft.com
 - [ts-starter-complete-cotta](ts-starter-complete-cotta/README.md) - A completed version of the `ts-starter` tutorial, featuring the Break the Cotta simple arena game.
 - [howto-gallery](howto-gallery/README.md) - A set of small code snippets that can be played back within the game.
 - [build-challenge](build-challenge/README.md) - A more complex starter script map with the ability to form teams that build structures, that can then be voted on.
-- [custom-components-sample](custom-components-sample/README.md) - A sample pack using block and item custom components to add a new strawberry crop and watering tool.
+- [custom-components](custom-components/README.md) - An addon using block and item custom components to add a new strawberry crop and watering tool.
 
 ## Contributing
 

@@ -1,8 +1,8 @@
 {
-  "name": "scripting-custom-component-sample",
+  "name": "scripting-custom-component",
   "version": "0.1.0",
-  "productName": "Minecraft TypeScript Custom Component Sample",
-  "description": "Minecraft TypeScript Custom Component Sample",
+  "productName": "Minecraft TypeScript Custom Component",
+  "description": "Minecraft TypeScript Custom Component",
   "private": true,
   "devDependencies": {
     "@minecraft/core-build-tasks": "^1.1.3",

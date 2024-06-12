@@ -1,7 +1,7 @@
 ---
 page_type: sample
 author: agriffin
-description: A sample pack using block and item custom components to add a new strawberry crop and watering tool.
+description: An addon using block and item custom components to add a new strawberry crop and watering tool.
 ms.author: agriffin@microsoft.com
 ms.date: 06/11/2024
 languages:
@@ -12,7 +12,7 @@ products:
 
 # Minecraft How-to Gallery
 
-This sample contains many code snippets that show how you can use custom components to create new logic for custom blocks and items.
+This addon contains many code snippets that show how you can use custom components to create new logic for custom blocks and items.
 
 ## Prerequisites
 
