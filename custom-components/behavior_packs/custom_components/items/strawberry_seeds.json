@@ -1,0 +1,19 @@
+{
+  "format_version": "1.21.10",
+  "minecraft:item": {
+    "description": {
+      "menu_category": {
+        "group": "itemGroup.name.seed",
+        "category": "nature"
+      },
+      "identifier": "starter:strawberry_seeds"
+    },
+    "components": {
+      "minecraft:icon": "strawberry_seeds",
+      "minecraft:max_stack_size": 64,
+      "minecraft:block_placer": {
+        "block": "starter:strawberry_crop"
+      }
+    }
+  }
+}

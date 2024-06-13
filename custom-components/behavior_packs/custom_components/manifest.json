@@ -1,0 +1,46 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Custom components behavior pack",
+    "description": "Custom components behavior pack",
+    "uuid": "922f8c01-632f-4579-91c4-40101d578de7",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      20,
+      30
+    ]
+  },
+  "modules": [
+    {
+      "description": "Script resources",
+      "language": "javascript",
+      "type": "script",
+      "uuid": "85c3bdf1-a82b-47f1-962f-90cb74c0f300",
+      "version": [
+        1,
+        0,
+        0
+      ],
+      "entry": "scripts/main.js"
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "1.13.0-beta"
+    },
+    {
+      "uuid": "7bd3b140-a9c0-42cb-aa56-0bdedc80e27b",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}
