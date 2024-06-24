@@ -27,7 +27,7 @@
     "@minecraft/server-admin": "1.0.0-beta.1.20.70-preview.24",
     "@minecraft/server-net": "1.0.0-beta.1.20.40-preview.21",
     "@minecraft/server-ui": "1.2.0-beta.1.20.70-preview.24",
-    "@minecraft/vanilla-data": "^1.20.60"
+    "@minecraft/vanilla-data": "^1.21.1"
   },
   "overrides": {
     "@minecraft/server-ui": {
