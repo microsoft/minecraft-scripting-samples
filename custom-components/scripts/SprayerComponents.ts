@@ -11,7 +11,7 @@ import {
   Block,
   Dimension,
   Direction,
-  EntityComponentTypes,
+  EntityInventoryComponent,
   ItemComponentCompleteUseEvent,
   ItemComponentUseOnEvent,
   ItemStack,
@@ -79,7 +79,7 @@ function tryWetFarmland(dimension: Dimension, points: Vector3[]) {
 
 function setPlayerItem(itemId: string, player: Player) {
   const newItem = new ItemStack(itemId);
-  const inventory = player.getComponent(EntityComponentTypes.Inventory);
+  const inventory = player.getComponent(EntityInventoryComponent.componentId) as EntityInventoryComponent;
   inventory?.container?.setItem(player.selectedSlotIndex, newItem);
 }
 
