@@ -23,7 +23,7 @@ export class CropGrowthComponent implements BlockCustomComponent {
   }
 
   static tryFertilize(block: Block, player: Player): boolean {
-    const inventory = player.getComponent(EntityInventoryComponent.componentId);
+    const inventory = player.getComponent(EntityInventoryComponent.componentId) as EntityInventoryComponent;
     if (inventory === undefined) {
       return false;
     }

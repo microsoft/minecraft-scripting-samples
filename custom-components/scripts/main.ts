@@ -6,8 +6,8 @@ import { sprayWater, gatherWater } from "./SprayerComponents";
 
 world.beforeEvents.worldInitialize.subscribe((initEvent) => {
   // block
-  initEvent.blockTypeRegistry.registerCustomComponent("starter:strawberry_grown", new GrownStrawberryCropComponent());
-  initEvent.blockTypeRegistry.registerCustomComponent("starter:crop_grow", new CropGrowthComponent());
+  initEvent.blockComponentRegistry.registerCustomComponent("starter:strawberry_grown", new GrownStrawberryCropComponent());
+  initEvent.blockComponentRegistry.registerCustomComponent("starter:crop_grow", new CropGrowthComponent());
 
   // item
   initEvent.itemComponentRegistry.registerCustomComponent(
