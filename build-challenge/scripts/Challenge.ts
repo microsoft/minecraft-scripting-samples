@@ -7,8 +7,6 @@ import {
   LeverActionAfterEvent,
   TitleDisplayOptions,
   Player,
-  ChatSendBeforeEvent,
-  Vector,
   DisplaySlotId,
   BlockPermutation,
   ScriptEventCommandMessageAfterEvent,
@@ -17,6 +15,8 @@ import {
   Block,
   TicksPerSecond,
   BlockComponentTypes,
+  BlockInventoryComponent,
+  EntityInventoryComponent,
 } from "@minecraft/server";
 import ChallengePlayer, { ChallengePlayerRole, IPlayerData } from "./ChallengePlayer.js";
 import Log from "./Log.js";
@@ -180,7 +180,6 @@ export default class Challenge {
     this.playerLeft = this.playerLeft.bind(this);
     this.leverAction = this.leverAction.bind(this);
     this.itemUseOn = this.itemUseOn.bind(this);
-    this.beforeChat = this.beforeChat.bind(this);
     this.handleScriptEvent = this.handleScriptEvent.bind(this);
     this.refreshTeam = this.refreshTeam.bind(this);
     this.clearTeamArea = this.clearTeamArea.bind(this);
@@ -446,7 +445,6 @@ export default class Challenge {
 
     world.afterEvents.playerSpawn.subscribe(this.playerSpawned);
     world.afterEvents.playerLeave.subscribe(this.playerLeft);
-    world.beforeEvents.chatSend.subscribe(this.beforeChat);
     world.afterEvents.leverAction.subscribe(this.leverAction);
     world.afterEvents.itemUseOn.subscribe(this.itemUseOn);
     system.afterEvents.scriptEventReceive.subscribe(this.handleScriptEvent);
@@ -458,25 +456,25 @@ export default class Challenge {
   setupTracks() {
     this.tracks = [];
     let track = new Track(
-      new Vector(this.nwbLocation.x, this.nwbLocation.y + 10, this.nwbLocation.z),
-      new Vector(this.nwbLocation.x, this.nwbLocation.y + 10, this.nwbLocation.z + TOTAL_Z),
-      new Vector(20, -10, 0)
+      { x: this.nwbLocation.x, y: this.nwbLocation.y + 10, z: this.nwbLocation.z },
+      { x: this.nwbLocation.x, y: this.nwbLocation.y + 10, z: this.nwbLocation.z + TOTAL_Z },
+      { x: 20, y: -10, z: 0 }
     );
 
     this.tracks.push(track);
 
     track = new Track(
-      new Vector(this.nwbLocation.x + TOTAL_X / 2, this.nwbLocation.y + 10, this.nwbLocation.z - 20),
-      new Vector(this.nwbLocation.x + TOTAL_X / 2, this.nwbLocation.y + 10, this.nwbLocation.z + TOTAL_Z),
-      new Vector(0, -10, 20)
+      { x: this.nwbLocation.x + TOTAL_X / 2, y: this.nwbLocation.y + 10, z: this.nwbLocation.z - 20 },
+      { x: this.nwbLocation.x + TOTAL_X / 2, y: this.nwbLocation.y + 10, z: this.nwbLocation.z + TOTAL_Z },
+      { x: 0, y: -10, z: 20 }
     );
 
     this.tracks.push(track);
 
     track = new Track(
-      new Vector(this.nwbLocation.x + TOTAL_X, this.nwbLocation.y + 10, this.nwbLocation.z),
-      new Vector(this.nwbLocation.x + TOTAL_X, this.nwbLocation.y + 10, this.nwbLocation.z + TOTAL_Z),
-      new Vector(-20, -10, 0)
+      { x: this.nwbLocation.x + TOTAL_X, y: this.nwbLocation.y + 10, z: this.nwbLocation.z },
+      { x: this.nwbLocation.x + TOTAL_X, y: this.nwbLocation.y + 10, z: this.nwbLocation.z + TOTAL_Z },
+      { x: -20, y: -10, z: 10 }
     );
 
     this.tracks.push(track);
@@ -490,19 +488,6 @@ export default class Challenge {
     }
 
     this.addScores();
-  }
-
-  beforeChat(event: ChatSendBeforeEvent) {
-    let mess = event.message;
-
-    if (event.sender && event.sender.typeId === "minecraft:player" && mess) {
-      if (mess.startsWith("!")) {
-        system.run(() => {
-          this.processMessage(mess, event.sender);
-        });
-        event.cancel = true;
-      }
-    }
   }
 
   handleScriptEvent(event: ScriptEventCommandMessageAfterEvent) {
@@ -968,7 +953,7 @@ export default class Challenge {
 
           let track = this.tracks[trackIndex];
 
-          let vec = Vector.lerp(track.from, track.to, (trackSequence % STANDARD_TRACK_TIME) / STANDARD_TRACK_TIME);
+          let vec = Utilities.lerp(track.from, track.to, (trackSequence % STANDARD_TRACK_TIME) / STANDARD_TRACK_TIME);
           player.teleport(vec, {
             dimension: world.getDimension(MinecraftDimensionTypes.Overworld),
             facingLocation: {
@@ -1387,7 +1372,7 @@ export default class Challenge {
                     northBlock &&
                     northBlock.typeId.indexOf("chest") < 0
                   ) {
-                    let invComp = block.getComponent(BlockComponentTypes.Inventory);
+                    let invComp = block.getComponent(BlockComponentTypes.Inventory) as BlockInventoryComponent;
 
                     if (invComp) {
                       let cont = invComp.container;
@@ -1700,7 +1685,7 @@ export default class Challenge {
   }
 
   ensurePlayerHas(player: Player, itemTypeId: string, amount?: number) {
-    const inventory = player.getComponent(BlockComponentTypes.Inventory);
+    const inventory = player.getComponent(BlockComponentTypes.Inventory) as EntityInventoryComponent;
 
     if (inventory) {
       const cont = inventory.container;

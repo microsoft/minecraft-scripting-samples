@@ -1,0 +1,212 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: write
+      deployments: none
+      packages: none
+      pull-requests: none
+      security-events: none
+      checks: none
+      id-token: none
+      issues: none
+      repository-projects: none
+      statuses: none
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bump version
+        id: version
+        uses: vemel/nextversion@0.1.1
+        with:
+          path: ./ts-starter/package.json
+          type: semver
+          result: ${{ github.event.inputs.bump }}
+          release: ${{ github.event.inputs.release }}
+          update: |
+            ./build-challenge/package.json
+            ./custom-components/package.json
+            ./editor-basics/package.json
+            ./editor-script-box/package.json
+            ./howto-gallery/package.json
+            ./script-box/package.json
+            ./ts-starter/package.json
+            ./ts-starter-complete-cotta/package.json
+
+      - name: build-challenge Build
+        run: |
+          pushd build-challenge
+          npm ci
+          npm run mcaddon
+          popd
+
+      - name: custom-components Build
+        run: |
+          pushd custom-components
+          npm ci
+          npm run mcaddon
+          popd
+
+      - name: editor-basics Build
+        run: |
+          pushd editor-basics
+          npm ci
+          npm run mcaddon
+          popd
+
+      - name: editor-script-box Build
+        run: |
+          pushd editor-basics
+          npm ci
+          npm run mcaddon
+          popd
+  
+      - name: howto-gallery Build
+        run: |
+          pushd howto-galler
+          npm ci
+          npm run mcaddon
+          popd
+
+      - name: script-box Build
+        run: |
+          pushd script-box
+          npm ci
+          npm run mcaddon
+          popd
+
+      - name: ts-starter Build
+        run: |
+          pushd ts-starter
+          npm ci
+          npm run mcaddon
+          popd
+
+      - name: ts-starter-complete-cotta Build
+        run: |
+          pushd ts-starter-complete-cotta
+          npm ci
+          npm run mcaddon
+          popd
+
+      - name: Get Package Version
+        id: get-package-version
+        with:
+          path: build-challenge/
+        uses: stevenbenitez/get-package-version-action@v1
+            
+      - name: Create draft Minecraft Scripting Samples release
+        id: create_samples_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.get-package-version.outputs.version }}-alpha
+          release_name: Minecraft Scripting Samples
+          draft: true
+          prerelease: true
+          
+      - name: Upload build-challenge.mcaddon to node_module release
+        id: upload-build-challenge
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_samples_release.outputs.upload_url }}
+          asset_path: ./build-challenge/packages/buildchallenge.mcaddon
+          asset_name: build-challenge-v${{ steps.get-package-version.outputs.version }}.mcaddon
+          asset_content_type: application/zip
+
+      - name: Upload custom-components.mcaddon to node_module release
+        id: upload-custom-components
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_samples_release.outputs.upload_url }}
+          asset_path: ./custom-components/packages/custom_components.mcaddon
+          asset_name: custom-components-v${{ steps.get-package-version.outputs.version }}.mcaddon
+          asset_content_type: application/zip
+
+      - name: Upload editor-basics.mcaddon to node_module release
+        id: upload-editor-basics
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_samples_release.outputs.upload_url }}
+          asset_path: ./editor-basics/packages/editor-basics.mcaddon
+          asset_name: editor-basics-v${{ steps.get-package-version.outputs.version }}.mcaddon
+          asset_content_type: application/zip
+
+      - name: Upload editor-script-box.mcaddon to node_module release
+        id: upload-editor-script-box
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_samples_release.outputs.upload_url }}
+          asset_path: ./editor-script-box/packages/editor-script-box.mcaddon
+          asset_name: editor-script-box-v${{ steps.get-package-version.outputs.version }}.mcaddon
+          asset_content_type: application/zip
+
+      - name: Upload howto-gallery.mcaddon to node_module release
+        id: upload-howto-gallery
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_samples_release.outputs.upload_url }}
+          asset_path: ./howto-gallery/packages/howto-gallery.mcaddon
+          asset_name: howto-gallery-v${{ steps.get-package-version.outputs.version }}.mcaddon
+          asset_content_type: application/zip
+
+      - name: Upload script-box.mcaddon to node_module release
+        id: upload-script-box
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_samples_release.outputs.upload_url }}
+          asset_path: ./script-box/packages/script-box.mcaddon
+          asset_name: script-box-v${{ steps.get-package-version.outputs.version }}.mcaddon
+          asset_content_type: application/zip
+
+      - name: Upload ts-starter.mcaddon to node_module release
+        id: upload-ts-starter
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_samples_release.outputs.upload_url }}
+          asset_path: ./ts-starter/packages/ts-starter.mcaddon
+          asset_name: starter-v${{ steps.get-package-version.outputs.version }}.mcaddon
+          asset_content_type: application/zip
+
+      - name: Upload ts-starter-complete-cotta.mcaddon to node_module release
+        id: upload-ts-starter-complete-cotta
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_samples_release.outputs.upload_url }}
+          asset_path: ./ts-starter-complete-cotta/packages/cotta.mcaddon
+          asset_name: cotta-v${{ steps.get-package-version.outputs.version }}.mcaddon
+          asset_content_type: application/zip
+
+      - name: Commit version changes
+        run: |
+          VERSION=${{ toJSON(steps.version.outputs.result) }}
+          BRANCH="main"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -am "Bump version to $VERSION"
+          git push origin $BRANCH          
