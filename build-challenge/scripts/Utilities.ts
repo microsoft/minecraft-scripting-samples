@@ -1,4 +1,4 @@
-import { world, BlockPermutation } from "@minecraft/server";
+import { world, BlockPermutation, Vector3 } from "@minecraft/server";
 import { MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
 export const CHARFONT: { [index: string]: string[][] } = {
@@ -309,6 +309,13 @@ export default class Utilities {
         xStart++;
       }
     }
+  }
+  static lerp(from: Vector3, to: Vector3, percent: number): Vector3 {
+    return {
+      x: from.x + (to.x - from.x) * percent,
+      y: from.y + (to.y - from.y) * percent,
+      z: from.z + (to.z - from.z) * percent,
+    };
   }
 
   static fillBlock(
