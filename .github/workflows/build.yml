@@ -56,7 +56,7 @@ jobs:
   
       - name: howto-gallery Build
         run: |
-          pushd howto-galler
+          pushd howto-gallery
           npm ci
           npm run mcaddon
           popd
