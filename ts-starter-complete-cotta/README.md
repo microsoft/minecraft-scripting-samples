@@ -30,6 +30,6 @@ Visit the [Visual Studio Code website](https://code.visualstudio.com) and instal
 
 ## Manifest
 
-- [gulpfile.js](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter-complete-cotta/gulpfile.js): This file contains build instructions for the Starter Break the Cotta arena project.
+- [just.config.ts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter-complete-cotta/just.config.ts): This file contains build instructions for the Starter Break the Cotta arena project.
 - [scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter-complete-cotta/scripts): This contains all of your TypeScript files, that will be compiled and built into your projects.
 - [behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter-complete-cotta/behavior_packs): This contains resources and JSON files that define your behavior pack.

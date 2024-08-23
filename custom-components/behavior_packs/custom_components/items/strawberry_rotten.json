@@ -1,0 +1,29 @@
+{
+  "format_version": "1.21.10",
+  "minecraft:item": {
+    "description": {
+      "menu_category": {
+        "group": "itemGroup.name.crop",
+        "category": "nature"
+      },
+      "identifier": "starter:strawberry_rotten"
+    },
+    "components": {
+      "minecraft:icon": "strawberry_rotten",
+      "minecraft:max_stack_size": 64,
+      "minecraft:use_modifiers": {
+        "use_duration": 1.6,
+        "movement_modifier": 0.35
+      },
+      "minecraft:food": {
+        "can_always_eat": true,
+        "nutrition": 1,
+        "saturation_modifier": 0.1
+      },
+      "minecraft:custom_components": [
+        "starter:cause_hunger_on_eat"
+      ],
+      "minecraft:use_animation": "eat"
+    }
+  }
+}

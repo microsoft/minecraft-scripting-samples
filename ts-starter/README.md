@@ -32,7 +32,7 @@ Visit the [Visual Studio Code website](https://code.visualstudio.com) and instal
 
 1. Using a copy of this starter project from GitHub - you can get a copy of this project by visiting [https://github.com/microsoft/minecraft-scripting-samples/](https://github.com/microsoft/minecraft-scripting-samples/) and, under the Code button, selecting `Download ZIP`.
 
-1. The `ts-starter` folder (this folder) contains a starter TypeScript project for Minecraft.  Note that there is a `ts-starter-complete-cotta` folder that will show you the finished product and code.
+1. The `ts-starter` folder (this folder) contains a starter TypeScript project for Minecraft. Note that there is a `ts-starter-complete-cotta` folder that will show you the finished product and code.
 
 1. To make your own environment look like the example, create a folder on your `C:\` drive and call it **projects**. Create a subfolder called **cotta**.
 
@@ -40,41 +40,40 @@ Visit the [Visual Studio Code website](https://code.visualstudio.com) and instal
 
 1. Open a Windows Terminal or PowerShell window and change the working directory to your **cotta** folder:
 
-    ```powershell
-    cd c:\projects\cotta\
-    ```
+   ```powershell
+   cd c:\projects\cotta\
+   ```
 
 1. Use NPM to install our tools:
 
-    ```powershell
-    npm i
-    ```
-
-1. When that's done, enter:
-
-    ```powershell
-    npm i gulp-cli --global
-    ```
+   ```powershell
+   npm i
+   ```
 
 1. Use this shortcut command to open the project in Visual Studio Code:
 
-    ```powershell
-    code .
-    ```
+   ```powershell
+   code .
+   ```
 
 It might also ask you to install the Minecraft Debugger and Blockception's Visual Studio Code plugin, which are plugins to Visual Studio Code that can help with Minecraft development. Go ahead and do that, if you haven't already.
 
 ### Chapter 1. Customize the behavior pack
 
-In Visual Studio Code, expand the `behavior_packs` node in the treeview to the left, and rename the **starterbp** folder to "cotta".
+In Visual Studio Code, open the file `.env`. This contains the environment variables to use to configure project:
 
-Use the Find/Replace command (Ctrl-Shift-F) to search for "starterbp" and replace the instance in **gulpfile.js** and the instance in **launch.json** with "cotta."
+```
+PROJECT_NAME="starter"
+MINECRAFT_PRODUCT="BedrockUWP"
+CUSTOM_DEPLOYMENT_PATH=""
+```
 
-> [!IMPORTANT]
-> You may choose to use either Minecraft or Minecraft Preview to debug and work
-> with your scripts. If you do use Minecraft Preview,
-> open up **gulpfile.js** and, at the top of the file, set
-> `useMinecraftPreview = true;`
+- **PROJECT_NAME** is used as the folder name under all the assets are going to be deployed inside the game directories (e.g., development_behavior_packs\\**PROJECT_NAME**, development_resource_packs\\**PROJECT_NAME**).
+
+- **MINECRAFT_PRODUCT**. You can choose to use either Minecraft or Minecraft Preview to debug and work with your scripts. These are the possible values: **BedrockUWP, PreviewUWP, Custom**.
+  Use **Custom** in case of deploy on any other path.
+
+- **CUSTOM_DEPLOYMENT_PATH**. In case of using **Custom** for **MINECRAFT_PRODUCT**, this is the path used to generate the assets.
 
 Go back the Files tree view and open `behavior_packs\cotta\manifest.json`
 
@@ -94,10 +93,10 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 Run this one, too.
 
 ```powershell
-gulp
+npm run local-deploy
 ```
 
-This uses a build tool called GulpJS and automatically compiles your TypeScript project and pushes it over into Minecraft.
+This uses a build tool called just-scripts and automatically compiles your TypeScript project and pushes it over into Minecraft.
 
 Launch Minecraft and create a new world:
 
@@ -126,7 +125,22 @@ Open up `scripts/main.ts` within Visual Studio Code.
 Remove all the existing script code in **main.ts**. Replace it with this to start:
 
 ```typescript
-import { world, system, BlockPermutation, EntityInventoryComponent, ItemStack, DisplaySlotId } from "@minecraft/server";
+import {
+  world,
+  system,
+  BlockPermutation,
+  EntityInventoryComponent,
+  ItemStack,
+  DisplaySlotId,
+  Vector3,
+} from "@minecraft/server";
+import { Vector3Utils } from "@minecraft/math";
+import {
+  MinecraftBlockTypes,
+  MinecraftDimensionTypes,
+  MinecraftEntityTypes,
+  MinecraftItemTypes,
+} from "@minecraft/vanilla-data";
 
 const START_TICK = 100;
 const ARENA_X_SIZE = 30;
@@ -134,12 +148,13 @@ const ARENA_Z_SIZE = 30;
 const ARENA_X_OFFSET = 0;
 const ARENA_Y_OFFSET = -60;
 const ARENA_Z_OFFSET = 0;
+const ARENA_VECTOR_OFFSET: Vector3 = { x: ARENA_X_OFFSET, y: ARENA_Y_OFFSET, z: ARENA_Z_OFFSET };
 
 // global variables
 let curTick = 0;
 
 function initializeBreakTheTerracotta() {
-  const overworld = world.getDimension("overworld");
+  const overworld = world.getDimension(MinecraftDimensionTypes.Overworld);
 
   let scoreObjective = world.scoreboard.getObjective("score");
 
@@ -149,7 +164,7 @@ function initializeBreakTheTerracotta() {
 
   // eliminate pesky nearby mobs
   let entities = overworld.getEntities({
-    excludeTypes: ["player"],
+    excludeTypes: [MinecraftEntityTypes.Player],
   });
 
   for (let entity of entities) {
@@ -161,26 +176,19 @@ function initializeBreakTheTerracotta() {
     objective: scoreObjective,
   });
 
-  let players = world.getAllPlayers();
+  const players = world.getAllPlayers();
 
-  for (let player of players) {
-    player.runCommand("scoreboard players set @s score 0");
+  for (const player of players) {
+    scoreObjective.setScore(player, 0);
 
     let inv = player.getComponent("inventory") as EntityInventoryComponent;
-    inv.container.addItem(new ItemStack("diamond_sword"));
-    inv.container.addItem(new ItemStack("dirt", 64));
+    inv.container?.addItem(new ItemStack(MinecraftItemTypes.DiamondSword));
+    inv.container?.addItem(new ItemStack(MinecraftItemTypes.Dirt, 64));
 
-    player.teleport(
-      {
-        x: ARENA_X_OFFSET - 3,
-        y: ARENA_Y_OFFSET,
-        z: ARENA_Z_OFFSET - 3,
-      },
-      {
-        dimension: overworld,
-        rotation: { x: 0, y: 0 },
-      }
-    );
+    player.teleport(Vector3Utils.add(ARENA_VECTOR_OFFSET, { x: -3, y: 0, z: -3 }), {
+      dimension: overworld,
+      rotation: { x: 0, y: 0 },
+    });
   }
 
   world.sendMessage("BREAK THE TERRACOTTA");
@@ -211,20 +219,20 @@ Note that we wait until `START_TICK` (100 ticks in) before the world is actually
 
 Within the initialize function, we run commands that:
 
-* Clear out any existing mobs near the player in the world.
-* Set up a scoreboard objective for overall Level of the player, meaning the number of terracotta breaks they have
-* Give the current player a diamond sword and some dirty dirt
-* Use chat to give the player an instructional message
+- Clear out any existing mobs near the player in the world.
+- Set up a scoreboard objective for overall Level of the player, meaning the number of terracotta breaks they have
+- Give the current player a diamond sword and some dirty dirt
+- Use chat to give the player an instructional message
 
-Now, let's run the code. This time, we're going to run gulp in "watch mode" - meaning it will just sit in the background and watch for changes, and if they happen, they will automatically compile and deploy to the Minecraft folder. This way, we won't have to worry about separately compiling every time we make a change to code.
+Now, let's run the code. This time, we're going to run the local-deploy task in "watch mode" - meaning it will just sit in the background and watch for changes, and if they happen, they will automatically compile and deploy to the Minecraft folder. This way, we won't have to worry about separately compiling every time we make a change to code.
 
 Go back to your PowerShell window, and enter:
 
 ```powershell
-gulp watch
+npm run local-deploy -- --watch
 ```
 
-You should see gulp compile and deploy to the Minecraft folder, and make a noise when it does that. From here, we don't need to tend to PowerShell except to see if there are any compilation errors down the road.
+You should see that the local-deploy task compiles and deploys to the Minecraft folder. From here, we don't need to tend to PowerShell except to see if there are any compilation errors down the road.
 
 When you are done coding for the day, either hit **ctrl-c** in the PowerShell Window to stop the watch mode or close the window.
 
@@ -234,7 +242,7 @@ Save and Quit to exit out of the world. We'll want to reload the world from here
 
 Now load the world. You should see your initialization changes: a new scoreboard, new items in your inventory, and a script message.
 
-Note that as you work through this tutorial, we are going to run the initialization code more than once, so your player is going to get multiples of these items during this development and test phase. If that bothers you, feel free to toss out these items before you close the world.
+Note that as you work through this tutorial, we are going to run the initialization code more than once, so your player is going to get multiples of these items during this development and test phase.
 
 #### Build your arena with some helper code
 
@@ -244,6 +252,7 @@ Add a new file to your `scripts` folder called `Utilities.ts`. Correct capitaliz
 
 ```typescript
 import { world, BlockPermutation } from "@minecraft/server";
+import { MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
 export default class Utilities {
   static fillBlock(
@@ -255,7 +264,7 @@ export default class Utilities {
     yTo: number,
     zTo: number
   ) {
-    const overworld = world.getDimension("overworld");
+    const overworld = world.getDimension(MinecraftDimensionTypes.Overworld);
 
     for (let i = xFrom; i <= xTo; i++) {
       for (let j = yFrom; j <= yTo; j++) {
@@ -275,7 +284,7 @@ export default class Utilities {
     yTo: number,
     zTo: number
   ) {
-    const overworld = world.getDimension("overworld");
+    const overworld = world.getDimension(MinecraftDimensionTypes.Overworld);
 
     for (let i = xFrom; i <= xTo; i++) {
       for (let k = yFrom; k <= yTo; k++) {
@@ -311,31 +320,31 @@ import Utilities from "./Utilities.js";
 Then, within `initializeBreakTheTerracotta`, let's add our arena initialization beneath the `world.sendMessage("BREAK THE TERRACOTTA!");` line of code:
 
 ```typescript
- let airBlockPerm = BlockPermutation.resolve("minecraft:air");
- let cobblestoneBlockPerm = BlockPermutation.resolve("minecraft:cobblestone");
+let airBlockPerm = BlockPermutation.resolve(MinecraftBlockTypes.Air);
+let cobblestoneBlockPerm = BlockPermutation.resolve(MinecraftBlockTypes.Cobblestone);
 
- if (airBlockPerm) {
-   Utilities.fillBlock(
-     airBlockPerm,
-     ARENA_X_OFFSET - ARENA_X_SIZE / 2 + 1,
-     ARENA_Y_OFFSET,
-     ARENA_Z_OFFSET - ARENA_Z_SIZE / 2 + 1,
-     ARENA_X_OFFSET + ARENA_X_SIZE / 2 - 1,
-     ARENA_Y_OFFSET + 10,
-     ARENA_Z_OFFSET + ARENA_Z_SIZE / 2 - 1
-   );
- }
+if (airBlockPerm) {
+  Utilities.fillBlock(
+    airBlockPerm,
+    ARENA_X_OFFSET - ARENA_X_SIZE / 2 + 1,
+    ARENA_Y_OFFSET,
+    ARENA_Z_OFFSET - ARENA_Z_SIZE / 2 + 1,
+    ARENA_X_OFFSET + ARENA_X_SIZE / 2 - 1,
+    ARENA_Y_OFFSET + 10,
+    ARENA_Z_OFFSET + ARENA_Z_SIZE / 2 - 1
+  );
+}
 
- if (cobblestoneBlockPerm) {
-   Utilities.fourWalls(
-     cobblestoneBlockPerm,
-     ARENA_X_OFFSET - ARENA_X_SIZE / 2,
-     ARENA_Y_OFFSET,
-     ARENA_Z_OFFSET - ARENA_Z_SIZE / 2,
-     ARENA_X_OFFSET + ARENA_X_SIZE / 2,
-     ARENA_Y_OFFSET + 10,
-     ARENA_Z_OFFSET + ARENA_Z_SIZE / 2
-   );
+if (cobblestoneBlockPerm) {
+  Utilities.fourWalls(
+    cobblestoneBlockPerm,
+    ARENA_X_OFFSET - ARENA_X_SIZE / 2,
+    ARENA_Y_OFFSET,
+    ARENA_Z_OFFSET - ARENA_Z_SIZE / 2,
+    ARENA_X_OFFSET + ARENA_X_SIZE / 2,
+    ARENA_Y_OFFSET + 10,
+    ARENA_Z_OFFSET + ARENA_Z_SIZE / 2
+  );
 }
 ```
 
@@ -359,53 +368,58 @@ let spawnCountdown = 1;
 Add the following to the `gameTick` function, beneath the `curTick++` line of code:
 
 ```typescript
-    if (curTick > START_TICK && curTick % 20 === 0) {
-      // no terracotta exists, and we're waiting to spawn a new one.
-      if (spawnCountdown > 0) {
-        spawnCountdown--;
+if (curTick > START_TICK && curTick % 20 === 0) {
+  // no terracotta exists, and we're waiting to spawn a new one.
+  if (spawnCountdown > 0) {
+    spawnCountdown--;
 
-        if (spawnCountdown <= 0) {
-          spawnNewTerracotta();
-        }
-      } else {
-        checkForTerracotta();
-      }
+    if (spawnCountdown <= 0) {
+      spawnNewTerracotta();
     }
+  } else {
+    checkForTerracotta();
+  }
+}
 ```
 
 Now add the `spawnNewTerracotta()` and `checkForTerracotta()` functions after the last function and before the last `system.run(gameTick);` line of code:
 
 ```typescript
 function spawnNewTerracotta() {
-  const overworld = world.getDimension("overworld");
+  const overworld = world.getDimension(MinecraftDimensionTypes.Overworld);
 
   // create new terracotta
   cottaX = Math.floor(Math.random() * (ARENA_X_SIZE - 1)) - (ARENA_X_SIZE / 2 - 1);
   cottaZ = Math.floor(Math.random() * (ARENA_Z_SIZE - 1)) - (ARENA_Z_SIZE / 2 - 1);
 
   world.sendMessage("Creating new terracotta!");
-  let block = overworld.getBlock({ x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET });
+  let block = overworld.getBlock(Vector3Utils.add(ARENA_VECTOR_OFFSET, { x: cottaX, y: 1, z: cottaZ }));
 
   if (block) {
-    block.setPermutation(BlockPermutation.resolve("minecraft:yellow_glazed_terracotta"));
+    block.setPermutation(BlockPermutation.resolve(MinecraftBlockTypes.YellowGlazedTerracotta));
   }
 }
 
 function checkForTerracotta() {
-  const overworld = world.getDimension("overworld");
+  const overworld = world.getDimension(MinecraftDimensionTypes.Overworld);
 
-  let block = overworld.getBlock({ x: cottaX + ARENA_X_OFFSET, y: 1 + ARENA_Y_OFFSET, z: cottaZ + ARENA_Z_OFFSET });
+  let block = overworld.getBlock(Vector3Utils.add(ARENA_VECTOR_OFFSET, { x: cottaX, y: 1, z: cottaZ }));
 
-  if (block && !block.permutation.matches("minecraft:yellow_glazed_terracotta")) {
+  if (block && !block.permutation.matches(MinecraftBlockTypes.YellowGlazedTerracotta)) {
     // we didn't find the terracotta! set a new spawn countdown
     score++;
     spawnCountdown = 2;
     cottaX = -1;
 
-    let players = world.getAllPlayers();
+    const scoreObjective = world.scoreboard.getObjective("score");
+    if (scoreObjective) {
+      let players = world.getAllPlayers();
 
-    for (let player of players) {
-      player.runCommand("scoreboard players set @s score " + score);
+      for (let player of players) {
+        scoreObjective.setScore(player, score);
+      }
+    } else {
+      console.warn("Score objective not found");
     }
 
     world.sendMessage("You broke the terracotta! Creating new terracotta in a few seconds.");
@@ -426,7 +440,7 @@ OK, let's add this function after the `checkForTerracotta()` function:
 
 ```typescript
 function spawnMobs() {
-  const overworld = world.getDimension("overworld");
+  const overworld = world.getDimension(MinecraftDimensionTypes.Overworld);
 
   // spawn mobs = create 1-2 mobs
   let spawnMobCount = Math.floor(Math.random() * 2) + 1;
@@ -435,11 +449,10 @@ function spawnMobs() {
     let zombieX = Math.floor(Math.random() * (ARENA_X_SIZE - 2)) - ARENA_X_SIZE / 2;
     let zombieZ = Math.floor(Math.random() * (ARENA_Z_SIZE - 2)) - ARENA_Z_SIZE / 2;
 
-    overworld.spawnEntity("minecraft:zombie", {
-      x: zombieX + ARENA_X_OFFSET,
-      y: 1 + ARENA_Y_OFFSET,
-      z: zombieZ + ARENA_Z_OFFSET,
-    });
+    overworld.spawnEntity(
+      MinecraftEntityTypes.Zombie,
+      Vector3Utils.add(ARENA_VECTOR_OFFSET, { x: zombieX, y: 1, z: zombieZ })
+    );
   }
 }
 ```
@@ -449,10 +462,10 @@ This function will spawn 1-2 zombies within the arena, at a random location. You
 Let's call that function within our `gameTick` method:
 
 ```typescript
-  const spawnInterval = Math.ceil(200 / ((score + 1) / 3));
-  if (curTick > START_TICK && curTick % spawnInterval === 0) {
-    spawnMobs();
-  }
+const spawnInterval = Math.ceil(200 / ((score + 1) / 3));
+if (curTick > START_TICK && curTick % spawnInterval === 0) {
+  spawnMobs();
+}
 ```
 
 For gameplay, we want mobs to spawn more frequently as your score goes up. To do this, the frequency at which `spawnMobs` is called depends on the `spawnInterval` variable. `spawnInterval` is the span of time between spawning new mobs. Because we divide this interval by our current score, this means that as our score goes up, the interval of time between spawning mobs gets shorter. This makes the challenge harder over time.
@@ -467,7 +480,7 @@ Add this function to **main.ts** to randomly place some fuzzy leaves:
 
 ```typescript
 function addFuzzyLeaves() {
-  const overworld = world.getDimension("overworld");
+  const overworld = world.getDimension(MinecraftDimensionTypes.Overworld);
 
   for (let i = 0; i < 10; i++) {
     const leafX = Math.floor(Math.random() * (ARENA_X_SIZE - 1)) - (ARENA_X_SIZE / 2 - 1);
@@ -475,7 +488,7 @@ function addFuzzyLeaves() {
     const leafZ = Math.floor(Math.random() * (ARENA_Z_SIZE - 1)) - (ARENA_Z_SIZE / 2 - 1);
 
     overworld
-      .getBlock({ x: leafX + ARENA_X_OFFSET, y: leafY + ARENA_Y_OFFSET, z: leafZ + ARENA_Z_OFFSET })
+      .getBlock(Vector3Utils.add(ARENA_VECTOR_OFFSET, { x: leafX, y: leafY, z: leafZ }))
       ?.setPermutation(BlockPermutation.resolve("minecraft:leaves"));
   }
 }
@@ -484,14 +497,34 @@ function addFuzzyLeaves() {
 And call that function in your gameTick() function:
 
 ```typescript
-  if (curTick > START_TICK && curTick % 29 === 0) {
-    addFuzzyLeaves();
-  }
+if (curTick > START_TICK && curTick % 29 === 0) {
+  addFuzzyLeaves();
+}
 ```
 
 You may wonder why the interval here is 29. The main idea was to select a number to avoid the chance that on a particular tick we do everything at once (create new leaves, spawn mobs AND check terracotta state), so we try to have offset schedules for all of these different game activities.
 
 Now exit out and reload your game. As you run around, you should see new leaves get spawned. This should add a little bit more challenge to your gameplay!
+
+### Other Commands
+
+To run a lint operation (that is, scan your code for errors) use this shortcut command:
+
+```powershell
+   npm run lint
+```
+
+To auto-fix lint issues, you can use this:
+
+```powershell
+   npm run lint -- --fix
+```
+
+To create an addon file you can share, run:
+
+```powershell
+   npm run mcaddon
+```
 
 ### Summary
 
@@ -501,6 +534,6 @@ Like the randomly spawning leaves, you can see how you can add different gamepla
 
 ## Manifest
 
--[gulpfile.js](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/gulpfile.js): This file contains build instructions for Gulp, for building out TypeScript code.
--[scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/scripts): This contains all of your TypeScript files, that will be compiled and built into your projects.
--[behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/behavior_packs): This contains resources and JSON files that define your behavior pack.
+- [just.config.ts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/just.config.ts): This file contains build instructions for just-scripts, for building out TypeScript code.
+- [scripts](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/scripts): This contains all of your TypeScript files, that will be compiled and built into your projects.
+- [behavior_packs](https://github.com/microsoft/minecraft-scripting-samples/blob/main/ts-starter/behavior_packs): This contains resources and JSON files that define your behavior pack.

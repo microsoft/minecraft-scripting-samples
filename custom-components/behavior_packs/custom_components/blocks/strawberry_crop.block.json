@@ -1,0 +1,197 @@
+{
+  "format_version": "1.21.10",
+  "minecraft:block": {
+    "description": {
+      "identifier": "starter:strawberry_crop",
+      "states": {
+        "starter:crop_age": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    "permutations": [
+      {
+        "condition": "query.block_state('starter:crop_age') == 0",
+        "components": {
+          "minecraft:material_instances": {
+            "*": {
+              "texture": "strawberry_crop_0",
+              "render_method": "alpha_test"
+            }
+          },
+          "minecraft:selection_box": {
+            "origin": [
+              -4,
+              0,
+              -4
+            ],
+            "size": [
+              8,
+              3,
+              8
+            ]
+          }
+        }
+      },
+      {
+        "condition": "query.block_state('starter:crop_age') == 1",
+        "components": {
+          "minecraft:material_instances": {
+            "*": {
+              "texture": "strawberry_crop_1",
+              "render_method": "alpha_test"
+            }
+          },
+          "minecraft:selection_box": {
+            "origin": [
+              -4,
+              0,
+              -4
+            ],
+            "size": [
+              8,
+              5,
+              8
+            ]
+          }
+        }
+      },
+      {
+        "condition": "query.block_state('starter:crop_age') == 2",
+        "components": {
+          "minecraft:material_instances": {
+            "*": {
+              "texture": "strawberry_crop_2",
+              "render_method": "alpha_test"
+            }
+          },
+          "minecraft:selection_box": {
+            "origin": [
+              -4,
+              0,
+              -4
+            ],
+            "size": [
+              8,
+              7,
+              8
+            ]
+          }
+        }
+      },
+      {
+        "condition": "query.block_state('starter:crop_age') == 3",
+        "components": {
+          "minecraft:material_instances": {
+            "*": {
+              "texture": "strawberry_crop_3",
+              "render_method": "alpha_test"
+            }
+          },
+          "minecraft:selection_box": {
+            "origin": [
+              -4,
+              0,
+              -4
+            ],
+            "size": [
+              8,
+              8,
+              8
+            ]
+          }
+        }
+      },
+      // fully grown
+      {
+        "condition": "query.block_state('starter:crop_age') == 4",
+        "components": {
+          "minecraft:material_instances": {
+            "*": {
+              "texture": "strawberry_crop_4",
+              "render_method": "alpha_test"
+            }
+          },
+          "minecraft:selection_box": {
+            "origin": [
+              -4,
+              0,
+              -4
+            ],
+            "size": [
+              8,
+              8,
+              8
+            ]
+          },
+          "minecraft:loot": "loot_tables/strawberry_grown_crop.json",
+          "minecraft:custom_components": [
+            "starter:strawberry_grown"
+          ],
+          "minecraft:tick": {
+            "looping": false,
+            "interval_range": [
+              1200,
+              1800
+            ] // 2-3 minutes to turn rotten
+          }
+        }
+      },
+      // rotten
+      {
+        "condition": "query.block_state('starter:crop_age') == 5",
+        "components": {
+          "minecraft:material_instances": {
+            "*": {
+              "texture": "strawberry_crop_rotten",
+              "render_method": "alpha_test"
+            }
+          },
+          "minecraft:selection_box": {
+            "origin": [
+              -4,
+              0,
+              -4
+            ],
+            "size": [
+              8,
+              8,
+              8
+            ]
+          },
+          "minecraft:loot": "loot_tables/strawberry_rotten_crop.json"
+        }
+      }
+    ],
+    // base block components
+    "components": {
+      "minecraft:geometry": "geometry.starter_crop_geo",
+      "minecraft:custom_components": [
+        "starter:crop_grow"
+      ],
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 0
+      },
+      "minecraft:loot": "loot_tables/strawberry_crop.json",
+      "minecraft:collision_box": false,
+      "minecraft:placement_filter": {
+        "conditions": [
+          {
+            "allowed_faces": [
+              "up"
+            ],
+            "block_filter": [
+              "minecraft:farmland"
+            ]
+          }
+        ]
+      },
+      "tag:minecraft:crop": {}
+    }
+  }
+}

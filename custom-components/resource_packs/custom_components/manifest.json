@@ -1,0 +1,40 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Custom components resource pack",
+    "description": "Custom components resource pack",
+    "uuid": "7bd3b140-a9c0-42cb-aa56-0bdedc80e27b",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      20,
+      30
+    ]
+  },
+  "modules": [
+    {
+      "description": "My Resource Pack",
+      "type": "resources",
+      "uuid": "053c2173-2278-4a68-b55a-e101418b42c9",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "922f8c01-632f-4579-91c4-40101d578de7",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

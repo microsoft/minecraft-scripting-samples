@@ -7,18 +7,16 @@ import {
   LeverActionAfterEvent,
   TitleDisplayOptions,
   Player,
-  BlockInventoryComponent,
   ChatSendBeforeEvent,
   Vector,
   DisplaySlotId,
   BlockPermutation,
   ScriptEventCommandMessageAfterEvent,
-  EntityInventoryComponent,
   ItemStack,
   ItemUseOnAfterEvent,
   Block,
-  System,
   TicksPerSecond,
+  BlockComponentTypes,
 } from "@minecraft/server";
 import ChallengePlayer, { ChallengePlayerRole, IPlayerData } from "./ChallengePlayer.js";
 import Log from "./Log.js";
@@ -52,6 +50,7 @@ import {
 } from "./Constants.js";
 import Utilities from "./Utilities.js";
 import Track from "./Track.js";
+import { MinecraftBlockTypes, MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
 export enum ChallengePhase {
   setup = 1,
@@ -73,11 +72,6 @@ export enum ChallengeFlavor {
   goodVibes = 1,
 }
 
-export enum ChallengeScoring {
-  blockValueWithBonuses = 0,
-  votesOnly = 1,
-}
-
 export default class Challenge {
   nwbLocation = { x: 0, y: 0, z: 0 }; // nwb = north west bottom
   teams: Team[] = [];
@@ -89,8 +83,7 @@ export default class Challenge {
   #size: ChallengeBoardSize = ChallengeBoardSize.small;
   #motdTitle: string = "Build Challenge";
   #motdSubtitle: string = "A place to showcase your build skills";
-  #flavor: ChallengeFlavor = ChallengeFlavor.regular;
-  #scoringMode: ChallengeScoring = ChallengeScoring.blockValueWithBonuses;
+  #flavor: ChallengeFlavor = 0;
   refreshTeamIter = 0;
   clearTeamIter = 0;
 
@@ -124,21 +117,8 @@ export default class Challenge {
 
   set flavor(newFlavor: number) {
     if (this.#flavor !== newFlavor) {
+      let oldPhase = this.#flavor;
       this.#flavor = newFlavor;
-
-      this.applyFlavor();
-
-      this.save();
-    }
-  }
-
-  get scoringMode() {
-    return this.#scoringMode;
-  }
-
-  set scoringMode(newScoringMode: number) {
-    if (this.#flavor !== newScoringMode) {
-      this.#flavor = newScoringMode;
 
       this.applyFlavor();
 
@@ -223,7 +203,6 @@ export default class Challenge {
     world.setDynamicProperty("challenge:nwbY", this.nwbLocation.y);
     world.setDynamicProperty("challenge:nwbZ", this.nwbLocation.z);
     world.setDynamicProperty("challenge:flavor", this.#flavor);
-    world.setDynamicProperty("challenge:scoringMode", this.#scoringMode);
 
     let data = [];
 
@@ -429,14 +408,6 @@ export default class Challenge {
       this.#flavor = ChallengeFlavor.regular;
     }
 
-    val = world.getDynamicProperty("challenge:scoringMode") as number;
-
-    if (val) {
-      this.#scoringMode = val;
-    } else {
-      this.#scoringMode = ChallengeScoring.blockValueWithBonuses;
-    }
-
     let motdTitle = world.getDynamicProperty("challenge:motdTitle") as string;
 
     if (motdTitle) {
@@ -472,8 +443,6 @@ export default class Challenge {
     system.run(this.tick);
     system.run(this.applyPhase);
     system.run(this.applyFlavor);
-
-    const overworld = world.getDimension("overworld");
 
     world.afterEvents.playerSpawn.subscribe(this.playerSpawned);
     world.afterEvents.playerLeave.subscribe(this.playerLeft);
@@ -699,24 +668,6 @@ export default class Challenge {
           }
           break;
 
-        case "setscoring":
-          if (!messageSender.isAdmin) {
-            this.sendMessageToAdminsPlus("Cannot run setscoring, " + messageSender.name + " is not an admin.", player);
-            return;
-          }
-
-          if (contentSep.length === 1) {
-            switch (contentSep[0].toLowerCase()) {
-              case "blockvalues":
-                this.scoringMode = ChallengeScoring.blockValueWithBonuses;
-                break;
-              case "votes":
-                this.scoringMode = ChallengeScoring.votesOnly;
-                break;
-            }
-          }
-          break;
-
         case "setflavor":
           if (!messageSender.isAdmin) {
             this.sendMessageToAdminsPlus("Cannot run setflavor, " + messageSender.name + " is not an admin.", player);
@@ -906,13 +857,13 @@ export default class Challenge {
 
     this.nwbLocation = { x: x, y: y, z: z };
 
-    let ow = world.getDimension("overworld");
+    let ow = world.getDimension(MinecraftDimensionTypes.Overworld);
 
     const centerX = x + Math.floor((PAD_SIZE_X + PAD_SURROUND_X) * 2.5);
     const centerY = y + 1;
     const centerZ = z + Math.floor((PAD_SIZE_Z + PAD_SURROUND_Z) * 2.5);
 
-    const airBlock = BlockPermutation.resolve("minecraft:air");
+    const airBlock = BlockPermutation.resolve(MinecraftBlockTypes.Air);
 
     if (airBlock) {
       Utilities.fillBlock(airBlock, centerX - 2, centerY - 2, centerZ - 2, centerX + 2, centerY + 2, centerZ + 2);
@@ -1019,7 +970,7 @@ export default class Challenge {
 
           let vec = Vector.lerp(track.from, track.to, (trackSequence % STANDARD_TRACK_TIME) / STANDARD_TRACK_TIME);
           player.teleport(vec, {
-            dimension: world.getDimension("overworld"),
+            dimension: world.getDimension(MinecraftDimensionTypes.Overworld),
             facingLocation: {
               x: vec.x + track.facingAdjust.x,
               y: vec.y + track.facingAdjust.y,
@@ -1100,7 +1051,7 @@ export default class Challenge {
   }
 
   postInit() {
-    let ow = world.getDimension("overworld");
+    let ow = world.getDimension(MinecraftDimensionTypes.Overworld);
 
     if (this.#motdTitle) {
       world.sendMessage({ rawtext: [{ text: "§l" + this.#motdTitle }] });
@@ -1122,27 +1073,13 @@ export default class Challenge {
     system.runTimeout(this.refreshTeamScores, 6);
   }
 
-  shouldShowScores() {
-    if (this.scoringMode === ChallengeScoring.votesOnly && this.scoringMode < ChallengePhase.vote) {
-      return false;
-    }
-
-    return true;
-  }
-
   addScores() {
-    if (!this.shouldShowScores()) {
-      return;
-    }
-
-    let ow = world.getDimension("overworld");
-
     // adding main team score
     let mainObj = world.scoreboard.addObjective("main", "Team Score");
     world.scoreboard.setObjectiveAtDisplaySlot(DisplaySlotId.Sidebar, { objective: mainObj });
 
     for (let team of this.teams) {
-      if (team.active || team.blockTallyScore > 0) {
+      if (team.active || team.score > 0) {
         team.applyScore();
       }
     }
@@ -1151,7 +1088,7 @@ export default class Challenge {
   applyFlavor() {}
 
   applyPhase() {
-    let ow = world.getDimension("overworld");
+    let ow = world.getDimension(MinecraftDimensionTypes.Overworld);
 
     switch (this.phase) {
       case ChallengePhase.setup:
@@ -1223,7 +1160,6 @@ export default class Challenge {
   }
 
   sendMessageToAdminsPlus(message: string, additionalPlayer?: Player) {
-    let ow = world.getDimension("overworld");
     Log.debug(message);
 
     for (let player of world.getPlayers()) {
@@ -1241,8 +1177,6 @@ export default class Challenge {
   }
 
   applyRoleToAllPlayers() {
-    let ow = world.getDimension("overworld");
-
     for (let player of world.getPlayers()) {
       let challPlayer = this.ensurePlayer(player);
 
@@ -1300,7 +1234,7 @@ export default class Challenge {
 
       teamsByVote.push(this.teams[i]);
 
-      if (this.teams[i].active || (this.teams[i].blockTallyScore > 0 && this.teams[i].playerTocks > 0)) {
+      if (this.teams[i].active || (this.teams[i].score > 0 && this.teams[i].playerTocks > 0)) {
         teamsByTocks.push(this.teams[i]);
       }
     }
@@ -1400,14 +1334,14 @@ export default class Challenge {
       this.activeTeamScore = 0;
     }
 
-    let ow = world.getDimension("overworld");
+    let ow = world.getDimension(MinecraftDimensionTypes.Overworld);
     if (this.activeTeamScore >= 0) {
       let canaryLoc = { x: team.padNwbX, y: team.padNwbY, z: team.padNwbZ + (PAD_SIZE_Z / 16) * area };
 
       let canaryBlock = ow.getBlock(canaryLoc);
 
       // if we don't find blackstone at our canary location, assume the chunk is loaded and bail on calculating score.
-      if (canaryBlock && !canaryBlock.permutation.matches("minecraft:sandstone")) {
+      if (canaryBlock && canaryBlock.typeId !== "minecraft:sandstone") {
         Log.debug(
           "Did not find sandstone at " +
             team.padNwbX +
@@ -1449,11 +1383,11 @@ export default class Challenge {
                   // todo: improve to accommodate double chests placed right next to each other
                   if (
                     leftBlock &&
-                    !leftBlock.permutation.matches("minecraft:chest") &&
+                    leftBlock.typeId.indexOf("chest") < 0 &&
                     northBlock &&
-                    !northBlock.permutation.matches("minecraft:chest")
+                    northBlock.typeId.indexOf("chest") < 0
                   ) {
-                    let invComp = block.getComponent("inventory") as BlockInventoryComponent;
+                    let invComp = block.getComponent(BlockComponentTypes.Inventory);
 
                     if (invComp) {
                       let cont = invComp.container;
@@ -1488,8 +1422,8 @@ export default class Challenge {
     }
 
     if (area === 15) {
-      if (this.activeTeamScore !== team.blockTallyScore && this.activeTeamScore >= 0) {
-        if (this.activeTeamScore > team.blockTallyScore && team.blockTallyScore > 0) {
+      if (this.activeTeamScore !== team.score && this.activeTeamScore >= 0) {
+        if (this.activeTeamScore > team.score && team.score > 0) {
           for (let challPlayer of team.players) {
             try {
               if (challPlayer.player && challPlayer.player.isValid()) {
@@ -1499,7 +1433,7 @@ export default class Challenge {
           }
         }
 
-        team.blockTallyScore = this.activeTeamScore;
+        team.score = this.activeTeamScore;
 
         team.applyScore();
 
@@ -1766,7 +1700,7 @@ export default class Challenge {
   }
 
   ensurePlayerHas(player: Player, itemTypeId: string, amount?: number) {
-    const inventory = player.getComponent("inventory") as EntityInventoryComponent;
+    const inventory = player.getComponent(BlockComponentTypes.Inventory);
 
     if (inventory) {
       const cont = inventory.container;

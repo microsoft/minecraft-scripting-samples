@@ -1,5 +1,5 @@
-import { world, Player, BlockTypes, BlockPermutation } from "@minecraft/server";
-import Challenge, { ChallengeFlavor, ChallengePhase, ChallengeScoring } from "./Challenge.js";
+import { world, Player, BlockPermutation } from "@minecraft/server";
+import Challenge, { ChallengeFlavor, ChallengePhase } from "./Challenge.js";
 import ChallengePlayer from "./ChallengePlayer.js";
 import {
   PAD_SURROUND_X as PAD_SURROUND_X,
@@ -19,6 +19,7 @@ import {
 import Log from "./Log.js";
 import Utilities from "./Utilities.js";
 import { ModalFormData, MessageFormData } from "@minecraft/server-ui";
+import { MinecraftBlockTypes, MinecraftDimensionTypes } from "@minecraft/vanilla-data";
 
 export interface ITeamData {
   n: string;
@@ -79,11 +80,7 @@ export default class Team {
   }
 
   get effectiveScore() {
-    if (this.challenge.scoringMode === ChallengeScoring.votesOnly) {
-      return this.votes;
-    }
-
-    let effectiveScore = this.blockTallyScore;
+    let effectiveScore = this.score;
 
     if (effectiveScore < 0) {
       return 0;
@@ -91,11 +88,11 @@ export default class Team {
 
     if (this.challenge.teams.length >= 4) {
       if (this.teamUsageQuartile == 1) {
-        effectiveScore += this.blockTallyScore / 4;
+        effectiveScore += this.score / 4;
       } else if (this.teamUsageQuartile == 2) {
-        effectiveScore += this.blockTallyScore / 2;
+        effectiveScore += this.score / 2;
       } else if (this.teamUsageQuartile == 3) {
-        effectiveScore += this.blockTallyScore;
+        effectiveScore += this.score;
       }
     }
 
@@ -104,11 +101,11 @@ export default class Team {
       this.challenge.teams.length >= 3
     ) {
       if (this.rankByVote == 0) {
-        effectiveScore += this.blockTallyScore * 2; // 3x bonus for first vote winner.
+        effectiveScore += this.score * 2; // 3x bonus for first vote winner.
       } else if (this.rankByVote == 1) {
-        effectiveScore += this.blockTallyScore;
+        effectiveScore += this.score;
       } else if (this.rankByVote == 2) {
-        effectiveScore += this.blockTallyScore / 2;
+        effectiveScore += this.score / 2;
       }
     }
 
@@ -125,11 +122,11 @@ export default class Team {
     }
   }
 
-  get blockTallyScore() {
+  get score() {
     return this.#score;
   }
 
-  set blockTallyScore(newScore: number) {
+  set score(newScore: number) {
     if (this.#score !== newScore) {
       this.#score = newScore;
     }
@@ -164,10 +161,6 @@ export default class Team {
   }
 
   applyScore() {
-    if (!this.challenge.shouldShowScores()) {
-      return;
-    }
-
     let teamName = this.name;
 
     if (this.challenge.teams.length >= 4) {
@@ -234,7 +227,7 @@ export default class Team {
             x: this.nwbX + SPAWN_TEAM_X,
             y: this.nwbY + SPAWN_TEAM_Y,
             z: this.nwbZ + SPAWN_TEAM_Z,
-            dimension: world.getDimension("overworld"),
+            dimension: world.getDimension(MinecraftDimensionTypes.Overworld),
           });
         } catch (e) {}
       }
@@ -252,8 +245,8 @@ export default class Team {
   }
 
   addTeamName() {
-    const airBlock = BlockPermutation.resolve("minecraft:air");
-    const signBlock = BlockPermutation.resolve("minecraft:wooden_slab", { wood_type: "birch" });
+    const airBlock = BlockPermutation.resolve(MinecraftBlockTypes.Air);
+    const signBlock = BlockPermutation.resolve(MinecraftBlockTypes.BirchSlab);
 
     if (!airBlock || !signBlock) {
       return;
@@ -354,7 +347,7 @@ export default class Team {
           teamMembers += this.players[i].name;
         }
 
-        let bodyStr = "Team members: " + teamMembers + "\r\nScore (before bonuses): " + this.blockTallyScore + "\r\n";
+        let bodyStr = "Team members: " + teamMembers + "\r\nScore (before bonuses): " + this.score + "\r\n";
 
         if (this.challenge.phase === ChallengePhase.vote || this.challenge.phase === ChallengePhase.post) {
           if (this.rankByVote === 0) {
@@ -389,10 +382,10 @@ export default class Team {
   }
 
   ensurePad() {
-    const foundationSurroundBlock = BlockPermutation.resolve("minecraft:grass");
-    const foundationBlock = BlockPermutation.resolve("minecraft:sandstone");
-    const foundationLowerBlock = BlockPermutation.resolve("minecraft:bedrock");
-    const roadBlock = BlockPermutation.resolve("minecraft:red_sandstone");
+    const foundationSurroundBlock = BlockPermutation.resolve(MinecraftBlockTypes.GrassBlock);
+    const foundationBlock = BlockPermutation.resolve(MinecraftBlockTypes.Sandstone);
+    const foundationLowerBlock = BlockPermutation.resolve(MinecraftBlockTypes.Bedrock);
+    const roadBlock = BlockPermutation.resolve(MinecraftBlockTypes.RedSandstone);
 
     if (!foundationSurroundBlock || !foundationBlock || !roadBlock || !foundationLowerBlock) {
       return;
@@ -517,7 +510,7 @@ export default class Team {
       this.nwbZ + PAD_SIZE_Z
     );
 
-    let ow = world.getDimension("overworld");
+    let ow = world.getDimension(MinecraftDimensionTypes.Overworld);
     let block = ow.getBlock({ x: this.nwbX + JOIN_TEAM_X, y: this.nwbY + JOIN_TEAM_Y, z: this.nwbZ + JOIN_TEAM_Z });
 
     let consoleType = "options";
@@ -538,7 +531,7 @@ export default class Team {
   }
 
   clearPad(index: number) {
-    let airBlock = BlockPermutation.resolve("minecraft:air");
+    let airBlock = BlockPermutation.resolve(MinecraftBlockTypes.Air);
 
     if (airBlock) {
       Utilities.fillBlock(
@@ -556,7 +549,7 @@ export default class Team {
   getSaveData() {
     let td = {
       n: this.name,
-      s: this.blockTallyScore,
+      s: this.score,
       t: this.#playerTocks,
     };
 

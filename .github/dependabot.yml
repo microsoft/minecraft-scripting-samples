@@ -1,0 +1,155 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/build-challenge"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "@minecraft*"
+    groups:
+      external:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/build-challenge"
+    schedule:
+      interval: "monthly"
+    allow:
+      - dependency-name: "@minecraft*"
+    groups:
+      internal:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/editor-basics"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "@minecraft*"
+    groups:
+      external:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/editor-basics"
+    schedule:
+      interval: "monthly"
+    allow:
+      - dependency-name: "@minecraft*"
+    groups:
+      internal:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/editor-script-box"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "@minecraft*"
+    groups:
+      external:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/editor-script-box"
+    schedule:
+      interval: "monthly"
+    allow:
+      - dependency-name: "@minecraft*"
+    groups:
+      internal:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/howto-gallery"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "@minecraft*"
+    groups:
+      external:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/howto-gallery"
+    schedule:
+      interval: "monthly"
+    allow:
+      - dependency-name: "@minecraft*"
+    groups:
+      internal:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/script-box"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "@minecraft*"
+    groups:
+      external:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/script-box"
+    schedule:
+      interval: "monthly"
+    allow:
+      - dependency-name: "@minecraft*"
+    groups:
+      internal:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/ts-starter"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "@minecraft*"
+    groups:
+      external:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/ts-starter"
+    schedule:
+      interval: "monthly"
+    allow:
+      - dependency-name: "@minecraft*"
+    groups:
+      internal:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/ts-starter-complete-cotta"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "@minecraft*"
+    groups:
+      external:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/ts-starter-complete-cotta"
+    schedule:
+      interval: "monthly"
+    allow:
+      - dependency-name: "@minecraft*"
+    groups:
+      internal:
+        patterns:
+          - "*"
