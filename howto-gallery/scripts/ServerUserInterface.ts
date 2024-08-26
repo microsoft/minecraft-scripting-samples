@@ -1,21 +1,27 @@
-import * as mc from "@minecraft/server";
-import * as mcui from "@minecraft/server-ui";
+import { DimensionLocation, world } from "@minecraft/server";
+import {
+  ActionFormData,
+  ActionFormResponse,
+  MessageFormData,
+  MessageFormResponse,
+  ModalFormData,
+} from "@minecraft/server-ui";
 
 /**
  * Shows a very basic action form.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
+ * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ActionFormData
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ActionFormResponse
  */
 export async function showActionForm(
   log: (message: string, status?: number) => void,
-  targetLocation: mc.DimensionLocation
+  targetLocation: DimensionLocation
 ) {
-  const playerList = mc.world.getPlayers();
+  const playerList = world.getPlayers();
 
   if (playerList.length >= 1) {
-    const form = new mcui.ActionFormData()
+    const form = new ActionFormData()
       .title("Test Title")
       .body("Body text here!")
       .button("btn 1")
@@ -38,18 +44,15 @@ export async function showActionForm(
 /**
  * Shows a dialog that lets a player pick their favorite month.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
+ * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ActionFormData
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ActionFormResponse
  */
-export function showFavoriteMonth(
-  log: (message: string, status?: number) => void,
-  targetLocation: mc.DimensionLocation
-) {
-  const players = mc.world.getPlayers();
+export function showFavoriteMonth(log: (message: string, status?: number) => void, targetLocation: DimensionLocation) {
+  const players = world.getPlayers();
 
   if (players.length >= 1) {
-    const form = new mcui.ActionFormData()
+    const form = new ActionFormData()
       .title("Months")
       .body("Choose your favorite month!")
       .button("January")
@@ -58,7 +61,7 @@ export function showFavoriteMonth(
       .button("April")
       .button("May");
 
-    form.show(players[0]).then((response: mcui.ActionFormResponse) => {
+    form.show(players[0]).then((response: ActionFormResponse) => {
       if (response.selection === 3) {
         log("I like April too!");
         return -1;
@@ -70,17 +73,17 @@ export function showFavoriteMonth(
 /**
  * Shows an example two-button dialog.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
+ * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/MessageFormData
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/MessageFormResponse
  */
 export function showBasicMessageForm(
   log: (message: string, status?: number) => void,
-  targetLocation: mc.DimensionLocation
+  targetLocation: DimensionLocation
 ) {
-  const players = mc.world.getPlayers();
+  const players = world.getPlayers();
 
-  const messageForm = new mcui.MessageFormData()
+  const messageForm = new MessageFormData()
     .title("Message Form Example")
     .body("This shows a simple example using §o§7MessageFormData§r.")
     .button1("Button 1")
@@ -88,7 +91,7 @@ export function showBasicMessageForm(
 
   messageForm
     .show(players[0])
-    .then((formData: mcui.MessageFormResponse) => {
+    .then((formData: MessageFormResponse) => {
       // player canceled the form, or another dialog was up and open.
       if (formData.canceled || formData.selection === undefined) {
         return;
@@ -105,18 +108,18 @@ export function showBasicMessageForm(
 /**
  * Shows an example translated two-button dialog dialog.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
+ * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/MessageFormData
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/MessageFormResponse
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/RawMessage
  */
 export function showTranslatedMessageForm(
   log: (message: string, status?: number) => void,
-  targetLocation: mc.DimensionLocation
+  targetLocation: DimensionLocation
 ) {
-  const players = mc.world.getPlayers();
+  const players = world.getPlayers();
 
-  const messageForm = new mcui.MessageFormData()
+  const messageForm = new MessageFormData()
     .title({ translate: "permissions.removeplayer" })
     .body({ translate: "accessibility.list.or.two", with: ["Player 1", "Player 2"] })
     .button1("Player 1")
@@ -124,7 +127,7 @@ export function showTranslatedMessageForm(
 
   messageForm
     .show(players[0])
-    .then((formData: mcui.MessageFormResponse) => {
+    .then((formData: MessageFormResponse) => {
       // player canceled the form, or another dialog was up and open.
       if (formData.canceled || formData.selection === undefined) {
         return;
@@ -141,17 +144,14 @@ export function showTranslatedMessageForm(
 /**
  * Shows an example multiple-control modal dialog.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
+ * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ModalFormData
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ModalFormResponse
  */
-export function showBasicModalForm(
-  log: (message: string, status?: number) => void,
-  targetLocation: mc.DimensionLocation
-) {
-  const players = mc.world.getPlayers();
+export function showBasicModalForm(log: (message: string, status?: number) => void, targetLocation: DimensionLocation) {
+  const players = world.getPlayers();
 
-  const modalForm = new mcui.ModalFormData().title("Example Modal Controls for §o§7ModalFormData§r");
+  const modalForm = new ModalFormData().title("Example Modal Controls for §o§7ModalFormData§r");
 
   modalForm.toggle("Toggle w/o default");
   modalForm.toggle("Toggle w/ default", true);

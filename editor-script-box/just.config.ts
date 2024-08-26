@@ -1,4 +1,6 @@
 import { argv, parallel, series, task, tscTask } from "just-scripts";
+import path from "path";
+
 import {
   bundleTask,
   BundleTaskParameters,
@@ -15,7 +17,6 @@ import {
   getOrThrowFromProcess,
   watchTask,
 } from "@minecraft/core-build-tasks";
-import path from "path";
 
 // Setup env variables
 setupEnvironment(path.resolve(__dirname, ".env"));
@@ -23,7 +24,7 @@ const projectName = getOrThrowFromProcess("PROJECT_NAME");
 
 const bundleTaskOptions: BundleTaskParameters = {
   entryPoint: path.join(__dirname, "./scripts/main.ts"),
-  external: ["@minecraft/server", "@minecraft/server-gametest", "@minecraft/server-ui"],
+  external: ["@minecraft/server", "@minecraft/server-gametest", "@minecraft/server-ui", "@minecraft/server-editor"],
   outfile: path.resolve(__dirname, "./dist/scripts/main.js"),
   minifyWhitespace: false,
   sourcemap: true,
@@ -33,6 +34,7 @@ const bundleTaskOptions: BundleTaskParameters = {
 const copyTaskOptions: CopyTaskParameters = {
   copyToBehaviorPacks: [`./behavior_packs/${projectName}`],
   copyToScripts: ["./dist/scripts"],
+  copyToResourcePacks: [`./resource_packs/${projectName}`],
 };
 
 const mcaddonTaskOptions: ZipTaskParameters = {

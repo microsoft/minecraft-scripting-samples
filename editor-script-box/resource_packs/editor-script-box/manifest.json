@@ -1,24 +1,24 @@
 {
   "format_version": 2,
   "header": {
-    "name": "Minecraft Editor Basics",
+    "name": "Editor Script Box",
     "description": "A simple list of editor code snippets.",
-    "uuid": "b3d35b27-1827-4bff-bdf5-694942cfdd25",
+    "uuid": "1cbf2047-73a7-45e0-a2ee-6dfdf27a0685",
     "version": [1, 0, 0],
-    "min_engine_version": [1, 20, 0]
+    "min_engine_version": [1, 21, 0]
   },
   "modules": [
     {
-      "description": "Editor Basics",
+      "description": "Editor Script Box",
       "type": "resources",
-      "uuid": "9f6d66d2-5373-4798-a729-3bc154d4a81b",
+      "uuid": "c3d4470c-4cd4-4f16-88b5-da3f21ae24e3",
       "version": [1, 0, 0]
     }
   ],
   "capabilities": ["editorExtension"],
   "dependencies": [
     {
-      "uuid": "2fb88d39-e589-4e49-a69f-f575f8705e5c",
+      "uuid": "421d57b3-b40e-459f-aee9-adaf63f7895d",
       "version": [1, 0, 0]
     }
   ]

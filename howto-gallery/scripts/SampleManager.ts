@@ -1,17 +1,17 @@
-import * as mc from "@minecraft/server";
-import * as mcui from "@minecraft/server-ui";
+import { DimensionLocation, Player, ScriptEventCommandMessageAfterEvent, system, world } from "@minecraft/server";
+import { ActionFormData, ActionFormResponse } from "@minecraft/server-ui";
 
 export default class SampleManager {
   tickCount = 0;
 
   _availableFuncs: {
-    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>;
+    [name: string]: Array<(log: (message: string, status?: number) => void, location: DimensionLocation) => void>;
   };
 
   pendingFuncs: Array<{
     name: string;
-    func: (log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void;
-    location: mc.DimensionLocation;
+    func: (log: (message: string, status?: number) => void, location: DimensionLocation) => void;
+    location: DimensionLocation;
   }> = [];
 
   gamePlayLogger(message: string, status?: number) {
@@ -21,11 +21,11 @@ export default class SampleManager {
       message = "FAIL: " + message;
     }
 
-    mc.world.sendMessage(message);
+    world.sendMessage(message);
     console.warn(message);
   }
 
-  newScriptEvent(scriptEvent: mc.ScriptEventCommandMessageAfterEvent) {
+  newScriptEvent(scriptEvent: ScriptEventCommandMessageAfterEvent) {
     const messageId = scriptEvent.id.toLowerCase();
 
     if (messageId.startsWith("htg") && scriptEvent.sourceEntity) {
@@ -53,13 +53,13 @@ export default class SampleManager {
           }
         }
 
-        const form = new mcui.ActionFormData().title("Samples").body("Choose the sample to run");
+        const form = new ActionFormData().title("Samples").body("Choose the sample to run");
 
         for (const sampleFuncKey in this._availableFuncs) {
           form.button(sampleFuncKey);
         }
 
-        form.show(scriptEvent.sourceEntity as mc.Player).then((response: mcui.ActionFormResponse) => {
+        form.show(scriptEvent.sourceEntity as Player).then((response: ActionFormResponse) => {
           if (!response.canceled && response.selection !== undefined && scriptEvent.sourceEntity) {
             let index = 0;
             for (const sampleFuncKey in this._availableFuncs) {
@@ -78,7 +78,7 @@ export default class SampleManager {
           }
         });
       } else {
-        mc.world.sendMessage(
+        world.sendMessage(
           "You can run a sample by typing `/scriptevent htg:run <sample name>` in chat. Here is a list of available samples:"
         );
         let availableFuncStr = "";
@@ -87,15 +87,15 @@ export default class SampleManager {
           availableFuncStr += " " + sampleFuncKey;
         }
 
-        mc.world.sendMessage(availableFuncStr);
+        world.sendMessage(availableFuncStr);
       }
     }
   }
 
   runSample(
     sampleId: string,
-    snippetFunctions: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>,
-    targetLocation: mc.DimensionLocation
+    snippetFunctions: Array<(log: (message: string, status?: number) => void, location: DimensionLocation) => void>,
+    targetLocation: DimensionLocation
   ) {
     for (let i = snippetFunctions.length - 1; i >= 0; i--) {
       this.pendingFuncs.push({ name: sampleId, func: snippetFunctions[i], location: targetLocation });
@@ -111,20 +111,20 @@ export default class SampleManager {
           try {
             funcSet.func(this.gamePlayLogger, funcSet.location);
           } catch (e: any) {
-            mc.world.sendMessage("Could not run sample function. Error: " + e.toString());
+            world.sendMessage("Could not run sample function. Error: " + e.toString());
           }
         }
       }
     }
     if (this.tickCount === 200) {
-      mc.world.sendMessage(
+      world.sendMessage(
         "Type '/scriptevent htg:run <sample name>' in chat to run a sample, and type 'help' to see a list of samples."
       );
     }
 
     this.tickCount++;
 
-    mc.system.run(this.worldTick);
+    system.run(this.worldTick);
   }
 
   constructor() {
@@ -134,13 +134,13 @@ export default class SampleManager {
 
     this.worldTick = this.worldTick.bind(this);
 
-    mc.system.afterEvents.scriptEventReceive.subscribe(this.newScriptEvent.bind(this));
+    system.afterEvents.scriptEventReceive.subscribe(this.newScriptEvent.bind(this));
 
-    mc.system.run(this.worldTick);
+    system.run(this.worldTick);
   }
 
   registerSamples(sampleSet: {
-    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>;
+    [name: string]: Array<(log: (message: string, status?: number) => void, location: DimensionLocation) => void>;
   }) {
     for (const sampleKey in sampleSet) {
       if (sampleKey.length > 1 && sampleSet[sampleKey]) {
