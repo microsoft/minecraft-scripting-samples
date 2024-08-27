@@ -5,7 +5,7 @@
     "description": "A simple sample where you can add code in a framework",
     "uuid": "421d57b3-b40e-459f-aee9-adaf63f7895d",
     "version": [1, 0, 0],
-    "min_engine_version": [1, 20, 0]
+    "min_engine_version": [1, 21, 0]
   },
   "modules": [
     {
@@ -17,14 +17,23 @@
       "entry": "scripts/main.js"
     }
   ],
+  "capabilities": ["editorExtension"],
   "dependencies": [
     {
+      "uuid": "1cbf2047-73a7-45e0-a2ee-6dfdf27a0685",
+      "version": [1, 0, 0]
+    },
+    {
+      "module_name": "@minecraft/server-editor",
+      "version": "0.1.0-beta"
+    },
+    {
       "module_name": "@minecraft/server",
-      "version": "1.10.0"
+      "version": "1.15.0-beta"
     },
     {
       "module_name": "@minecraft/server-ui",
-      "version": "1.1.0"
+      "version": "1.4.0-beta"
     }
   ]
 }

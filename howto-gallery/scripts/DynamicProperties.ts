@@ -1,17 +1,17 @@
-import * as mc from "@minecraft/server";
+import { DimensionLocation, world } from "@minecraft/server";
 
 /**
  * Increments a dynamic numeric persisted property.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
+ * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/world#getDynamicProperty
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/world#setDynamicProperty
  */
 export function incrementDynamicProperty(
   log: (message: string, status?: number) => void,
-  targetLocation: mc.DimensionLocation
+  targetLocation: DimensionLocation
 ) {
-  let number = mc.world.getDynamicProperty("samplelibrary:number");
+  let number = world.getDynamicProperty("samplelibrary:number");
 
   log("Current value is: " + number);
 
@@ -24,21 +24,21 @@ export function incrementDynamicProperty(
     return -1;
   }
 
-  mc.world.setDynamicProperty("samplelibrary:number", number + 1);
+  world.setDynamicProperty("samplelibrary:number", number + 1);
 }
 
 /**
  * Increments a dynamic numeric persisted property.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
+ * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/world#getDynamicProperty
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/world#setDynamicProperty
  */
 export function incrementDynamicPropertyInJsonBlob(
   log: (message: string, status?: number) => void,
-  targetLocation: mc.DimensionLocation
+  targetLocation: DimensionLocation
 ) {
-  let paintStr = mc.world.getDynamicProperty("samplelibrary:longerjson");
+  let paintStr = world.getDynamicProperty("samplelibrary:longerjson");
   let paint: { color: string; intensity: number } | undefined = undefined;
 
   log("Current value is: " + paintStr);
@@ -69,5 +69,5 @@ export function incrementDynamicPropertyInJsonBlob(
 
   paint.intensity++;
   paintStr = JSON.stringify(paint); // be very careful to ensure your serialized JSON str cannot exceed limits
-  mc.world.setDynamicProperty("samplelibrary:longerjson", paintStr);
+  world.setDynamicProperty("samplelibrary:longerjson", paintStr);
 }

@@ -1,26 +1,23 @@
-import * as mc from "@minecraft/server";
+import { DimensionLocation, DisplaySlotId, ObjectiveSortOrder, world } from "@minecraft/server";
 
 /**
  * Creates and updates a scoreboard objective, plus a player score.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
+ * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/Scoreboard
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/Scoreboard#addobjective
  */
-export function updateScoreboard(
-  log: (message: string, status?: number) => void,
-  targetLocation: mc.DimensionLocation
-) {
+export function updateScoreboard(log: (message: string, status?: number) => void, targetLocation: DimensionLocation) {
   const scoreboardObjectiveId = "scoreboard_demo_objective";
   const scoreboardObjectiveDisplayName = "Demo Objective";
 
-  const players = mc.world.getPlayers();
+  const players = world.getPlayers();
 
   // Ensure a new objective.
-  let objective = mc.world.scoreboard.getObjective(scoreboardObjectiveId);
+  let objective = world.scoreboard.getObjective(scoreboardObjectiveId);
 
   if (!objective) {
-    objective = mc.world.scoreboard.addObjective(scoreboardObjectiveId, scoreboardObjectiveDisplayName);
+    objective = world.scoreboard.addObjective(scoreboardObjectiveId, scoreboardObjectiveDisplayName);
   }
 
   // get the scoreboard identity for player 0
@@ -34,9 +31,9 @@ export function updateScoreboard(
   // initialize player score to 100;
   objective.setScore(player0Identity, 100);
 
-  mc.world.scoreboard.setObjectiveAtDisplaySlot(mc.DisplaySlotId.Sidebar, {
+  world.scoreboard.setObjectiveAtDisplaySlot(DisplaySlotId.Sidebar, {
     objective: objective,
-    sortOrder: mc.ObjectiveSortOrder.Descending,
+    sortOrder: ObjectiveSortOrder.Descending,
   });
 
   const playerScore = objective.getScore(player0Identity) ?? 0;

@@ -1,8 +1,8 @@
 {
-  "name": "script-box",
+  "name": "editor-script-box",
   "version": "0.1.0",
-  "productName": "Minecraft Script Box Playground",
-  "description": "Minecraft Script Box Playground",
+  "productName": "Minecraft Editor Script Box Playground",
+  "description": "Minecraft Editor Script Box Playground",
   "private": true,
   "devDependencies": {
     "@minecraft/core-build-tasks": "^1.1.4",
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@minecraft/math": "^1.1.0",
-    "@minecraft/server": "^1.12.0-beta.1.21.0-preview.24",
+    "@minecraft/server": "^1.15.0-beta.1.21.30-preview.24",
     "@minecraft/server-editor": "^0.1.0-beta.1.21.30-preview.24",
     "@minecraft/server-ui": "^1.2.0",
     "@minecraft/vanilla-data": "^1.20.60"

@@ -1,15 +1,14 @@
-import * as mc from "@minecraft/server";
-import * as vanilla from "@minecraft/vanilla-data";
+import { DimensionLocation, MolangVariableMap } from "@minecraft/server";
 
 /**
  * Spawns a cloud of colored flame particles.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
+ * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#spawnparticle
  */
-export function spawnParticle(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
+export function spawnParticle(log: (message: string, status?: number) => void, targetLocation: DimensionLocation) {
   for (let i = 0; i < 100; i++) {
-    const molang = new mc.MolangVariableMap();
+    const molang = new MolangVariableMap();
 
     molang.setColorRGB("variable.color", { red: Math.random(), green: Math.random(), blue: Math.random() });
 

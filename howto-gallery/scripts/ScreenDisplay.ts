@@ -1,14 +1,14 @@
-import * as mc from "@minecraft/server";
+import { DimensionLocation, system, world } from "@minecraft/server";
 
 /**
  * Sets a title overlay on the player's screen
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
+ * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/ScreenDisplay
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/ScreenDisplay#setTitle
  */
-export function setTitle(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
-  let players = mc.world.getPlayers();
+export function setTitle(log: (message: string, status?: number) => void, targetLocation: DimensionLocation) {
+  let players = world.getPlayers();
 
   players[0].onScreenDisplay.setTitle("§o§6Fancy Title§r");
 }
@@ -16,15 +16,15 @@ export function setTitle(log: (message: string, status?: number) => void, target
 /**
  * Sets a title and subtitle overlay on the player's screen
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
+ * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/ScreenDisplay
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/ScreenDisplay#setTitle
  */
 export function setTitleAndSubtitle(
   log: (message: string, status?: number) => void,
-  targetLocation: mc.DimensionLocation
+  targetLocation: DimensionLocation
 ) {
-  const players = mc.world.getPlayers();
+  const players = world.getPlayers();
 
   players[0].onScreenDisplay.setTitle("Chapter 1", {
     stayDuration: 100,
@@ -37,13 +37,13 @@ export function setTitleAndSubtitle(
 /**
  * Runs a countdown from 10 to 0.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
- * @param {mc.DimensionLocation} targetLocation Location to center this sample code around.
+ * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/ScreenDisplay
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/ScreenDisplay#setTitle
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/ScreenDisplay#updateSubtitle
  */
-export function countdown(log: (message: string, status?: number) => void, targetLocation: mc.DimensionLocation) {
-  const players = mc.world.getPlayers();
+export function countdown(log: (message: string, status?: number) => void, targetLocation: DimensionLocation) {
+  const players = world.getPlayers();
 
   players[0].onScreenDisplay.setTitle("Get ready!", {
     stayDuration: 220,
@@ -54,12 +54,12 @@ export function countdown(log: (message: string, status?: number) => void, targe
 
   let countdown = 10;
 
-  const intervalId = mc.system.runInterval(() => {
+  const intervalId = system.runInterval(() => {
     countdown--;
     players[0].onScreenDisplay.updateSubtitle(countdown.toString());
 
     if (countdown == 0) {
-      mc.system.clearRun(intervalId);
+      system.clearRun(intervalId);
     }
   }, 20);
 }

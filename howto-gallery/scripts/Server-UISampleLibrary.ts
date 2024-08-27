@@ -1,12 +1,10 @@
-import * as mc from "@minecraft/server";
-import * as mcui from "@minecraft/server-ui"; // keep in for ui samples
-
+import { DimensionLocation } from "@minecraft/server";
 import SampleManager from "./SampleManager";
 
 import * as sdf1 from "./ServerUserInterface";
 
 const mojangMinecraftUIFuncs: {
-  [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>;
+  [name: string]: Array<(log: (message: string, status?: number) => void, location: DimensionLocation) => void>;
 } = {
   showActionForm: [sdf1.showActionForm],
   showFavoriteMonth: [sdf1.showFavoriteMonth],

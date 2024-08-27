@@ -1,16 +1,16 @@
-import * as mc from "@minecraft/server";
+import { world, system, DimensionLocation, ScriptEventCommandMessageAfterEvent } from "@minecraft/server";
 
 export default class SampleManager {
   tickCount = 0;
 
   _availableFuncs: {
-    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>;
+    [name: string]: Array<(log: (message: string, status?: number) => void, location: DimensionLocation) => void>;
   };
 
   pendingFuncs: Array<{
     name: string;
-    func: (log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void;
-    location: mc.DimensionLocation;
+    func: (log: (message: string, status?: number) => void, location: DimensionLocation) => void;
+    location: DimensionLocation;
   }> = [];
 
   gamePlayLogger(message: string, status?: number) {
@@ -20,11 +20,11 @@ export default class SampleManager {
       message = "FAIL: " + message;
     }
 
-    mc.world.sendMessage(message);
+    world.sendMessage(message);
     console.warn(message);
   }
 
-  newScriptEvent(scriptEvent: mc.ScriptEventCommandMessageAfterEvent) {
+  newScriptEvent(scriptEvent: ScriptEventCommandMessageAfterEvent) {
     const messageId = scriptEvent.id.toLowerCase();
 
     if (messageId.startsWith("sample") && scriptEvent.sourceEntity) {
@@ -54,8 +54,8 @@ export default class SampleManager {
 
   runSample(
     sampleId: string,
-    snippetFunctions: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>,
-    targetLocation: mc.DimensionLocation
+    snippetFunctions: Array<(log: (message: string, status?: number) => void, location: DimensionLocation) => void>,
+    targetLocation: DimensionLocation
   ) {
     for (let i = snippetFunctions.length - 1; i >= 0; i--) {
       this.pendingFuncs.push({ name: sampleId, func: snippetFunctions[i], location: targetLocation });
@@ -71,18 +71,18 @@ export default class SampleManager {
           try {
             funcSet.func(this.gamePlayLogger, funcSet.location);
           } catch (e: any) {
-            mc.world.sendMessage("Could not run sample function. Error: " + e.toString());
+            world.sendMessage("Could not run sample function. Error: " + e.toString());
           }
         }
       }
     }
     if (this.tickCount === 200) {
-      mc.world.sendMessage("Type '/scriptevent sample:run' in chat to run this sample.");
+      world.sendMessage("Type '/scriptevent sample:run' in chat to run this sample.");
     }
 
     this.tickCount++;
 
-    mc.system.run(this.worldTick);
+    system.run(this.worldTick);
   }
 
   constructor() {
@@ -92,13 +92,13 @@ export default class SampleManager {
 
     this.worldTick = this.worldTick.bind(this);
 
-    mc.system.afterEvents.scriptEventReceive.subscribe(this.newScriptEvent.bind(this));
+    system.afterEvents.scriptEventReceive.subscribe(this.newScriptEvent.bind(this));
 
-    mc.system.run(this.worldTick);
+    system.run(this.worldTick);
   }
 
   registerSamples(sampleSet: {
-    [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>;
+    [name: string]: Array<(log: (message: string, status?: number) => void, location: DimensionLocation) => void>;
   }) {
     for (const sampleKey in sampleSet) {
       if (sampleKey.length > 1 && sampleSet[sampleKey]) {

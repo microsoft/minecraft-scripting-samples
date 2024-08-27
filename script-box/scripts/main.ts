@@ -1,8 +1,8 @@
 import SampleManager from "./SampleManager";
-import * as sb from "./ScriptBox";
+import { scriptBox } from "./ScriptBox";
 
 const sm = new SampleManager();
 
 sm.registerSamples({
-  scriptBox: [sb.scriptBox],
+  scriptBox: [scriptBox],
 });

@@ -1,4 +1,3 @@
-import * as mc from "@minecraft/server";
 import SampleManager from "./SampleManager";
 
 import * as sdf1 from "./EntitySpawnEvent";
@@ -20,9 +19,10 @@ import * as sdf16 from "./SendMessage";
 import * as sdf17 from "./BlockEvent";
 import * as sdf18 from "./DynamicProperties";
 import * as sdf19 from "./Equipment";
+import { DimensionLocation } from "@minecraft/server";
 
 const mojangMinecraftFuncs: {
-  [name: string]: Array<(log: (message: string, status?: number) => void, location: mc.DimensionLocation) => void>;
+  [name: string]: Array<(log: (message: string, status?: number) => void, location: DimensionLocation) => void>;
 } = {
   logEntitySpawnEvent: [sdf1.logEntitySpawnEvent, sdf1.spawnAdultHorse],
   spawnAdultHorse: [sdf1.spawnAdultHorse],
