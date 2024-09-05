@@ -2,6 +2,10 @@
 
 This project contains samples of [@minecraft/server](https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/minecraft-server) scripting APIs that are part of the Beta APIs experimental capability of Minecraft. For more information, see the [Minecraft: Bedrock Edition Creator Documentation](https://learn.microsoft.com/minecraft/creator/)
 
+## New Samples
+
+- [script-box-tsjs](script-box-ts/README.md) - A simple build process and allow collaboration compliation of TypeScript and Javascript code into a Minecraft behavior pack.
+
 ## Current Samples
 
 - [ts-starter](ts-starter/README.md) - A starter project that lets you use TypeScript, alongside a tutorial on how to use more `@minecraft/server` APIs.
