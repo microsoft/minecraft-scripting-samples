@@ -1,18 +1,15 @@
 ---
-page_type: sample
-author: mammerla, keyyard
-description: A simple sandbox for experimenting with Minecraft coding behaviors. added javascript support.
-ms.author: mikeam@microsoft.com
-ms.date: 06/07/2023
-mr.author: keyyard
-mr.date: 06/09/2024
+page_type: sample workspace
+author: keyyard
+description: A simple sandbox for experimenting with Minecraft coding behaviors in TypeScript and JavaScript.
+author: keyyard
+date: 06/09/2024
 languages:
   - typescript
   - javascript
 products:
   - minecraft
 ---
-
 # Minecraft Script Box TypeScript and JavaScript
 
 This workspace is designed to allow you to experiment with TypeScript and JavaScript code, and build it into a Minecraft behavior pack.
