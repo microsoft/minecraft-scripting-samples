@@ -4,7 +4,7 @@ This project contains samples of [@minecraft/server](https://learn.microsoft.com
 
 ## New Samples and Workspaces (*this should be why you are here*)
 
-- [script-box-tsjs](script-box-tsjs/README.md) - A simple workspace allow collaboration compliation of TypeScript and Javascript code into a Minecraft behavior pack.
+- [script-box-tsjs](script-box-tsjs/README.md) - A simple workspace allow collaboration compliation of TypeScript and JavaScript code into a Minecraft behavior pack.
 
 ## Current Samples
 
