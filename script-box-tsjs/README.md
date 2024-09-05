@@ -1,19 +1,25 @@
 ---
 page_type: sample
-author: mammerla
-description: A simple sandbox for experimenting with Minecraft coding behaviors.
+author: mammerla, keyyard
+description: A simple sandbox for experimenting with Minecraft coding behaviors. added javascript support.
 ms.author: mikeam@microsoft.com
 ms.date: 06/07/2023
+mr.author: keyyard
+mr.date: 06/09/2024
 languages:
   - typescript
+  - javascript
 products:
   - minecraft
 ---
 
-# Minecraft Script Box
+# Minecraft Script Box TypeScript and JavaScript
 
-This sample demonstrates a simple build process and allow collaboration compliation of TypeScript and **Javascript** code into a Minecraft behavior pack.
--> This was made for the case where you want to use JavaScript in your project. For example a previous project that was written in JavaScript.
+This workspace is designed to allow you to experiment with TypeScript and JavaScript code, and build it into a Minecraft behavior pack.
+
+## How to use this workspace sample
+
+To get started, you'll need to clone or download this repository to your local machine. You can do this by clicking the green "Code" button in the top right of this page, and then selecting "Download ZIP".
 
 ## Prerequisites
 
