@@ -13,6 +13,7 @@ products:
 # Minecraft Script Box TypeScript and JavaScript
 
 This workspace is designed to allow you to experiment with TypeScript and JavaScript code, and build it into a Minecraft behavior pack.
+This workspace also works when you add a resource pack.
 
 ## How to use this workspace sample
 
