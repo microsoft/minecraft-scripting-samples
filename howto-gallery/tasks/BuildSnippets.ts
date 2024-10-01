@@ -7,8 +7,14 @@ export class BuildSnippetsParameters {
 }
 
 const ImportTypes = {
-  vanilla: ["MinecraftDimensionTypes", "MinecraftBlockTypes", "MinecraftItemTypes", "MinecraftEntityTypes"],
-  math: ["Vector3Utils"],
+  vanilla: [
+    "MinecraftDimensionTypes",
+    "MinecraftBlockTypes",
+    "MinecraftItemTypes",
+    "MinecraftEntityTypes",
+    "MinecraftEffectTypes",
+  ],
+  mathutils: ["Vector3Utils"],
   mcui: [
     "MessageFormResponse",
     "MessageFormData",
@@ -27,12 +33,15 @@ const ImportTypes = {
     "EntityQueryOptions",
     "ButtonPushAfterEvent",
     "ItemStack",
+    "BlockPistonState",
     "MolangVariableMap",
+    "LeverActionAfterEvent",
     "EntityInventoryComponent",
     "Enchantment",
     "ItemEnchantsComponent",
     "EntityHealthComponent",
     "EntityOnFireComponent",
+    "EntityItemComponent",
     "EntityEquippableComponent",
     "EquipmentSlot",
     "EntityItemComponent",
@@ -44,8 +53,11 @@ const ImportTypes = {
     "PlayerSoundOptions",
     "DisplaySlotId",
     "ObjectiveSortOrder",
-    "TripWireAfterEvent",
+    "TripWireTripAfterEvent",
     "Vector3",
+    "EntityComponentTypes",
+    "BlockComponentTypes",
+    "ItemComponentTypes",
     "DimensionLocation",
   ],
 };
@@ -116,6 +128,20 @@ class SnippetsBuilder {
             }
 
             importStr += str;
+          } else if (
+            code.indexOf(str + ".") >= 0 ||
+            code.indexOf(str + "(") >= 0 ||
+            code.indexOf(str + ")") >= 0 ||
+            code.indexOf(str + ";") >= 0 ||
+            code.indexOf(str + "\r") >= 0 ||
+            code.indexOf(str + "\n") >= 0 ||
+            code.indexOf(str + " ") >= 0
+          ) {
+            if (importStr.length > 0) {
+              importStr += ", ";
+            }
+
+            importStr += str;
           }
         }
       }
@@ -131,7 +157,7 @@ class SnippetsBuilder {
           case "vanilla":
             code = "import { " + importStr + ' } from "@minecraft/vanilla-data";\r\n' + code;
             break;
-          case "math":
+          case "mathutils":
             code = "import { " + importStr + ' } from "@minecraft/math";\r\n' + code;
             break;
         }
@@ -148,7 +174,7 @@ class SnippetsBuilder {
     code = code.replace(/mcgt\./gi, "");
     code = code.replace(/mc\./gi, "");
     code = code.replace(/vanilla\./gi, "");
-    code = code.replace(/math\./gi, "");
+    code = code.replace(/mathutils\./gi, "");
 
     return code;
   }
