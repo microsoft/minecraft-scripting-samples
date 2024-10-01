@@ -31,7 +31,7 @@ trapTick();
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/system#runInterval
  */
 export function every30Seconds(log: (message: string, status?: number) => void, targetLocation: DimensionLocation) {
-  let intervalRunIdentifier = Math.floor(Math.random() * 10000);
+  const intervalRunIdentifier = Math.floor(Math.random() * 10000);
 
   system.runInterval(() => {
     world.sendMessage("This is an interval run " + intervalRunIdentifier + " sending a message every 30 seconds.");

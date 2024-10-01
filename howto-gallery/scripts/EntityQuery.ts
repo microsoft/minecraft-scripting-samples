@@ -40,7 +40,7 @@ export function tagsQuery(log: (message: string, status?: number) => void, targe
   // create some sample mob data
   for (let i = 0; i < 10; i++) {
     let mobTypeId = mobs[i % mobs.length];
-    let entity = targetLocation.dimension.spawnEntity(mobTypeId, targetLocation);
+    const entity = targetLocation.dimension.spawnEntity(mobTypeId, targetLocation);
     entity.addTag("mobparty." + mobTypeId);
   }
 
