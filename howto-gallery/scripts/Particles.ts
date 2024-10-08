@@ -12,7 +12,7 @@ export function spawnParticle(log: (message: string, status?: number) => void, t
 
     molang.setColorRGB("variable.color", { red: Math.random(), green: Math.random(), blue: Math.random() });
 
-    let newLocation = {
+    const newLocation = {
       x: targetLocation.x + Math.floor(Math.random() * 8) - 4,
       y: targetLocation.y + Math.floor(Math.random() * 8) - 4,
       z: targetLocation.z + Math.floor(Math.random() * 8) - 4,
