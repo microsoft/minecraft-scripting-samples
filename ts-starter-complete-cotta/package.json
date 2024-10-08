@@ -24,6 +24,6 @@
     "@minecraft/math": "^1.4.0",
     "@minecraft/server": "^1.14.0",
     "@minecraft/server-ui": "^1.3.0",
-    "@minecraft/vanilla-data": "^1.21.20"
+    "@minecraft/vanilla-data": "^1.21.31"
   }
 }
