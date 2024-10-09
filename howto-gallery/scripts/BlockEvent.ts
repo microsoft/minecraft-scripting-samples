@@ -31,9 +31,7 @@ export function buttonPushEvent(log: (message: string, status?: number) => void,
   }
 
   cobblestone.setPermutation(BlockPermutation.resolve(MinecraftBlockTypes.Cobblestone));
-  button.setPermutation(
-    BlockPermutation.resolve(MinecraftBlockTypes.AcaciaButton).withState("facing_direction", 1 /* up */)
-  );
+  button.setPermutation(BlockPermutation.resolve(MinecraftBlockTypes.AcaciaButton).withState("facing_direction", 1));
 
   world.afterEvents.buttonPush.subscribe((buttonPushEvent: ButtonPushAfterEvent) => {
     const eventLoc = buttonPushEvent.block.location;
@@ -67,7 +65,7 @@ export function leverActionEvent(log: (message: string, status?: number) => void
 
   cobblestone.setPermutation(BlockPermutation.resolve(MinecraftBlockTypes.Cobblestone));
   lever.setPermutation(
-    BlockPermutation.resolve(MinecraftBlockTypes.Lever).withState("lever_direction", "up_north_south" /* up */)
+    BlockPermutation.resolve(MinecraftBlockTypes.Lever).withState("lever_direction", "up_north_south")
   );
 
   world.afterEvents.leverAction.subscribe((leverActionEvent: LeverActionAfterEvent) => {

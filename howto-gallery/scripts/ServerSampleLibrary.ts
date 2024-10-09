@@ -19,6 +19,7 @@ import * as sdf16 from "./SendMessage";
 import * as sdf17 from "./BlockEvent";
 import * as sdf18 from "./DynamicProperties";
 import * as sdf19 from "./Equipment";
+import * as sdf20 from "./Containers";
 import { DimensionLocation } from "@minecraft/server";
 
 const mojangMinecraftFuncs: {
@@ -40,6 +41,7 @@ const mojangMinecraftFuncs: {
   addTwoSidedSign: [sdf8.addTwoSidedSign],
   addTranslatedSign: [sdf8.addTranslatedSign],
   addBlockColorCube: [sdf9.addBlockColorCube],
+  checkBlockTags: [sdf9.checkBlockTags],
   playMusicAndSound: [sdf10.playMusicAndSound],
   updateScoreboard: [sdf11.updateScoreboard],
   triggerEvent: [sdf12.triggerEvent],
@@ -64,6 +66,8 @@ const mojangMinecraftFuncs: {
   incrementDynamicPropertyInJsonBlob: [sdf18.incrementDynamicPropertyInJsonBlob],
   givePlayerElytra: [sdf19.givePlayerElytra],
   givePlayerEquipment: [sdf19.givePlayerEquipment],
+  containers: [sdf20.containers],
+  placeItemsInChest: [sdf20.placeItemsInChest],
 };
 
 export function register(sampleManager: SampleManager) {

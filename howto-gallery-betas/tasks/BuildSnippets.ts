@@ -23,6 +23,9 @@ const ImportTypes = {
     "ModalFormData",
     "ModalFormResponse",
   ],
+  mcgt: ["Test", "register"],
+  mcsa: ["secrets", "variables"],
+  mcnet: ["http", "HttpRequest", "HttpResponse", "HttpRequestMethod", "HttpHeader"],
   mc: [
     "world",
     "system",
@@ -161,6 +164,15 @@ class SnippetsBuilder {
           case "mathutils":
             code = "import { " + importStr + ' } from "@minecraft/math";\r\n' + code;
             break;
+          case "mcgt":
+            code = "import { " + importStr + ' } from "@minecraft/server-gametest";\r\n' + code;
+            break;
+          case "mcnet":
+            code = "import { " + importStr + ' } from "@minecraft/server-net";\r\n' + code;
+            break;
+          case "mcsa":
+            code = "import { " + importStr + ' } from "@minecraft/server-admin";\r\n' + code;
+            break;
         }
       }
     }
@@ -173,6 +185,9 @@ class SnippetsBuilder {
     code = code.replace(/mcnet\./gi, "");
     code = code.replace(/mcadmin\./gi, "");
     code = code.replace(/mcgt\./gi, "");
+    code = code.replace(/mcgt\r\n/gi, "");
+    code = code.replace(/mcgt\n/gi, "");
+    code = code.replace(/  .register/gi, "register");
     code = code.replace(/mc\./gi, "");
     code = code.replace(/vanilla\./gi, "");
     code = code.replace(/mathutils\./gi, "");
@@ -247,7 +262,49 @@ class SnippetsBuilder {
 
               if (nextFunction >= 0) {
                 const firstParen = content.indexOf("(", nextFunction);
-                const endOfFunction = content.indexOf("\r\n}", nextFunction);
+                let endOfFunction = content.indexOf("\r\n}", nextFunction);
+                const gtStart = content.indexOf(".register", nextFunction);
+
+                if (gtStart >= 0) {
+                  const gtEnd = content.indexOf(");", gtStart);
+
+                  if (gtEnd > firstParen && firstParen > nextFunction) {
+                    const name = content.substring(nextFunction + 10, firstParen);
+                    const functionCode = content.substring(nextExport, endOfFunction + 3);
+                    let codeSampleFull = content.substring(nextFunction + 1, gtEnd + 3);
+
+                    codeSampleFull = this.addImports(codeSampleFull);
+                    codeSampleFull = this.removeNamespaceAliases(codeSampleFull);
+
+                    let cs = new CodeSnippet();
+                    cs.name = name;
+                    cs.description = description;
+                    cs.segments = urlSegments;
+                    cs.function = functionCode;
+                    cs.codeSampleFull = codeSampleFull;
+                    cs.codeSampleInterior = codeSampleFull;
+
+                    this._snippets.push(cs);
+
+                    let moduleKey = urlSegments[0] + "/" + urlSegments[1];
+
+                    if (!this._snippetsByModules[moduleKey]) {
+                      this._snippetsByModules[moduleKey] = {};
+                    }
+
+                    if (!this._snippetsByModules[moduleKey][name]) {
+                      this._snippetsByModules[moduleKey][name] = [];
+                    }
+
+                    this._snippetsByModules[moduleKey][name].push(cs);
+
+                    console.log(
+                      "Gametest snippet '" + name + "' discovered for " + urlSegments.join(".") + " in " + moduleKey
+                    );
+
+                    endOfFunction = -1;
+                  }
+                }
 
                 if (endOfFunction > firstParen && firstParen > nextFunction) {
                   const name = content.substring(nextFunction + 10, firstParen);
@@ -372,7 +429,6 @@ class SnippetsBuilder {
 
       for (const sharedSnippetPath in snippetNamesByPath) {
         const snippetList = snippetNamesByPath[sharedSnippetPath];
-
         this.writeFile(
           "docsnips/" + sharedSnippetPath + "/_example_files.json",
           JSON.stringify(snippetList, undefined, 2)
@@ -424,7 +480,7 @@ class SnippetsBuilder {
 
       jsonMarkup += "\r\n}";
 
-      this.writeFile("samplejson/" + moduleKey + "-samples.json", jsonMarkup);
+      this.writeFile("samplejson/" + moduleKey + "-samples-beta.json", jsonMarkup);
 
       let tsTestFileMarkup =
         "/* eslint-disable  @typescript-eslint/no-unused-vars */\r\n" +
