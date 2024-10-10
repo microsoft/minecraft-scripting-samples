@@ -9,7 +9,6 @@ import { MinecraftBlockTypes, MinecraftEntityTypes, MinecraftItemTypes } from "@
 
 /**
  * Creates some chests and containers and uses container transfer and swapping APIs
- * This sample uses only stable APIs.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/Container
@@ -86,7 +85,6 @@ export function containers(log: (message: string, status?: number) => void, targ
 
 /**
  * Creates a chest and places some items within it.
- * This sample uses only stable APIs.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/BlockInventoryComponent

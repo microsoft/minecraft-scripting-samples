@@ -2,7 +2,10 @@ import {
   DimensionLocation,
   EntityComponentTypes,
   EntityEquippableComponent,
+  EntityInventoryComponent,
   EquipmentSlot,
+  ItemComponentTypes,
+  ItemDurabilityComponent,
   ItemStack,
   world,
 } from "@minecraft/server";
