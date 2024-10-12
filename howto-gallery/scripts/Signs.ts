@@ -26,7 +26,7 @@ export function addSign(log: (message: string, status?: number) => void, targetL
     log("Could not find a block at specified location.");
     return -1;
   }
-  let signPerm = BlockPermutation.resolve(MinecraftBlockTypes.StandingSign, { ground_sign_direction: 8 });
+  const signPerm = BlockPermutation.resolve(MinecraftBlockTypes.StandingSign, { ground_sign_direction: 8 });
 
   signBlock.setPermutation(signPerm);
 
@@ -54,7 +54,7 @@ export function addTranslatedSign(log: (message: string, status?: number) => voi
     log("Could not find a block at specified location.");
     return -1;
   }
-  let signPerm = BlockPermutation.resolve(MinecraftBlockTypes.StandingSign, { ground_sign_direction: 8 });
+  const signPerm = BlockPermutation.resolve(MinecraftBlockTypes.StandingSign, { ground_sign_direction: 8 });
 
   signBlock.setPermutation(signPerm);
 
@@ -76,7 +76,7 @@ export function addTwoSidedSign(log: (message: string, status?: number) => void,
     log("Could not find a block at specified location.");
     return -1;
   }
-  let signPerm = BlockPermutation.resolve(MinecraftBlockTypes.StandingSign, { ground_sign_direction: 8 });
+  const signPerm = BlockPermutation.resolve(MinecraftBlockTypes.StandingSign, { ground_sign_direction: 8 });
 
   signBlock.setPermutation(signPerm);
 

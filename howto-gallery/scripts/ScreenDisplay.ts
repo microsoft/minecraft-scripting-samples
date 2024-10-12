@@ -8,9 +8,11 @@ import { DimensionLocation, system, world } from "@minecraft/server";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/ScreenDisplay#setTitle
  */
 export function setTitle(log: (message: string, status?: number) => void, targetLocation: DimensionLocation) {
-  let players = world.getPlayers();
+  const players = world.getPlayers();
 
-  players[0].onScreenDisplay.setTitle("§o§6Fancy Title§r");
+  if (players.length > 0) {
+    players[0].onScreenDisplay.setTitle("§o§6Fancy Title§r");
+  }
 }
 
 /**

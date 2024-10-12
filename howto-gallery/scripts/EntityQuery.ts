@@ -9,18 +9,18 @@ import { DimensionLocation, EntityQueryOptions } from "@minecraft/server";
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#applyknockback
  */
 export function bounceSkeletons(log: (message: string, status?: number) => void, targetLocation: DimensionLocation) {
-  let mobs = ["creeper", "skeleton", "sheep"];
+  const mobs = ["creeper", "skeleton", "sheep"];
 
   // create some sample mob data
   for (let i = 0; i < 10; i++) {
     targetLocation.dimension.spawnEntity(mobs[i % mobs.length], targetLocation);
   }
 
-  let eqo: EntityQueryOptions = {
+  const eqo: EntityQueryOptions = {
     type: "skeleton",
   };
 
-  for (let entity of targetLocation.dimension.getEntities(eqo)) {
+  for (const entity of targetLocation.dimension.getEntities(eqo)) {
     entity.applyKnockback(0, 0, 0, 1);
   }
 }
@@ -35,20 +35,20 @@ export function bounceSkeletons(log: (message: string, status?: number) => void,
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#addtag
  */
 export function tagsQuery(log: (message: string, status?: number) => void, targetLocation: DimensionLocation) {
-  let mobs = ["creeper", "skeleton", "sheep"];
+  const mobs = ["creeper", "skeleton", "sheep"];
 
   // create some sample mob data
   for (let i = 0; i < 10; i++) {
-    let mobTypeId = mobs[i % mobs.length];
-    let entity = targetLocation.dimension.spawnEntity(mobTypeId, targetLocation);
+    const mobTypeId = mobs[i % mobs.length];
+    const entity = targetLocation.dimension.spawnEntity(mobTypeId, targetLocation);
     entity.addTag("mobparty." + mobTypeId);
   }
 
-  let eqo: EntityQueryOptions = {
+  const eqo: EntityQueryOptions = {
     tags: ["mobparty.skeleton"],
   };
 
-  for (let entity of targetLocation.dimension.getEntities(eqo)) {
+  for (const entity of targetLocation.dimension.getEntities(eqo)) {
     entity.kill();
   }
 }
