@@ -15,25 +15,28 @@ export function logEntitySpawnEvent(
   // register a new function that is called when a new entity is created.
   world.afterEvents.entitySpawn.subscribe((entityEvent: EntitySpawnAfterEvent) => {
     if (entityEvent && entityEvent.entity) {
-      log(`New entity of type '${entityEvent.entity.typeId}' created!`, 1);
+      log(`New entity of type ${entityEvent.entity.typeId} created!`, 1);
     } else {
-      log(`The entity event didn't work as expected.`, -1);
+      log(`The entity event did not work as expected.`, -1);
     }
   });
 
   system.runTimeout(() => {
-    spawnAdultHorse(log, targetLocation);
+    targetLocation.dimension.spawnEntity(
+      "minecraft:horse<minecraft:ageable_grow_up>",
+      Vector3Utils.add(targetLocation, { x: 0, y: 1, z: 0 })
+    );
   }, 20);
 }
 
 /**
- * A simple function to create a horse.
+ * A simple function to create an adult horse.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#spawnentity
  */
 export function spawnAdultHorse(log: (message: string, status?: number) => void, targetLocation: DimensionLocation) {
-  log("Create a horse and triggering the 'ageable_grow_up' event, ensuring the horse is created as an adult");
+  log("Create a horse and triggering the ageable_grow_up event, ensuring the horse is created as an adult");
   targetLocation.dimension.spawnEntity(
     "minecraft:horse<minecraft:ageable_grow_up>",
     Vector3Utils.add(targetLocation, { x: 0, y: 1, z: 0 })

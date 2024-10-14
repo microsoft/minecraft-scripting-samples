@@ -10,7 +10,7 @@ import {
 import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
 
 /**
- * A simple button push before event
+ * A simple button push before event.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/buttonpushaftereventsignal
@@ -31,9 +31,7 @@ export function buttonPushEvent(log: (message: string, status?: number) => void,
   }
 
   cobblestone.setPermutation(BlockPermutation.resolve(MinecraftBlockTypes.Cobblestone));
-  button.setPermutation(
-    BlockPermutation.resolve(MinecraftBlockTypes.AcaciaButton).withState("facing_direction", 1 /* up */)
-  );
+  button.setPermutation(BlockPermutation.resolve(MinecraftBlockTypes.AcaciaButton).withState("facing_direction", 1));
 
   world.afterEvents.buttonPush.subscribe((buttonPushEvent: ButtonPushAfterEvent) => {
     const eventLoc = buttonPushEvent.block.location;
@@ -45,7 +43,7 @@ export function buttonPushEvent(log: (message: string, status?: number) => void,
 }
 
 /**
- * A simple lever activate event
+ * A simple lever activate event.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/leveractionaftereventsignal
@@ -67,7 +65,7 @@ export function leverActionEvent(log: (message: string, status?: number) => void
 
   cobblestone.setPermutation(BlockPermutation.resolve(MinecraftBlockTypes.Cobblestone));
   lever.setPermutation(
-    BlockPermutation.resolve(MinecraftBlockTypes.Lever).withState("lever_direction", "up_north_south" /* up */)
+    BlockPermutation.resolve(MinecraftBlockTypes.Lever).withState("lever_direction", "up_north_south")
   );
 
   world.afterEvents.leverAction.subscribe((leverActionEvent: LeverActionAfterEvent) => {
@@ -80,7 +78,7 @@ export function leverActionEvent(log: (message: string, status?: number) => void
 }
 
 /**
- * A basic tripwire event
+ * A basic tripwire event.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/tripwiretripaftereventsignal

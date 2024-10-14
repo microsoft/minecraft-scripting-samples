@@ -4,13 +4,15 @@ import {
   BlockSignComponent,
   DimensionLocation,
   DyeColor,
+  RawMessage,
+  RawText,
   SignSide,
   world,
 } from "@minecraft/server";
 import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
 
 /**
- * Creates a single-sided simple sign
+ * Creates a single-sided simple sign.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/BlockSignComponent
@@ -36,7 +38,7 @@ export function addSign(log: (message: string, status?: number) => void, targetL
 }
 
 /**
- * Creates a single-sided simple sign
+ * Creates a single-sided simple sign.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/BlockPermutation
@@ -64,7 +66,7 @@ export function addTranslatedSign(log: (message: string, status?: number) => voi
 }
 
 /**
- * Creates a two-sided sign with custom colors and a read-only status
+ * Creates a two-sided sign with custom colors and a read-only status.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/BlockSignComponent
@@ -92,5 +94,34 @@ export function addTwoSidedSign(log: (message: string, status?: number) => void,
     signComponent.setWaxed(true);
   } else {
     log("Could not find sign component.");
+  }
+}
+/**
+ * Updates sign text.
+ * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
+ * @param {DimensionLocation} targetLocation Location to center this sample code around.
+ * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/BlockSignComponent
+ */
+export function updateSignText(log: (message: string, status?: number) => void, targetLocation: DimensionLocation) {
+  const block = targetLocation.dimension.getBlock(targetLocation);
+  if (!block) {
+    console.warn("Could not find a block at specified location.");
+    return;
+  }
+
+  const sign = block.getComponent(BlockComponentTypes.Sign) as BlockSignComponent;
+  if (sign) {
+    // RawMessage
+    const helloWorldMessage: RawMessage = { text: "Hello World" };
+    sign.setText(helloWorldMessage);
+
+    // RawText
+    const helloWorldText: RawText = { rawtext: [{ text: "Hello World" }] };
+    sign.setText(helloWorldText);
+
+    // Regular string
+    sign.setText("Hello World");
+  } else {
+    console.warn("Could not find a sign component on the block.");
   }
 }

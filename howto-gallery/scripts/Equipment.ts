@@ -2,14 +2,17 @@ import {
   DimensionLocation,
   EntityComponentTypes,
   EntityEquippableComponent,
+  EntityInventoryComponent,
   EquipmentSlot,
+  ItemComponentTypes,
+  ItemDurabilityComponent,
   ItemStack,
   world,
 } from "@minecraft/server";
 import { MinecraftItemTypes } from "@minecraft/vanilla-data";
 
 /**
- * Give a player elytra.
+ * Gives a player an elytra.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/EntityEquipmentInventoryComponent
