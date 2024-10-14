@@ -240,12 +240,7 @@ class SnippetsBuilder {
               let endOfFirstCommentLine = content.indexOf("\n", firstAsterisk);
 
               if (endOfFirstCommentLine > firstAsterisk) {
-                endOfFirstCommentLine--;
-                if (content[endOfFirstCommentLine] === "\r") {
-                  endOfFirstCommentLine--;
-                }
-
-                description = content.substring(firstAsterisk + 2, endOfFirstCommentLine);
+                description = content.substring(firstAsterisk + 2, endOfFirstCommentLine).trim();
               }
             }
           }
@@ -480,7 +475,7 @@ class SnippetsBuilder {
 
       jsonMarkup += "\r\n}";
 
-      this.writeFile("samplejson/" + moduleKey + "-samples-beta.json", jsonMarkup);
+      this.writeFile("samplejson/" + moduleKey + "-beta.json", jsonMarkup);
 
       let tsTestFileMarkup =
         "/* eslint-disable  @typescript-eslint/no-unused-vars */\r\n" +

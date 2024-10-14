@@ -71,6 +71,7 @@ const mojangMinecraftFuncs: {
   sendBasicMessage: [sdf16.sendBasicMessage],
   sendTranslatedMessage: [sdf16.sendTranslatedMessage],
   nestedTranslation: [sdf16.nestedTranslation],
+  scoreWildcard: [sdf16.scoreWildcard],
   buttonPushEvent: [sdf17.buttonPushEvent],
   leverActionEvent: [sdf17.leverActionEvent],
   tripWireTripEvent: [sdf17.tripWireTripEvent],

@@ -40,7 +40,7 @@ export function applyImpulse(log: (message: string, status?: number) => void, ta
 }
 
 /**
- * Gets a velocity of a firework
+ * Gets a velocity of a firework.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#getvelocity
@@ -59,7 +59,7 @@ export function getFireworkVelocity(
 }
 
 /**
- * Applies damage then heals an entity.
+ * Applies damage, then heals an entity.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#applydamage
@@ -82,7 +82,7 @@ export function applyDamageThenHeal(
 }
 
 /**
- * Applies damage then heals an entity.
+ * Sets an entity on fire.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/entity#setOnFire
@@ -196,7 +196,7 @@ export function blockConditional(log: (message: string, status?: number) => void
 }
 
 /**
- * Find entities having a property that is equals to
+ * Find entities having a property that is equals to a value.
  * Uses default properties of Minecraft bees.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
@@ -215,7 +215,7 @@ export function findEntitiesHavingPropertyEqualsTo(
 }
 
 /**
- * Plays a sound for every player, based on armor stands
+ * Plays a sound for every player, based on armor stands.
  * Scripting code equivalent to execute as @e[type=armor_stand,name=myArmorStand,tag=dummyTag1,tag=!dummyTag2] run playsound raid.horn @a
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
@@ -238,7 +238,7 @@ export function playSoundChained(log: (message: string, status?: number) => void
 }
 
 /**
- * Sets a scoreboard for armor stands
+ * Sets a scoreboard, based on the presence of armor stands.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/EntityQueryOptions
@@ -261,7 +261,7 @@ export function setScoreboardChained(
 }
 
 /**
- * Summons a mob near every player, based on a number of armor stands
+ * Summons a mob near every player, based on a number of armor stands.
  * Scripting code equivalent to execute as @e[type=armor_stand] run execute as @a[x=0,y=-60,z=0,c=4,r=15] run summon pig ~1 ~ ~
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.

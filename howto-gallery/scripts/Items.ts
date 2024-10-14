@@ -10,7 +10,7 @@ import {
 import { MinecraftEntityTypes, MinecraftItemTypes } from "@minecraft/vanilla-data";
 
 /**
- * Gives a player a half-damaged diamond sword
+ * Gives a player a half-damaged diamond sword.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/ItemStack#getComponent
@@ -37,7 +37,7 @@ export function giveHurtDiamondSword(
 }
 
 /**
- * Gives a player a restricted pickaxe
+ * Gives a player a restricted pickaxe.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/ItemStack#setCanDestroy
@@ -60,7 +60,7 @@ export function giveDestroyRestrictedPickaxe(
 }
 
 /**
- * Gives a player a restricted gold block
+ * Gives a player a restricted gold block.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/ItemStack#setCanPlaceOn
@@ -83,7 +83,7 @@ export function givePlaceRestrictedGoldBlock(
 }
 
 /**
- * Gives a player a diamond sword with custom lore text
+ * Gives a player a diamond sword with custom lore text.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/ItemStack#addLore
@@ -107,7 +107,7 @@ export function diamondAwesomeSword(
 }
 
 /**
- * Gets the first hotbar item
+ * Gets the first hotbar item.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/Container#getItem
@@ -129,7 +129,7 @@ export function getFirstHotbarItem(log: (message: string, status?: number) => vo
 }
 
 /**
- * Move an item between containers
+ * Move an item between containers.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/Container#moveItem
@@ -159,7 +159,7 @@ export function moveBetweenContainers(
 }
 
 /**
- * Swap an item between containers
+ * Swap an item between containers.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/Container#swapItem
@@ -189,7 +189,7 @@ export function swapBetweenContainers(
 }
 
 /**
- * Transfer an item between containers
+ * Transfer an item between containers.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/Container#transferItem

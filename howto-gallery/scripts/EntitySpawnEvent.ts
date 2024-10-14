@@ -30,7 +30,7 @@ export function logEntitySpawnEvent(
 }
 
 /**
- * A simple function to create a horse.
+ * A simple function to create an adult horse.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/dimension#spawnentity
