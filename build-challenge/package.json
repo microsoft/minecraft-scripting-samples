@@ -9,7 +9,7 @@
     "eslint-plugin-minecraft-linting": "^1.2.2",
     "source-map": "^0.7.4",
     "ts-node": "^10.9.1",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.3"
   },
   "scripts": {
     "lint": "just-scripts lint",
