@@ -41,61 +41,10 @@ jobs:
             ./ts-starter/package.json
             ./ts-starter-complete-cotta/package.json
 
-      - name: build-challenge Build
-        run: |
-          pushd build-challenge
-          npm ci
-          npm run mcaddon
-          popd
-
-      - name: custom-components Build
-        run: |
-          pushd custom-components
-          npm ci
-          npm run mcaddon
-          popd
-
-      - name: editor-basics Build
-        run: |
-          pushd editor-basics
-          npm ci
-          npm run mcaddon
-          popd
-
-      - name: editor-script-box Build
-        run: |
-          pushd editor-basics
-          npm ci
-          npm run mcaddon
-          popd
-  
-      - name: howto-gallery Build
-        run: |
-          pushd howto-galler
-          npm ci
-          npm run mcaddon
-          popd
-
-      - name: script-box Build
-        run: |
-          pushd script-box
-          npm ci
-          npm run mcaddon
-          popd
-
-      - name: ts-starter Build
-        run: |
-          pushd ts-starter
-          npm ci
-          npm run mcaddon
-          popd
-
-      - name: ts-starter-complete-cotta Build
-        run: |
-          pushd ts-starter-complete-cotta
-          npm ci
-          npm run mcaddon
-          popd
+      - name: Install
+        run: npm ci
+      - name: Build
+        run: npm run mcaddon
 
       - name: Get Package Version
         id: get-package-version
