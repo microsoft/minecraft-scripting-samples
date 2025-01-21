@@ -1,7 +1,7 @@
 {
     "name": "minecraft-scripting-samples",
     "workspaces": [
-        "samples/*"
+        "*"
     ],
     "scripts": {
         "build": "npm run build -ws",
