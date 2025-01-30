@@ -1,12 +1,12 @@
 {
-  "name": "howto-gallery",
+  "name": "howto-gallery-betas",
   "version": "0.1.0",
   "productName": "Minecraft TypeScript How-to Gallery",
   "description": "Minecraft TypeScript How-to Gallery",
   "private": true,
   "devDependencies": {
-    "@minecraft/core-build-tasks": "^1.1.4",
-    "eslint-plugin-minecraft-linting": "^1.2.1",
+    "@minecraft/core-build-tasks": "^3.0.1",
+    "eslint-plugin-minecraft-linting": "^2.0.1",
     "source-map": "^0.7.4",
     "ts-node": "^10.9.1",
     "typescript": "^5.5.4"
@@ -22,23 +22,23 @@
     "enablemcpreviewloopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-424268864-5579737-879501358-346833251-474568803-887069379-4040235476"
   },
   "dependencies": {
-    "@minecraft/math": "^1.4.0",
-    "@minecraft/server": "^1.16.0-beta.1.21.40-preview.25",
-    "@minecraft/server-admin": "^1.0.0-beta.1.21.40-preview.25",
-    "@minecraft/server-gametest": "^1.0.0-beta.1.21.40-preview.25",
-    "@minecraft/server-net": "^1.0.0-beta.1.21.40-preview.25",
-    "@minecraft/server-ui": "^1.4.0-beta.1.21.40-preview.25",
+    "@minecraft/math": "^2.0.1",
+    "@minecraft/server": "1.18.0-beta.1.21.60-preview.25",
+    "@minecraft/server-admin": "1.0.0-beta.1.21.60-preview.25",
+    "@minecraft/server-gametest": "1.0.0-beta.1.21.60-preview.25",
+    "@minecraft/server-net": "1.0.0-beta.1.21.60-preview.25",
+    "@minecraft/server-ui": "1.4.0-beta.1.21.60-preview.25",
     "@minecraft/vanilla-data": "^1.21.20"
   },
   "overrides": {
     "@minecraft/math": {
-      "@minecraft/server": "$@minecraft/server"
+      "@minecraft/server": "1.18.0-beta.1.21.60-preview.25"
     },
-    "@minecraft/server-gametest": {
-      "@minecraft/server": "$@minecraft/server"
+    "@minecraft/server-gametest@1.0.0-beta.1.21.60-preview.25": {
+      "@minecraft/server": "1.18.0-beta.1.21.60-preview.25"
     },
-    "@minecraft/server-ui": {
-      "@minecraft/server": "$@minecraft/server"
+    "@minecraft/server-ui@1.4.0-beta.1.21.60-preview.25": {
+      "@minecraft/server": "1.18.0-beta.1.21.60-preview.25"
     }
   }
 }
