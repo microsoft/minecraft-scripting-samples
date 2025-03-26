@@ -1,0 +1,185 @@
+{
+  "dataType": 1,
+  "storageBasePath": "",
+  "contentsModified": "2025-03-19T17:15:53.876Z",
+  "dataStorageRelativePath": "/CustomCommands/",
+  "editPreference": 0,
+  "name": "CustomCommands",
+  "title": "CustomCommands",
+  "description": "TypeScript Starter",
+  "defaultBehaviorPackUniqueId": "490cb58c-e6b1-4af2-8f48-433b96ae8dcd",
+  "defaultResourcePackUniqueId": "06f36430-433b-4315-a30f-02d41e54b078",
+  "defaultScriptModuleUniqueId": "d6cc3ec1-f3d6-4ee1-9883-e01852a27c7a",
+  "defaultDataUniqueId": "f8718ba3-55a6-4799-b6e7-90ef2031abee",
+  "focus": 0,
+  "items": [
+    {
+      "itemType": 59,
+      "projectPath": "/package.json",
+      "storageType": 0,
+      "creationType": 1,
+      "tags": [],
+      "name": "package.json",
+      "isInWorld": false
+    },
+    {
+      "itemType": 58,
+      "projectPath": "/tsconfig.json",
+      "storageType": 0,
+      "creationType": 0,
+      "tags": [],
+      "name": "tsconfig.json",
+      "isInWorld": false
+    },
+    {
+      "itemType": 129,
+      "projectPath": "/.mct/prefs.mctp.json",
+      "storageType": 0,
+      "creationType": 0,
+      "tags": [],
+      "name": "prefs.mctp.json",
+      "isInWorld": false
+    },
+    {
+      "itemType": 109,
+      "projectPath": "/behavior_packs/starter/",
+      "storageType": 1,
+      "creationType": 0,
+      "tags": [],
+      "name": "starter"
+    },
+    {
+      "itemType": 5,
+      "projectPath": "/behavior_packs/starter/manifest.json",
+      "storageType": 0,
+      "creationType": 0,
+      "tags": [
+        "behaviorpackmanifest"
+      ],
+      "name": "manifest.json",
+      "isInWorld": false
+    },
+    {
+      "itemType": 103,
+      "projectPath": "/behavior_packs/starter/pack_icon.png",
+      "storageType": 0,
+      "creationType": 0,
+      "tags": [],
+      "name": "pack_icon.png",
+      "isInWorld": false
+    },
+    {
+      "itemType": 110,
+      "projectPath": "/resource_packs/starter/",
+      "storageType": 1,
+      "creationType": 0,
+      "tags": [],
+      "name": "starter"
+    },
+    {
+      "itemType": 14,
+      "projectPath": "/resource_packs/starter/manifest.json",
+      "storageType": 0,
+      "creationType": 0,
+      "tags": [
+        "resourcepackmanifest"
+      ],
+      "name": "manifest.json",
+      "isInWorld": false
+    },
+    {
+      "itemType": 103,
+      "projectPath": "/resource_packs/starter/pack_icon.png",
+      "storageType": 0,
+      "creationType": 0,
+      "tags": [],
+      "name": "pack_icon.png",
+      "isInWorld": false
+    },
+    {
+      "itemType": 13,
+      "projectPath": "/scripts/main.ts",
+      "storageType": 0,
+      "creationType": 0,
+      "tags": [],
+      "name": "main.ts",
+      "isInWorld": false
+    },
+    {
+      "itemType": 121,
+      "projectPath": "/.env",
+      "storageType": 0,
+      "creationType": 1,
+      "tags": [],
+      "name": ".env"
+    },
+    {
+      "itemType": 122,
+      "projectPath": "/.prettierrc.json",
+      "storageType": 0,
+      "creationType": 1,
+      "tags": [],
+      "name": ".prettierrc.json"
+    },
+    {
+      "itemType": 119,
+      "projectPath": "/just.config.ts",
+      "storageType": 0,
+      "creationType": 1,
+      "tags": [],
+      "name": "just.config.ts"
+    },
+    {
+      "itemType": 120,
+      "projectPath": "/eslint.config.mjs",
+      "storageType": 0,
+      "creationType": 1,
+      "tags": [],
+      "name": "eslint.config.mjs"
+    },
+    {
+      "itemType": 75,
+      "projectPath": "/.vscode/launch.json",
+      "storageType": 0,
+      "creationType": 1,
+      "tags": [],
+      "name": "launch.json"
+    },
+    {
+      "itemType": 77,
+      "projectPath": "/.vscode/settings.json",
+      "storageType": 0,
+      "creationType": 1,
+      "tags": [],
+      "name": "settings.json"
+    },
+    {
+      "itemType": 76,
+      "projectPath": "/.vscode/tasks.json",
+      "storageType": 0,
+      "creationType": 1,
+      "tags": [],
+      "name": "tasks.json"
+    },
+    {
+      "itemType": 78,
+      "projectPath": "/.vscode/extensions.json",
+      "storageType": 0,
+      "creationType": 1,
+      "tags": [],
+      "name": "extensions.json"
+    }
+  ],
+  "projectFolderTitle": "custom-commands",
+  "originalGitHubOwner": "microsoft",
+  "originalGitHubRepoName": "minecraft-scripting-samples",
+  "originalGitHubFolder": "/ts-starter",
+  "originalGalleryId": "tsStarter",
+  "creator": "mike",
+  "shortName": "mike_cc",
+  "versionMajor": 1,
+  "versionMinor": 0,
+  "versionPatch": 0,
+  "collapsedStoragePaths": [],
+  "gitHubReferences": []
+}

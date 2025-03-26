@@ -1,0 +1,30 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "CustomCommands",
+    "description": "TypeScript Starter",
+    "uuid": "490cb58c-e6b1-4af2-8f48-433b96ae8dcd",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 21, 80]
+  },
+  "modules": [
+    {
+      "description": "Script resources",
+      "language": "javascript",
+      "type": "script",
+      "uuid": "d6cc3ec1-f3d6-4ee1-9883-e01852a27c7a",
+      "version": [1, 0, 0],
+      "entry": "scripts/main.js"
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.0.0-beta"
+    },
+    {
+      "uuid": "06f36430-433b-4315-a30f-02d41e54b078",
+      "version": [1, 0, 0]
+    }
+  ]
+}

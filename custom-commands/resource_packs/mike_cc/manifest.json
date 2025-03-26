@@ -1,0 +1,40 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "CustomCommands",
+    "description": "TypeScript Starter",
+    "uuid": "06f36430-433b-4315-a30f-02d41e54b078",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      80
+    ]
+  },
+  "modules": [
+    {
+      "description": "My Resource Pack",
+      "type": "resources",
+      "uuid": "0d36f7a8-e710-46ed-ac97-bef823020561",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "490cb58c-e6b1-4af2-8f48-433b96ae8dcd",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}
