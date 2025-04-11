@@ -216,7 +216,6 @@ export class SimpleLocate extends SimpleToolWrapper {
     super();
 
     const toolOptions: ISimpleToolOptions = {
-      id: "editor:simpleLocateBiome",
       name: "Simple Locate Biome",
       activationKeyBinding: {
         binding: {

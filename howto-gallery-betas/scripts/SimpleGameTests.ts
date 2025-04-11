@@ -87,7 +87,7 @@ export function minibiomes(test: mcgt.Test) {
 
   test.setBlockType(MinecraftBlockTypes.Cobblestone, { x: 10, y: 7, z: 7 });
 
-  const minecartRideableComp = minecart.getComponent(mc.EntityComponentTypes.Rideable) as mc.EntityRideableComponent;
+  const minecartRideableComp = minecart.getComponent(mc.EntityComponentTypes.Rideable);
 
   minecartRideableComp?.addRider(pig);
 

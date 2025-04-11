@@ -9,7 +9,6 @@ import {
   IObservable,
   IPlayerUISession,
   IPropertyPane,
-  IRootPropertyPane,
   UserDefinedTransactionHandle,
   bindDataSource,
   makeObservable,
@@ -116,7 +115,7 @@ function teleportTo(uiSession: IPlayerUISession<ExtensionStorage>, destination: 
 
 // Add the extension to the tool rail and give it an icon
 function addExtensionTool(uiSession: IPlayerUISession<ExtensionStorage>): IModalTool {
-  const tool = uiSession.toolRail.addTool("editorSample:goToMarkTool", {
+  const tool = uiSession.toolRail.addTool({
     title: "sample.gotomark.tool.title",
     icon: "pack://textures/goto-mark.png",
     tooltip: "Set or Jump to a stored location",
@@ -124,7 +123,7 @@ function addExtensionTool(uiSession: IPlayerUISession<ExtensionStorage>): IModal
   return tool;
 }
 
-function buildParentPane(uiSession: IPlayerUISession<ExtensionStorage>, storage: ExtensionStorage): IRootPropertyPane {
+function buildParentPane(uiSession: IPlayerUISession<ExtensionStorage>, storage: ExtensionStorage): IPropertyPane {
   const parentPane = uiSession.createPropertyPane({
     title: "sample.gotomark.pane.title",
   });

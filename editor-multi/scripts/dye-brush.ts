@@ -321,7 +321,7 @@ function addDyeBrushPane(uiSession: DyeBrushSession, tool: IModalTool) {
 }
 
 export function addDyeBrushTool(uiSession: DyeBrushSession) {
-  const tool = uiSession.toolRail.addTool("editorSample:dyeBrushTool", {
+  const tool = uiSession.toolRail.addTool({
     title: "sample.dyebrush.tool.title",
     tooltip: "sample.dyebrush.tool.tooltip",
     icon: "pack://textures/dye-brush.png",

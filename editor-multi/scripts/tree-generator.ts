@@ -399,12 +399,16 @@ function addTool(uiSession: IPlayerUISession) {
     },
   });
 
-  const tool = uiSession.toolRail.addTool("editorSample:treeGeneratorTool", {
-    title: "sample.treegenerator.tool.title",
-    icon: "pack://textures/tree-generator.png",
-    tooltip: "sample.treegenerator.tool.tooltip",
-    action: toolToggleAction,
-  });
+  const tool = uiSession.toolRail.addTool(
+    {
+      title: "sample.treegenerator.tool.title",
+      icon: "pack://textures/tree-generator.png",
+      tooltip: "sample.treegenerator.tool.tooltip",
+      inputContextId: "editorSamples:treeGenerator",
+      inputContextLabel: "sample.treegenerator.tool.title",
+    },
+    toolToggleAction
+  );
 
   // Register a global shortcut to select the tool
   uiSession.inputManager.registerKeyBinding(
