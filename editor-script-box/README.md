@@ -12,7 +12,7 @@ products:
 
 # Minecraft Editor Script Box
 
-This sample makes it easy to experiment with JavaScript code in the context of the Minecraft Edutir. Just add your code in the function at ScriptBox.ts, and this sample will add some infrastructure around it to make it easy to run that sample in within the editor experience.
+This sample makes it easy to experiment with JavaScript code in the context of the Minecraft Editor. Just add your code in the function at ScriptBox.ts, and this sample will add some infrastructure around it to make it easy to run that sample in within the editor experience.
 
 ## Prerequisites
 
