@@ -526,6 +526,19 @@ To create an addon file you can share, run:
    npm run mcaddon
 ```
 
+To create a production version of your code (i.e. with `dev:` labels stripped), run:
+
+```
+  npm run build -- -- --production
+```
+
+or produce a build with
+
+```
+  npm run mcaddon -- -- --production
+```
+
+
 ### Summary
 
 With this starter, you've seen how to build a nice little arena game.
