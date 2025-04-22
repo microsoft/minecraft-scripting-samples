@@ -2,13 +2,14 @@ import {
   world,
   system,
   CustomCommand,
-  CustomCommandPermissionLevel,
+  CommandPermissionLevel,
   CustomCommandParamType,
   StartupEvent,
   CustomCommandResult,
   CustomCommandStatus,
   Entity,
   Vector3,
+  CustomCommandOrigin,
 } from "@minecraft/server";
 
 function mainTick() {
@@ -23,7 +24,7 @@ system.beforeEvents.startup.subscribe((init: StartupEvent) => {
   const helloCommand: CustomCommand = {
     name: "creator:hellocustomcommand",
     description: "Celebration super party hello",
-    permissionLevel: CustomCommandPermissionLevel.Any,
+    permissionLevel: CommandPermissionLevel.Any,
     optionalParameters: [{ type: CustomCommandParamType.Integer, name: "celebrationSize" }],
   };
   init.customCommandRegistry.registerCommand(helloCommand, helloCustomCommand);
@@ -31,7 +32,7 @@ system.beforeEvents.startup.subscribe((init: StartupEvent) => {
   const partyCommand: CustomCommand = {
     name: "creator:party",
     description: "Cause selected entities to party",
-    permissionLevel: CustomCommandPermissionLevel.GameDirectors,
+    permissionLevel: CommandPermissionLevel.GameDirectors,
     mandatoryParameters: [{ type: CustomCommandParamType.EntitySelector, name: "partyParticipants" }],
   };
   init.customCommandRegistry.registerCommand(partyCommand, party);
@@ -39,13 +40,13 @@ system.beforeEvents.startup.subscribe((init: StartupEvent) => {
   const dirtsterCommand: CustomCommand = {
     name: "creator:dirtster",
     description: "Adds some dirt, ster",
-    permissionLevel: CustomCommandPermissionLevel.GameDirectors,
-    mandatoryParameters: [{ type: CustomCommandParamType.Position, name: "dirtLocation" }],
+    permissionLevel: CommandPermissionLevel.GameDirectors,
+    mandatoryParameters: [{ type: CustomCommandParamType.Location, name: "dirtLocation" }],
   };
   init.customCommandRegistry.registerCommand(dirtsterCommand, dirtster);
 });
 
-function helloCustomCommand(celebrationSize?: number): CustomCommandResult {
+function helloCustomCommand(origin: CustomCommandOrigin, celebrationSize?: number): CustomCommandResult {
   world.sendMessage("Hello Custom Command!");
 
   if (celebrationSize) {
@@ -61,7 +62,7 @@ function helloCustomCommand(celebrationSize?: number): CustomCommandResult {
   };
 }
 
-function party(entities: Entity[]): CustomCommandResult {
+function party(origin: CustomCommandOrigin, entities: Entity[]): CustomCommandResult {
   world.sendMessage("Entity party!");
 
   system.run(() => {
@@ -76,7 +77,7 @@ function party(entities: Entity[]): CustomCommandResult {
   };
 }
 
-function dirtster(loc: Vector3): CustomCommandResult {
+function dirtster(origin: CustomCommandOrigin, loc: Vector3): CustomCommandResult {
   world.sendMessage("Lets get dirty!");
 
   system.run(() => {
