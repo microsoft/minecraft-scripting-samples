@@ -532,7 +532,7 @@ To create a production version of your code (i.e. with `dev:` labels stripped), 
   npm run build -- -- --production
 ```
 
-or produce a build with
+To create a production (i.e. with `dev:` labels stripped) addon file you can share, run:
 
 ```
   npm run mcaddon -- -- --production
