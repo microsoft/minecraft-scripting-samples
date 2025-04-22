@@ -1,5 +1,6 @@
 import { argv, parallel, series, task, tscTask } from "just-scripts";
 import {
+  BundleTaskParameters,
   CopyTaskParameters,
   bundleTask,
   cleanTask,
@@ -9,7 +10,6 @@ import {
   mcaddonTask,
   setupEnvironment,
   ZipTaskParameters,
-  BundleTaskParameters,
   STANDARD_CLEAN_PATHS,
   DEFAULT_CLEAN_DIRECTORIES,
   getOrThrowFromProcess,
