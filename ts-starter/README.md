@@ -529,13 +529,13 @@ To create an addon file you can share, run:
 To create a production version of your code (i.e. with `dev:` labels stripped), run:
 
 ```
-  npm run build -- -- --production
+  npm run build:production
 ```
 
 To create a production (i.e. with `dev:` labels stripped) addon file you can share, run:
 
 ```
-  npm run mcaddon -- -- --production
+  npm run mcaddon:production
 ```
 
 

@@ -21,7 +21,7 @@ import path from "path";
 setupEnvironment(path.resolve(__dirname, ".env"));
 const projectName = getOrThrowFromProcess("PROJECT_NAME");
 
-// You can use `npm run build -- -- --production` to build a "production" build that strips out statements labelled with "dev:".
+// You can use `npm run build:production` to build a "production" build that strips out statements labelled with "dev:".
 const isProduction = argv()['production'];
 
 const bundleTaskOptions: BundleTaskParameters = {

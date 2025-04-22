@@ -101,7 +101,7 @@ function initializeBreakTheTerracotta() {
 
 function warn(message: string) {
   // The "dev:" here means that console.warn will be removed when making a publish build.
-  // You can make a publish build with `npm run build -- -- --production`.
+  // You can make a publish build with `npm run build:production`.
   dev: console.warn(message);
 }
 
