@@ -1,7 +1,7 @@
 {
   "format_version": 2,
   "header": {
-    "name": "Script Box",
+    "name": "Starter TSJS",
     "description": "A simple sample where you can add code in a framework",
     "uuid": "b16f9f73-f686-4bb1-bf7f-f65b3c8f2658",
     "version": [1, 0, 0],
