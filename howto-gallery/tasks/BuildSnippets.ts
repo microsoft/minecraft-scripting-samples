@@ -7,8 +7,21 @@ export class BuildSnippetsParameters {
 }
 
 const ImportTypes = {
-  vanilla: ["MinecraftDimensionTypes", "MinecraftBlockTypes", "MinecraftItemTypes", "MinecraftEntityTypes"],
-  math: ["Vector3Utils"],
+  vanilla: [
+    "MinecraftDimensionTypes",
+    "MinecraftBlockTypes",
+    "MinecraftItemTypes",
+    "MinecraftEntityTypes",
+    "MinecraftEffectTypes",
+    "MinecraftEnchantmentTypes",
+    "MinecraftBiomeTypes",
+    "MinecraftFeatureTypes",
+    "MinecraftPotionEffectTypes",
+    "MinecraftPotionLiquidTypes",
+    "MinecraftPotionModifierTypes",
+    "MinecraftCooldownCategoryTypes",
+  ],
+  mathutils: ["Vector3Utils"],
   mcui: [
     "MessageFormResponse",
     "MessageFormData",
@@ -24,15 +37,23 @@ const ImportTypes = {
     "BlockSignComponent",
     "SignSide",
     "DyeColor",
+    "ItemDurabilityComponent",
+    "RawMessage",
+    "RawText",
+    "EntityProjectileComponent",
     "EntityQueryOptions",
     "ButtonPushAfterEvent",
     "ItemStack",
+    "BlockPistonState",
     "MolangVariableMap",
+    "LeverActionAfterEvent",
     "EntityInventoryComponent",
+    "BlockInventoryComponent",
     "Enchantment",
     "ItemEnchantsComponent",
     "EntityHealthComponent",
     "EntityOnFireComponent",
+    "EntityItemComponent",
     "EntityEquippableComponent",
     "EquipmentSlot",
     "EntityItemComponent",
@@ -44,8 +65,11 @@ const ImportTypes = {
     "PlayerSoundOptions",
     "DisplaySlotId",
     "ObjectiveSortOrder",
-    "TripWireAfterEvent",
+    "TripWireTripAfterEvent",
     "Vector3",
+    "EntityComponentTypes",
+    "BlockComponentTypes",
+    "ItemComponentTypes",
     "DimensionLocation",
   ],
 };
@@ -116,6 +140,20 @@ class SnippetsBuilder {
             }
 
             importStr += str;
+          } else if (
+            code.indexOf(str + ".") >= 0 ||
+            code.indexOf(str + "(") >= 0 ||
+            code.indexOf(str + ")") >= 0 ||
+            code.indexOf(str + ";") >= 0 ||
+            code.indexOf(str + "\r") >= 0 ||
+            code.indexOf(str + "\n") >= 0 ||
+            code.indexOf(str + " ") >= 0
+          ) {
+            if (importStr.length > 0) {
+              importStr += ", ";
+            }
+
+            importStr += str;
           }
         }
       }
@@ -131,7 +169,7 @@ class SnippetsBuilder {
           case "vanilla":
             code = "import { " + importStr + ' } from "@minecraft/vanilla-data";\r\n' + code;
             break;
-          case "math":
+          case "mathutils":
             code = "import { " + importStr + ' } from "@minecraft/math";\r\n' + code;
             break;
         }
@@ -148,7 +186,7 @@ class SnippetsBuilder {
     code = code.replace(/mcgt\./gi, "");
     code = code.replace(/mc\./gi, "");
     code = code.replace(/vanilla\./gi, "");
-    code = code.replace(/math\./gi, "");
+    code = code.replace(/mathutils\./gi, "");
 
     return code;
   }
@@ -198,12 +236,7 @@ class SnippetsBuilder {
               let endOfFirstCommentLine = content.indexOf("\n", firstAsterisk);
 
               if (endOfFirstCommentLine > firstAsterisk) {
-                endOfFirstCommentLine--;
-                if (content[endOfFirstCommentLine] === "\r") {
-                  endOfFirstCommentLine--;
-                }
-
-                description = content.substring(firstAsterisk + 2, endOfFirstCommentLine);
+                description = content.substring(firstAsterisk + 2, endOfFirstCommentLine).trim();
               }
             }
           }
@@ -291,46 +324,54 @@ class SnippetsBuilder {
 
       for (let snippetKey in snippetsByName) {
         const snippets = snippetsByName[snippetKey];
-        let snippet = snippets[0];
-
-        let localUrlSegments = Array.from(snippet.segments);
-
-        if (localUrlSegments[0] === localUrlSegments[1]) {
-          localUrlSegments.shift();
-        }
 
         if (snippets.length <= 1) {
+          let coreSnippet = snippets[0];
+
+          let coreUrlSegments = Array.from(coreSnippet.segments);
+
+          if (coreUrlSegments[0] === coreUrlSegments[1]) {
+            coreUrlSegments.shift();
+          }
           this.writeFile(
-            "docsnips/" + localUrlSegments.join("/") + "/_examples/" + snippet.name + ".ts",
-            snippet.codeSampleFull
+            "docsnips/" + coreUrlSegments.join("/") + "/_examples/" + coreSnippet.name + ".ts",
+            coreSnippet.codeSampleFull
           );
         } else {
-          const path = localUrlSegments.join("/");
+          for (const snippet of snippets) {
+            let snipUrlSegments = Array.from(snippet.segments);
 
-          if (snippetNamesByPath[path] === undefined) {
-            snippetNamesByPath[path] = [];
-          }
+            if (snipUrlSegments[0] === snipUrlSegments[1]) {
+              snipUrlSegments.shift();
+            }
 
-          if (!snippetNamesByPath[path].includes(snippet.name + ".ts")) {
-            snippetNamesByPath[path].push(snippet.name + ".ts");
-          }
+            const path = snipUrlSegments.join("/");
 
-          if (localUrlSegments.length >= 2) {
-            this.writeFile(
-              "docsnips/" +
-                localUrlSegments[0] +
-                "/" +
-                localUrlSegments[1] +
-                "/_shared_examples/" +
-                snippet.name +
-                ".ts",
-              snippet.codeSampleFull
-            );
-          } else {
-            this.writeFile(
-              "docsnips/" + localUrlSegments[0] + "/_shared_examples/" + snippet.name + ".ts",
-              snippet.codeSampleFull
-            );
+            if (snippetNamesByPath[path] === undefined) {
+              snippetNamesByPath[path] = [];
+            }
+
+            if (!snippetNamesByPath[path].includes(snippet.name + ".ts")) {
+              snippetNamesByPath[path].push(snippet.name + ".ts");
+            }
+
+            if (snipUrlSegments.length >= 2) {
+              this.writeFile(
+                "docsnips/" +
+                  snipUrlSegments[0] +
+                  "/" +
+                  snipUrlSegments[1] +
+                  "/_shared_examples/" +
+                  snippet.name +
+                  ".ts",
+                snippet.codeSampleFull
+              );
+            } else {
+              this.writeFile(
+                "docsnips/" + snipUrlSegments[0] + "/_shared_examples/" + snippet.name + ".ts",
+                snippet.codeSampleFull
+              );
+            }
           }
         }
       }
@@ -389,7 +430,7 @@ class SnippetsBuilder {
 
       jsonMarkup += "\r\n}";
 
-      this.writeFile("samplejson/" + moduleKey + "-samples.json", jsonMarkup);
+      this.writeFile("samplejson/" + moduleKey + ".json", jsonMarkup);
 
       let tsTestFileMarkup =
         "/* eslint-disable  @typescript-eslint/no-unused-vars */\r\n" +

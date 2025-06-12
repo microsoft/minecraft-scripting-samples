@@ -2,20 +2,23 @@ import {
   DimensionLocation,
   EntityComponentTypes,
   EntityEquippableComponent,
+  EntityInventoryComponent,
   EquipmentSlot,
+  ItemComponentTypes,
+  ItemDurabilityComponent,
   ItemStack,
   world,
 } from "@minecraft/server";
 import { MinecraftItemTypes } from "@minecraft/vanilla-data";
 
 /**
- * Give a player elytra.
+ * Gives a player an elytra.
  * @param {(message: string, status?: number) => void} log: Logger function. If status is positive, test is a success. If status is negative, test is a failure.
  * @param {DimensionLocation} targetLocation Location to center this sample code around.
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/EntityEquipmentInventoryComponent
  */
 export function givePlayerElytra(log: (message: string, status?: number) => void, targetLocation: DimensionLocation) {
-  let players = world.getAllPlayers();
+  const players = world.getAllPlayers();
 
   const equipment = players[0].getComponent(EntityComponentTypes.Equippable) as EntityEquippableComponent;
   equipment?.setEquipment(EquipmentSlot.Chest, new ItemStack(MinecraftItemTypes.Elytra));
@@ -34,10 +37,10 @@ export function givePlayerEquipment(
   log: (message: string, status?: number) => void,
   targetLocation: DimensionLocation
 ) {
-  let players = world.getAllPlayers();
+  const players = world.getAllPlayers();
 
   const armorStandLoc = { x: targetLocation.x, y: targetLocation.y, z: targetLocation.z + 4 };
-  let armorStand = players[0].dimension.spawnEntity(MinecraftItemTypes.ArmorStand, armorStandLoc);
+  const armorStand = players[0].dimension.spawnEntity(MinecraftItemTypes.ArmorStand, armorStandLoc);
 
   const equipmentCompPlayer = players[0].getComponent(EntityComponentTypes.Equippable) as EntityEquippableComponent;
   if (equipmentCompPlayer) {

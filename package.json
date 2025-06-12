@@ -1,0 +1,21 @@
+{
+    "name": "minecraft-scripting-samples",
+    "workspaces": [
+        "*"
+    ],
+    "scripts": {
+        "build": "npm run build -ws",
+        "mcaddon": "npm run mcaddon -ws"
+    },
+    "overrides": {
+        "@minecraft/server-editor@0.1.0-beta.1.21.60-preview.25": {
+            "@minecraft/server": "1.18.0-beta.1.21.60-preview.25"
+        },
+        "@minecraft/server-ui@1.4.0-beta.1.21.60-preview.25": {
+            "@minecraft/server": "1.18.0-beta.1.21.60-preview.25"
+        },
+        "@minecraft/server-gametest@1.0.0-beta.1.21.60-preview.25": {
+            "@minecraft/server": "1.18.0-beta.1.21.60-preview.25"
+        }
+    }
+}

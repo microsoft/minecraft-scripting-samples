@@ -99,6 +99,12 @@ function initializeBreakTheTerracotta() {
   }
 }
 
+function warn(message: string) {
+  // The "dev:" here means that console.warn will be removed when making a publish build.
+  // You can make a publish build with `npm run build:production`.
+  dev: console.warn(message);
+}
+
 function gameTick() {
   try {
     curTick++;
@@ -129,7 +135,7 @@ function gameTick() {
       addFuzzyLeaves();
     }
   } catch (e) {
-    console.warn("Tick error: " + e);
+    warn("Tick error: " + e);
   }
 
   system.run(gameTick);
@@ -169,7 +175,7 @@ function checkForTerracotta() {
         scoreObjective.setScore(player, score);
       }
     } else {
-      console.warn("Score objective not found");
+      warn("Score objective not found");
     }
 
     world.sendMessage("You broke the terracotta! Creating new terracotta in a few seconds.");

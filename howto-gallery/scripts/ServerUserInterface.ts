@@ -14,10 +14,7 @@ import {
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ActionFormData
  * @see https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server-ui/ActionFormResponse
  */
-export async function showActionForm(
-  log: (message: string, status?: number) => void,
-  targetLocation: DimensionLocation
-) {
+export function showActionForm(log: (message: string, status?: number) => void, targetLocation: DimensionLocation) {
   const playerList = world.getPlayers();
 
   if (playerList.length >= 1) {
@@ -30,14 +27,14 @@ export async function showActionForm(
       .button("btn 4")
       .button("btn 5");
 
-    const result = await form.show(playerList[0]);
-
-    if (result.canceled) {
-      log("Player exited out of the dialog. Note that if the chat window is up, dialogs are automatically canceled.");
-      return -1;
-    } else {
-      log("Your result was: " + result.selection);
-    }
+    form.show(playerList[0]).then((result: ActionFormResponse) => {
+      if (result.canceled) {
+        log("Player exited out of the dialog. Note that if the chat window is up, dialogs are automatically canceled.");
+        return -1;
+      } else {
+        log("Your result was: " + result.selection);
+      }
+    });
   }
 }
 
