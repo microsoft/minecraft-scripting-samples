@@ -13,7 +13,7 @@
 
 # Minecraft Starter TSJS Project
 
-This sample demonstrates a simple build process and TypeScript compilation for Minecraft. This readme shows how you can use Script APIs to build out simple gameplay styles. You can use this project as a starter for your own scripting projects. You can also see a more full [version of this tutorial that uses this TypeScript starter](https://learn.microsoft.com/minecraft/creator/documents/scriptinggettingstarted).
+This sample demonstrates a simple build process for Minecraft that supports both TypeScript and JavaScript. It's ideal for those migrating from JavaScript to TypeScript, or anyone who wants a flexible starter boilerplate. You can use Script APIs to build out simple or advanced gameplay styles, and this project serves as a great foundation for your own scripting projects—whether you prefer JS, TS, or a mix of both. For a more complete tutorial using this starter, see the [official documentation](https://learn.microsoft.com/minecraft/creator/documents/scriptinggettingstarted).
 
 ## Prerequisites
 
