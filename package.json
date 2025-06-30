@@ -17,5 +17,13 @@
         "@minecraft/server-gametest@1.0.0-beta.1.21.60-preview.25": {
             "@minecraft/server": "1.18.0-beta.1.21.60-preview.25"
         }
+    },
+    "dependencies": {
+        "@minecraft/math": "^2.2.7",
+        "@minecraft/server": "^2.0.0",
+        "@minecraft/vanilla-data": "^1.21.90"
+    },
+    "devDependencies": {
+        "@minecraft/core-build-tasks": "^5.2.0"
     }
 }

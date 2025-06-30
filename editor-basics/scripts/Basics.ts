@@ -5,8 +5,6 @@ import {
   CoreMenuType,
   IMenu,
   IPlayerUISession,
-  PropertyBag,
-  bindDataSource,
   registerEditorExtension,
 } from "@minecraft/server-editor";
 
@@ -71,13 +69,6 @@ export function registerBasicsExtension() {
           id: "sample.minimal.pane.title",
         },
       });
-
-      // Bind the property bag containing your dynamic data to the property pane - this is the common area
-      // which you can query and set values which cause the UI to update (and will be updated BY the UI)
-      const paneData: PropertyBag = {
-        mySliderValue: 0,
-      };
-      bindDataSource(extensionPane, paneData);
 
       // Creating UI elements like buttons and sliders require a couple of simple steps.
       // - Create an action (a function declaration of what you want to happen when the element is actioned)

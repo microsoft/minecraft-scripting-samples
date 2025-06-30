@@ -11,12 +11,12 @@ import {
   BlockPermutation,
   ScriptEventCommandMessageAfterEvent,
   ItemStack,
-  ItemUseOnAfterEvent,
   Block,
   TicksPerSecond,
   BlockComponentTypes,
   BlockInventoryComponent,
   EntityInventoryComponent,
+  ItemStopUseOnAfterEvent,
 } from "@minecraft/server";
 import ChallengePlayer, { ChallengePlayerRole, IPlayerData } from "./ChallengePlayer.js";
 import Log from "./Log.js";
@@ -446,7 +446,7 @@ export default class Challenge {
     world.afterEvents.playerSpawn.subscribe(this.playerSpawned);
     world.afterEvents.playerLeave.subscribe(this.playerLeft);
     world.afterEvents.leverAction.subscribe(this.leverAction);
-    world.afterEvents.itemUseOn.subscribe(this.itemUseOn);
+    world.afterEvents.itemStopUseOn.subscribe(this.itemUseOn);
     system.afterEvents.scriptEventReceive.subscribe(this.handleScriptEvent);
 
     this.loadPlayerState();
@@ -863,7 +863,7 @@ export default class Challenge {
 
       console.warn("Running: " + tickingAreaCommand);
       try {
-        ow.runCommandAsync(tickingAreaCommand);
+        ow.runCommand(tickingAreaCommand);
       } catch (e) {
         console.warn("Failed to run: " + tickingAreaCommand);
       }
@@ -1411,7 +1411,7 @@ export default class Challenge {
         if (this.activeTeamScore > team.score && team.score > 0) {
           for (let challPlayer of team.players) {
             try {
-              if (challPlayer.player && challPlayer.player.isValid()) {
+              if (challPlayer.player && challPlayer.player.isValid) {
                 challPlayer.player.playSound("random.orb");
               }
             } catch (e) {}
@@ -1519,12 +1519,12 @@ export default class Challenge {
     }
   }
 
-  itemUseOn(event: ItemUseOnAfterEvent) {
+  itemUseOn(event: ItemStopUseOnAfterEvent) {
     if (!event.source) {
       return;
     }
 
-    if (event.itemStack.typeId === "bc:heart" && this.#phase === ChallengePhase.vote) {
+    if (event.itemStack && event.itemStack.typeId === "bc:heart" && this.#phase === ChallengePhase.vote) {
       this.doAction(event.source, event.block);
     }
   }

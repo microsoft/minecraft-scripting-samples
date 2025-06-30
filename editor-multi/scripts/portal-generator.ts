@@ -75,7 +75,7 @@ class PortalGenerator implements IDisposable {
     this._endPortal = new EndPortal();
   }
 
-  public toolPane(uiSession: PortalGeneratorSession): IPropertyPane | undefined {
+  public toolPane(uiSession: PortalGeneratorSession): IRootPropertyPane | undefined {
     if (!this._pane) {
       uiSession.log.error("Tool pane not initialized");
       return undefined;
@@ -267,14 +267,14 @@ class NetherPortal implements IPortalGenerator {
     subPane.addNumber(this._sizeX, {
       title: "sample.portalgenerator.pane.nether.pane.width",
       min: 4,
-      max: 33,
+      max: 23,
       isInteger: true,
     });
 
     subPane.addNumber(this._sizeY, {
       title: "sample.portalgenerator.pane.nether.pane.height",
       min: 5,
-      max: 33,
+      max: 23,
       isInteger: true,
     });
 

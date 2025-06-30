@@ -92,12 +92,11 @@ export function registerCameraGrapple() {
           if (uiSession.scratchStorage?.latestRunId) {
             return;
           }
-          const selection = uiSession.extensionContext.selectionManager.selection;
-          if (selection.isEmpty) {
+          if (uiSession.extensionContext.selectionManager.volume.isEmpty) {
             return;
           }
 
-          const bounds = selection.getBoundingBox();
+          const bounds = uiSession.extensionContext.selectionManager.volume.getBoundingBox();
           bounds.max = Vector3Utils.add(bounds.max, { x: 1, y: 1, z: 1 });
           const halfSize = Vector3Utils.scale(Vector3Utils.subtract(bounds.max, bounds.min), 0.5);
           const viewTarget = Vector3Utils.add(bounds.min, halfSize);
@@ -110,7 +109,7 @@ export function registerCameraGrapple() {
       uiSession.inputManager.registerKeyBinding(
         EditorInputContext.GlobalToolMode,
         grappleAction,
-        { key: KeyboardKey.KEY_Y },
+        { key: KeyboardKey.KEY_G },
         {
           uniqueId: "editorSamples:grapple:flyToCursor",
           label: "sample.cameragrapple.keyBinding.flyToCursor",
@@ -119,7 +118,7 @@ export function registerCameraGrapple() {
       uiSession.inputManager.registerKeyBinding(
         EditorInputContext.GlobalToolMode,
         frameAction,
-        { key: KeyboardKey.KEY_H },
+        { key: KeyboardKey.KEY_F },
         {
           uniqueId: "editorSamples:grapple:flyToSelection",
           label: "sample.cameragrapple.keyBinding.flyToSelection",

@@ -1,8 +1,11 @@
 import SampleManager from "./SampleManager";
 import * as serverSampleLibrary from "./ServerSampleLibrary";
 import * as serverUISampleLibrary from "./Server-UISampleLibrary";
+import { world } from "@minecraft/server";
 
 const sm = new SampleManager();
 
-serverSampleLibrary.register(sm);
-serverUISampleLibrary.register(sm);
+world.afterEvents.worldLoad.subscribe(() => {
+  serverSampleLibrary.register(sm);
+  serverUISampleLibrary.register(sm);
+});

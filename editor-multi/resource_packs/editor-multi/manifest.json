@@ -3,22 +3,22 @@
   "header": {
     "name": "Minecraft Editor Multiple Plugin",
     "description": "A simple list of editor code snippets.",
-    "uuid": "b3d35b27-1827-4bff-bdf5-694942cfdd25",
+    "uuid": "83e67115-f576-4335-b014-dc3c1a102620",
     "version": [1, 0, 0],
     "min_engine_version": [1, 20, 0]
   },
   "capabilities": ["editorExtension"],
   "modules": [
     {
-      "description": "Editor Basics",
+      "description": "Editor Multiple",
       "type": "resources",
-      "uuid": "9f6d66d2-5373-4798-a729-3bc154d4a81b",
+      "uuid": "9ef717dc-71e7-4319-b91e-20fb17bf78b3",
       "version": [1, 0, 0]
     }
   ],
   "dependencies": [
     {
-      "uuid": "2fb88d39-e589-4e49-a69f-f575f8705e5c",
+      "uuid": "abfc8701-02a7-4cbb-87d6-004f5d56c1d1",
       "version": [1, 0, 0]
     }
   ]
