@@ -1,13 +1,17 @@
 {
-	"format_version": "1.21.90",
-	"minecraft:item": {
-		"description": {
-			"identifier": "starter:spray_can_empty"
-		},
-		"components": {
-			"minecraft:icon": "spray_can_empty",
-			"minecraft:liquid_clipped": true,
-			"starter:gather_water": {}
-		}
-	}
+  "format_version": "1.21.90",
+  "minecraft:item": {
+    "description": {
+      "menu_category": {
+        "group": "minecraft:itemGroup.name.crop",
+        "category": "nature"
+      },
+      "identifier": "starter:spray_can_empty"
+    },
+    "components": {
+      "minecraft:icon": "spray_can_empty",
+      "minecraft:liquid_clipped": true,
+      "starter:gather_water": {}
+    }
+  }
 }
