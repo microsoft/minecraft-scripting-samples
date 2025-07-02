@@ -22,23 +22,29 @@
     "enablemcpreviewloopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-424268864-5579737-879501358-346833251-474568803-887069379-4040235476"
   },
   "dependencies": {
-    "@minecraft/math": "^2.2.7",
-    "@minecraft/server": "^2.2.0-beta.1.21.100-preview.22",
-    "@minecraft/server-admin": "^1.0.0-beta.1.21.100-preview.22",
-    "@minecraft/server-gametest": "^1.0.0-beta.1.21.100-preview.22",
-    "@minecraft/server-net": "^1.0.0-beta.1.21.100-preview.22",
-    "@minecraft/server-ui": "^2.1.0-beta.1.21.100-preview.22",
-    "@minecraft/vanilla-data": "^1.21.90"
+    "@minecraft/math": "2.2.7",
+    "@minecraft/server": "2.2.0-beta.1.21.100-preview.22",
+    "@minecraft/server-admin": "1.0.0-beta.1.21.100-preview.22",
+    "@minecraft/server-gametest": "1.0.0-beta.1.21.100-preview.22",
+    "@minecraft/server-net": "1.0.0-beta.1.21.100-preview.22",
+    "@minecraft/server-ui": "2.1.0-beta.1.21.100-preview.22",
+    "@minecraft/vanilla-data": ">=1.21.90"
   },
   "overrides": {
     "@minecraft/math": {
-      "@minecraft/server": "2.2.0-beta.1.21.100-preview.22"
+      "@minecraft/server": "$@minecraft/server"
     },
-    "@minecraft/server-gametest@1.0.0-beta.1.21.100-preview.22": {
-      "@minecraft/server": "2.2.0-beta.1.21.100-preview.22"
+    "@minecraft/server-admin": {
+      "@minecraft/server": "$@minecraft/server"
     },
-    "@minecraft/server-net@1.0.0-beta.1.21.100-preview.22": {
-      "@minecraft/server": "2.2.0-beta.1.21.100-preview.22"
+    "@minecraft/server-gametest": {
+      "@minecraft/server": "$@minecraft/server"
+    },
+    "@minecraft/server-net": {
+      "@minecraft/server": "$@minecraft/server"
+    },
+    "@minecraft/server-ui": {
+      "@minecraft/server": "$@minecraft/server"
     }
   }
 }
