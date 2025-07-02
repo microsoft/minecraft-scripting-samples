@@ -1,5 +1,5 @@
 {
-	"format_version": "1.21.10",
+	"format_version": "1.21.90",
 	"minecraft:item": {
 		"description": {
 			"identifier": "starter:spray_can_empty"
@@ -7,9 +7,7 @@
 		"components": {
 			"minecraft:icon": "spray_can_empty",
 			"minecraft:liquid_clipped": true,
-			"minecraft:custom_components": [
-				"starter:gather_water"
-			]
+			"starter:gather_water": {}
 		}
 	}
 }

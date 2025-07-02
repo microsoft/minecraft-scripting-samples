@@ -6,7 +6,6 @@ import {
   IMenu,
   IPlayerUISession,
   PropertyBag,
-  bindDataSource,
   registerEditorExtension,
 } from "@minecraft/server-editor";
 
@@ -46,12 +45,7 @@ export function registerExtension() {
           id: "sample.minimal.pane.title",
         },
       });
-
-      const paneData: PropertyBag = {
-        mySliderValue: 0,
-      };
-      bindDataSource(extensionPane, paneData);
-
+      
       const buttonAction = uiSession.actionManager.createAction({
         actionType: ActionTypes.NoArgsAction,
         onExecute: () => {
