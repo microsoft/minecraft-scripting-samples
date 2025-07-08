@@ -89,7 +89,9 @@ export function minibiomes(test: mcgt.Test) {
 
   const minecartRideableComp = minecart.getComponent(mc.EntityComponentTypes.Rideable) as mc.EntityRideableComponent;
 
-  minecartRideableComp?.addRider(pig);
+  if (pig) {
+    minecartRideableComp?.addRider(pig);
+  }
 
   test.succeedWhenEntityPresent(MinecraftEntityTypes.Pig, { x: 8, y: 3, z: 1 }, true);
 }

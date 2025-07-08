@@ -1,10 +1,10 @@
-import { world, ItemComponentConsumeEvent } from "@minecraft/server";
+import { world, ItemComponentConsumeEvent, system } from "@minecraft/server";
 import { GrownStrawberryCropComponent } from "./GrownStrawberryCropComponent";
 import { CropGrowthComponent } from "./CropGrowthComponent";
 import { CauseHungerOnConsumeComponent } from "./CauseHungerOnConsumeComponent";
 import { sprayWater, gatherWater } from "./SprayerComponents";
 
-world.beforeEvents.worldInitialize.subscribe((initEvent) => {
+system.beforeEvents.startup.subscribe((initEvent) => {
   // block
   initEvent.blockComponentRegistry.registerCustomComponent("starter:strawberry_grown", new GrownStrawberryCropComponent());
   initEvent.blockComponentRegistry.registerCustomComponent("starter:crop_grow", new CropGrowthComponent());

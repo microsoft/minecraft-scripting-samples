@@ -1,9 +1,9 @@
 {
-  "format_version": "1.21.10",
+  "format_version": "1.21.90",
   "minecraft:item": {
     "description": {
       "menu_category": {
-        "group": "itemGroup.name.crop",
+        "group": "minecraft:itemGroup.name.crop",
         "category": "nature"
       },
       "identifier": "starter:strawberry"
@@ -21,9 +21,7 @@
         "saturation_modifier": 0.5
       },
       "minecraft:use_animation": "eat",
-      "minecraft:custom_components": [
-        "starter:add_night_vision_on_consume"
-      ]
+      "starter:add_night_vision_on_consume": {}
     }
   }
 }

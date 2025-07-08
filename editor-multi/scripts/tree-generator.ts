@@ -220,56 +220,64 @@ export class SimpleTree implements ITree {
   }
 }
 
-const TreeTypes = [
-  {
-    name: "Oak",
-    type: new SimpleTree(
-      BlockPermutation.resolve(MinecraftBlockTypes.OakLog),
-      BlockPermutation.resolve(MinecraftBlockTypes.OakLeaves)
-    ),
-  },
-  {
-    name: "Spruce",
-    type: new SimpleTree(
-      BlockPermutation.resolve(MinecraftBlockTypes.SpruceLog),
-      BlockPermutation.resolve(MinecraftBlockTypes.SpruceLeaves)
-    ),
-  },
-  {
-    name: "Birch",
-    type: new SimpleTree(
-      BlockPermutation.resolve(MinecraftBlockTypes.BirchLog),
-      BlockPermutation.resolve(MinecraftBlockTypes.BirchLeaves)
-    ),
-  },
-  {
-    name: "Jungle",
-    type: new SimpleTree(
-      BlockPermutation.resolve(MinecraftBlockTypes.JungleLog),
-      BlockPermutation.resolve(MinecraftBlockTypes.JungleLeaves)
-    ),
-  },
+function GetTreeTypes() {
+  return [
+    {
+      name: "Oak",
+      type: new SimpleTree(
+        BlockPermutation.resolve(MinecraftBlockTypes.OakLog),
+        BlockPermutation.resolve(MinecraftBlockTypes.OakLeaves)
+      ),
+    },
+    {
+      name: "Spruce",
+      type: new SimpleTree(
+        BlockPermutation.resolve(MinecraftBlockTypes.SpruceLog),
+        BlockPermutation.resolve(MinecraftBlockTypes.SpruceLeaves)
+      ),
+    },
+    {
+      name: "Birch",
+      type: new SimpleTree(
+        BlockPermutation.resolve(MinecraftBlockTypes.BirchLog),
+        BlockPermutation.resolve(MinecraftBlockTypes.BirchLeaves)
+      ),
+    },
+    {
+      name: "Jungle",
+      type: new SimpleTree(
+        BlockPermutation.resolve(MinecraftBlockTypes.JungleLog),
+        BlockPermutation.resolve(MinecraftBlockTypes.JungleLeaves)
+      ),
+    },
 
-  {
-    name: "Acacia",
-    type: new SimpleTree(
-      BlockPermutation.resolve(MinecraftBlockTypes.AcaciaLog),
-      BlockPermutation.resolve(MinecraftBlockTypes.AcaciaLeaves)
-    ),
-  },
-  {
-    name: "Dark Oak",
-    type: new SimpleTree(
-      BlockPermutation.resolve(MinecraftBlockTypes.DarkOakLog),
-      BlockPermutation.resolve(MinecraftBlockTypes.DarkOakLeaves)
-    ),
-  },
-];
+    {
+      name: "Acacia",
+      type: new SimpleTree(
+        BlockPermutation.resolve(MinecraftBlockTypes.AcaciaLog),
+        BlockPermutation.resolve(MinecraftBlockTypes.AcaciaLeaves)
+      ),
+    },
+    {
+      name: "Dark Oak",
+      type: new SimpleTree(
+        BlockPermutation.resolve(MinecraftBlockTypes.DarkOakLog),
+        BlockPermutation.resolve(MinecraftBlockTypes.DarkOakLeaves)
+      ),
+    },
+  ];
+}
 
 function addToolSettingsPane(uiSession: IPlayerUISession, tool: IModalTool) {
   // Create a pane that will be shown when the tool is selected
   const pane = uiSession.createPropertyPane({
     title: "sample.treegenerator.pane.title",
+    infoTooltip: {
+      description: [
+        "sample.treegenerator.tool.tooltip",
+        { link: "https://aka.ms/BedrockEditorTreeGenerator", text: "resourcePack.editor.help.learnMore" },
+      ],
+    },
   });
 
   // Settings
@@ -278,6 +286,8 @@ function addToolSettingsPane(uiSession: IPlayerUISession, tool: IModalTool) {
     randomHeightVariance: makeObservable(0),
     treeType: makeObservable(0),
   };
+
+  const treeTypes = GetTreeTypes();
 
   const onExecuteTool = (ray?: Ray) => {
     const player = uiSession.extensionContext.player;
@@ -304,7 +314,7 @@ function addToolSettingsPane(uiSession: IPlayerUISession, tool: IModalTool) {
     // Begin transaction
     uiSession.extensionContext.transactionManager.openTransaction("Tree Tool");
 
-    const selectedTreeType = TreeTypes[settings.treeType.value];
+    const selectedTreeType = treeTypes[settings.treeType.value];
     const affectedBlocks = selectedTreeType.type.place(location, settings);
 
     // Track changes
@@ -333,7 +343,7 @@ function addToolSettingsPane(uiSession: IPlayerUISession, tool: IModalTool) {
   pane.addDropdown(settings.treeType, {
     title: "sample.treegenerator.pane.type",
     enable: true,
-    entries: TreeTypes.map((tree, index): IDropdownPropertyItemEntry => {
+    entries: treeTypes.map((tree, index): IDropdownPropertyItemEntry => {
       return {
         label: tree.name,
         value: index,

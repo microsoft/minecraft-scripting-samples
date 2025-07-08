@@ -6,11 +6,12 @@ import {
   EntityInventoryComponent,
   Player,
 } from "@minecraft/server";
+import { BlockStateSuperset } from "@minecraft/vanilla-data";
 
 export class CropGrowthComponent implements BlockCustomComponent {
   static tryGrowBlock(block: Block) {
     const perm = block.permutation;
-    const age = perm.getState("starter:crop_age");
+    const age = perm.getState("starter:crop_age" as keyof BlockStateSuperset);
     if (age === undefined || typeof age !== "number") {
       return;
     }
@@ -19,7 +20,7 @@ export class CropGrowthComponent implements BlockCustomComponent {
       return; // already at max age
     }
 
-    block.setPermutation(perm.withState("starter:crop_age", age + 1));
+    block.setPermutation(perm.withState("starter:crop_age" as keyof BlockStateSuperset, age + 1));
   }
 
   static tryFertilize(block: Block, player: Player): boolean {

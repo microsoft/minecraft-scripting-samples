@@ -22,7 +22,7 @@ export function playMusicAndSound(log: (message: string, status?: number) => voi
     pitch: 0.5,
     volume: 4.0,
   };
-  world.playSound("ambient.weather.thunder", targetLocation, worldSoundOptions);
+  targetLocation.dimension.playSound("ambient.weather.thunder", targetLocation, worldSoundOptions);
 
   const playerSoundOptions: PlayerSoundOptions = {
     pitch: 1.0,

@@ -221,7 +221,7 @@ export default class Team {
     this.players.push(challPlayer);
 
     if (challPlayer.player) {
-      if (challPlayer.player.isValid()) {
+      if (challPlayer.player.isValid) {
         try {
           challPlayer.player.setSpawnPoint({
             x: this.nwbX + SPAWN_TEAM_X,
@@ -304,7 +304,7 @@ export default class Team {
         }
 
         mdf.title(name);
-        mdf.textField("Name", "team name", this.name);
+        mdf.textField("Name", "team name", { defaultValue: this.name });
 
         let result = await mdf.show(player);
 
@@ -327,7 +327,7 @@ export default class Team {
     if (challPlayer) {
       let mdf = new MessageFormData();
 
-      let name = this.name;
+      let name = this.name; 
 
       if (!name) {
         name = "Unknown team";

@@ -1,9 +1,9 @@
 {
-  "format_version": "1.21.10",
+  "format_version": "1.21.90",
   "minecraft:item": {
     "description": {
       "menu_category": {
-        "group": "itemGroup.name.crop",
+        "group": "minecraft:itemGroup.name.crop",
         "category": "nature"
       },
       "identifier": "starter:strawberry_rotten"
@@ -20,9 +20,7 @@
         "nutrition": 1,
         "saturation_modifier": 0.1
       },
-      "minecraft:custom_components": [
-        "starter:cause_hunger_on_eat"
-      ],
+      "starter:cause_hunger_on_eat": {},
       "minecraft:use_animation": "eat"
     }
   }

@@ -90,7 +90,7 @@ export function sprayWater(arg: ItemComponentCompleteUseEvent) {
   const waterVariables = new MolangVariableMap();
   waterVariables.setVector3("direction", VECTOR3_DOWN);
 
-  world.playSound("mob.llama.spit", arg.source.location);
+  dimension.playSound("mob.llama.spit", arg.source.location);
   sprayAnimation(
     dimension,
     getConePoints(arg.source.getHeadLocation(), forward, 9, 9, 2),
@@ -134,7 +134,7 @@ export function gatherWater(arg: ItemComponentUseOnEvent) {
   }
 
   if (isWater) {
-    world.playSound("bucket.fill_water", loc);
+    arg.source.dimension.playSound("bucket.fill_water", loc);
     setPlayerItem("starter:spray_can_full", arg.source as Player);
   }
 }

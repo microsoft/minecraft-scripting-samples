@@ -11,8 +11,11 @@ export function spawnPoisonedVillager(
   log: (message: string, status?: number) => void,
   targetLocation: DimensionLocation
 ) {
-  const villagerType = "minecraft:villager_v2<minecraft:ageable_grow_up>";
-  const villager = targetLocation.dimension.spawnEntity(villagerType, targetLocation);
+  const villagerType = "minecraft:villager_v2";
+  const villager = targetLocation.dimension.spawnEntity(villagerType, targetLocation, {
+        spawnEvent: "minecraft:ageable_grow_up"
+      });
+      
   const duration = 20;
 
   villager.addEffect(MinecraftEffectTypes.Poison, duration, { amplifier: 1 });

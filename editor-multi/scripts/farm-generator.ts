@@ -133,6 +133,12 @@ const buildFarm = (
 function addFarmGeneratorSettingsPane(uiSession: IPlayerUISession, tool: IModalTool) {
   const windowPane = uiSession.createPropertyPane({
     title: "sample.farmgenerator.pane.title",
+    infoTooltip: {
+      description: [
+        "sample.farmgenerator.tool.tooltip",
+        { link: "https://aka.ms/BedrockEditorFarmGenerator", text: "resourcePack.editor.help.learnMore" },
+      ],
+    },
   });
   const cropPane = windowPane.createSubPane({
     title: "sample.farmgenerator.pane.crops.title",

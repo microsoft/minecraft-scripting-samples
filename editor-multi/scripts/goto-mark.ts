@@ -3,7 +3,7 @@
 import {
   ActionTypes,
   IButtonPropertyItem,
-  IDropdownItem,
+  IDropdownPropertyItemEntry,
   IDropdownPropertyItem,
   IModalTool,
   IObservable,
@@ -11,7 +11,6 @@ import {
   IPropertyPane,
   IRootPropertyPane,
   UserDefinedTransactionHandle,
-  bindDataSource,
   makeObservable,
   registerEditorExtension,
   registerUserDefinedTransactionHandler,
@@ -39,11 +38,6 @@ type ParentPaneDataSourceType = {
   playerLocation: Vector3;
 };
 
-// UI Pane data for the sub pane with the stored locations
-type LocationPaneDataSourceType = {
-  newName: IObservable<string>;
-};
-
 // Extension storage data which is pertinent to the the player's context of this extension
 type ExtensionStorage = {
   tool?: IModalTool; // The tool handle for the extension
@@ -55,7 +49,7 @@ type ExtensionStorage = {
   parentPane?: IPropertyPane; // The parent pane
   dropdownMenu?: IDropdownPropertyItem; // The dropdown
 
-  locationPaneDataSource?: LocationPaneDataSourceType; // The data source for the location pane
+  newLocationName: IObservable<string>;
 
   storedLocations: LocationData[]; // The list of stored locations
 
@@ -80,9 +74,9 @@ function vector3Truncate(vec: Vector3): Vector3 {
   return blockLocation;
 }
 
-function mapDropdownItems(storage: ExtensionStorage): IDropdownItem[] {
-  return storage.storedLocations.map((v, index): IDropdownItem => {
-    const item: IDropdownItem = {
+function mapDropdownItems(storage: ExtensionStorage): IDropdownPropertyItemEntry[] {
+  return storage.storedLocations.map((v, index): IDropdownPropertyItemEntry => {
+    const item: IDropdownPropertyItemEntry = {
       label: `${index + 1}: ${v.name} (${vector3ToString(v.location)})`,
       value: index,
     };
@@ -110,8 +104,12 @@ function teleportTo(uiSession: IPlayerUISession<ExtensionStorage>, destination: 
   try {
     uiSession.extensionContext.player.teleport(destination);
   } catch (e) {
-    uiSession.log.error(`Teleport failed: ${e}`);
+    uiSession.log.error(`Teleport failed: ${stringFromException(e)}`);
   }
+}
+
+function stringFromException(e: any) {
+  return e.toString();
 }
 
 // Add the extension to the tool rail and give it an icon
@@ -129,14 +127,10 @@ function buildParentPane(uiSession: IPlayerUISession<ExtensionStorage>, storage:
     title: "sample.gotomark.pane.title",
   });
 
-  const currentLocation = vector3Truncate(uiSession.extensionContext.player.location);
-  const initialPaneData: ParentPaneDataSourceType = {
-    playerLocation: currentLocation,
-  };
-  storage.parentPaneDataSource = bindDataSource(parentPane, initialPaneData);
-  storage.previousLocation = currentLocation;
+  const playerLocation = makeObservable<Vector3>(vector3Truncate(uiSession.extensionContext.player.location));
+  storage.previousLocation = playerLocation.value;
 
-  parentPane.addVector3_deprecated(storage.parentPaneDataSource, "playerLocation", {
+  parentPane.addVector3(playerLocation, {
     title: "sample.gotomark.pane.location",
   });
 
@@ -248,11 +242,6 @@ function buildLocationPane(
 
   const currentSelection = makeObservable(initialSelection);
 
-  const initialPaneData: LocationPaneDataSourceType = {
-    newName: makeObservable(""),
-  };
-  storage.locationPaneDataSource = bindDataSource(locationPane, initialPaneData);
-
   const dropdownItems = mapDropdownItems(storage);
 
   storage.dropdownMenu = locationPane.addDropdown(currentSelection, {
@@ -275,11 +264,6 @@ function buildLocationPane(
     uiSession.actionManager.createAction({
       actionType: ActionTypes.NoArgsAction,
       onExecute: () => {
-        if (!storage.locationPaneDataSource) {
-          uiSession.log.error("An error occurred: No UI pane datasource could be found");
-          return;
-        }
-
         if (currentSelection.value < 0 || currentSelection.value >= storage.storedLocations.length) {
           uiSession.log.error("No stored locations to delete");
           return;
@@ -302,11 +286,6 @@ function buildLocationPane(
     uiSession.actionManager.createAction({
       actionType: ActionTypes.NoArgsAction,
       onExecute: () => {
-        if (!storage.locationPaneDataSource) {
-          uiSession.log.error("An error occurred: No UI pane datasource could be found");
-          return;
-        }
-
         const selectionValue = currentSelection.value;
         if (selectionValue < 0 || selectionValue >= storage.storedLocations.length) {
           uiSession.log.error("No stored locations to delete");
@@ -337,7 +316,7 @@ function buildLocationPane(
     }
   );
 
-  locationPane.addString(storage.locationPaneDataSource.newName, {
+  locationPane.addString(storage.newLocationName, {
     title: "sample.gotomark.pane.locationpane.input.name",
   });
 
@@ -345,7 +324,7 @@ function buildLocationPane(
     uiSession.actionManager.createAction({
       actionType: ActionTypes.NoArgsAction,
       onExecute: () => {
-        if (!storage.parentPaneDataSource || !storage.locationPaneDataSource) {
+        if (!storage.parentPaneDataSource) {
           uiSession.log.error("An error occurred: No UI pane datasource could be found");
           return;
         }
@@ -354,7 +333,7 @@ function buildLocationPane(
           return;
         }
         const currentLocation = vector3Truncate(storage.parentPaneDataSource.playerLocation);
-        const newName = storage.locationPaneDataSource.newName;
+        const newName = storage.newLocationName;
         if (!newName.value) {
           newName.set(`Location ${storage.storedLocations.length + 1}`);
         } else {
@@ -405,6 +384,7 @@ export function registerGotoMarkExtension() {
       const storage: ExtensionStorage = {
         previousLocation: uiSession.extensionContext.player.location,
         storedLocations: [],
+        newLocationName: makeObservable(""),
         transactionHandler: registerUserDefinedTransactionHandler<GotoTeleportTransactionPayload>(
           uiSession.extensionContext.transactionManager,
           (payload: GotoTeleportTransactionPayload) => {
@@ -413,7 +393,7 @@ export function registerGotoMarkExtension() {
             try {
               uiSession.extensionContext.player.teleport(payload.current);
             } catch (e) {
-              uiSession.log.error(`Teleport failed: ${e}`);
+              uiSession.log.error(`Teleport failed: ${stringFromException(e)}`);
             }
           },
           (payload: GotoTeleportTransactionPayload) => {
@@ -422,7 +402,7 @@ export function registerGotoMarkExtension() {
             try {
               uiSession.extensionContext.player.teleport(payload.destination);
             } catch (e) {
-              uiSession.log.error(`Teleport failed: ${e}`);
+              uiSession.log.error(`Teleport failed: ${stringFromException(e)}`);
             }
           }
         ),

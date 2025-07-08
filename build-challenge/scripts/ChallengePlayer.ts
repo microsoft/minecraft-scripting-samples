@@ -171,7 +171,7 @@ export default class ChallengePlayer {
     }
 
     try {
-      if (this.player.isValid()) {
+      if (this.player.isValid) {
         this.player.runCommand("gamemode " + mode + " @s");
       }
     } catch (e) {}

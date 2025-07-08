@@ -5,7 +5,7 @@
   "description": "Minecraft Basic Editor Add-on",
   "private": true,
   "devDependencies": {
-    "@minecraft/core-build-tasks": "^4.0.0",
+    "@minecraft/core-build-tasks": "^5.2.0",
     "eslint-plugin-minecraft-linting": "^2.0.1",
     "source-map": "^0.7.4",
     "ts-node": "^10.9.1",
@@ -23,10 +23,9 @@
   },
   "dependencies": {
     "@minecraft/math": "^2.0.1",
-    "@minecraft/server": "1.18.0-beta.1.21.60-preview.25",
-    "@minecraft/server-editor": "0.1.0-beta.1.21.60-preview.25",
-    "@minecraft/server-ui": "1.4.0-beta.1.21.60-preview.25",
-    "@minecraft/vanilla-data": "^1.21.20"
+    "@minecraft/server": "^2.2.0-beta.1.21.100-preview.22",
+    "@minecraft/server-editor": "^0.1.0-beta.1.21.100-preview.22",
+    "@minecraft/vanilla-data": "^1.21.90"
   },
   "overrides": {
     "@minecraft/math": {

@@ -1,3 +1,4 @@
+
 import { DimensionLocation, EntityQueryOptions } from "@minecraft/server";
 
 /**
@@ -21,7 +22,7 @@ export function bounceSkeletons(log: (message: string, status?: number) => void,
   };
 
   for (const entity of targetLocation.dimension.getEntities(eqo)) {
-    entity.applyKnockback(0, 0, 0, 1);
+    entity.applyKnockback({ x: 0, z: 1}, 1);
   }
 }
 
