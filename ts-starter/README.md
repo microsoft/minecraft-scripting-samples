@@ -64,13 +64,13 @@ In Visual Studio Code, open the file `.env`. This contains the environment varia
 
 ```
 PROJECT_NAME="starter"
-MINECRAFT_PRODUCT="BedrockUWP"
+MINECRAFT_PRODUCT="BedrockGDK"
 CUSTOM_DEPLOYMENT_PATH=""
 ```
 
 - **PROJECT_NAME** is used as the folder name under all the assets are going to be deployed inside the game directories (e.g., development_behavior_packs\\**PROJECT_NAME**, development_resource_packs\\**PROJECT_NAME**).
 
-- **MINECRAFT_PRODUCT**. You can choose to use either Minecraft or Minecraft Preview to debug and work with your scripts. These are the possible values: **BedrockUWP, PreviewUWP, Custom**.
+- **MINECRAFT_PRODUCT**. You can choose to use either Minecraft or Minecraft Preview to debug and work with your scripts. These are the possible values: **BedrockGDK, PreviewGDK, Custom**.
   Use **Custom** in case of deploy on any other path.
 
 - **CUSTOM_DEPLOYMENT_PATH**. In case of using **Custom** for **MINECRAFT_PRODUCT**, this is the path used to generate the assets.

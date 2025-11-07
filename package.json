@@ -31,6 +31,6 @@
         }
     },
     "devDependencies": {
-        "@minecraft/core-build-tasks": "^5.2.0"
+        "@minecraft/core-build-tasks": "^5.5.0"
     }
 }
