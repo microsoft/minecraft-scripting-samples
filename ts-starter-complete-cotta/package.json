@@ -6,7 +6,7 @@
   "private": true,
   "devDependencies": {
     "@minecraft/core-build-tasks": "^4.1.0",
-    "eslint-plugin-minecraft-linting": "^2.0.1",
+    "eslint-plugin-minecraft-linting": "^2.0.10",
     "source-map": "^0.7.4",
     "ts-node": "^10.9.1",
     "typescript": "^5.6.2"
@@ -23,11 +23,9 @@
     "enablemcpreviewloopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-424268864-5579737-879501358-346833251-474568803-887069379-4040235476"
   },
   "dependencies": {
-    "@minecraft/math": "^2.2.7",
+    "@minecraft/math": "^2.2.11",
     "@minecraft/server": "^2.0.0",
     "@minecraft/server-ui": "^2.0.0",
-    "@minecraft/vanilla-data": "^1.21.90",
-    "local-deploy": "^0.0.1",
-    "run": "^1.5.0"
+    "@minecraft/vanilla-data": "^1.21.90"
   }
 }
