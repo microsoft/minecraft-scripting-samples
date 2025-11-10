@@ -11,6 +11,9 @@
             "pattern": "./script-box/*/"
         },
         {
+            "pattern": "./script-box-tsjs/*/"
+        },
+        {
             "pattern": "./ts-starter/*/"
         },
         {
