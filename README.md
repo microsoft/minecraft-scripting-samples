@@ -2,6 +2,11 @@
 
 This project contains samples of [@minecraft/server](https://learn.microsoft.com/minecraft/creator/scriptapi/minecraft/server/minecraft-server) scripting APIs that are part of the Beta APIs experimental capability of Minecraft. For more information, see the [Minecraft: Bedrock Edition Creator Documentation](https://learn.microsoft.com/minecraft/creator/)
 
+## New Samples and Workspaces (*this should be why you are here*)
+
+This workspace allows you to work with both TypeScript and JavaScript code, and build it into a Minecraft behavior pack. This workspace also works when you add a resource pack.
+So if you are not familiar with TypeScript, or having a project built with JavaScript and don't want to port them to TypeScript, this is the workspace set-up you are looking for!
+
 ## Current Samples
 
 - [ts-starter](ts-starter/README.md) - A starter project that lets you use TypeScript, alongside a tutorial on how to use more `@minecraft/server` APIs.
