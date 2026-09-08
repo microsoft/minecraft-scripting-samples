@@ -21,11 +21,11 @@ jobs:
       statuses: none
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Bump version
         id: version
-        uses: vemel/nextversion@0.1.1
+        uses: vemel/nextversion@3d6568bf8a2b4b7c4f98216c28e390629285d3f3 # 0.1.1
         with:
           path: ./ts-starter/package.json
           type: semver
@@ -50,11 +50,11 @@ jobs:
         id: get-package-version
         with:
           path: build-challenge/
-        uses: stevenbenitez/get-package-version-action@v1
+        uses: stevenbenitez/get-package-version-action@8220857033e9653a710c79d5c07be24b13795bdd # v1
             
       - name: Create draft Minecraft Scripting Samples release
         id: create_samples_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@0cb9c9b65d5d1901c1f53e5e66eaf4afd303e70e # v1.1.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -65,7 +65,7 @@ jobs:
           
       - name: Upload build-challenge.mcaddon to node_module release
         id: upload-build-challenge
-        uses: actions/upload-release-asset@v1.0.1
+        uses: actions/upload-release-asset@64e5e85fc528f162d7ba7ce2d15a3bb67efb3d80 # v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -76,7 +76,7 @@ jobs:
 
       - name: Upload custom-components.mcaddon to node_module release
         id: upload-custom-components
-        uses: actions/upload-release-asset@v1.0.1
+        uses: actions/upload-release-asset@64e5e85fc528f162d7ba7ce2d15a3bb67efb3d80 # v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -87,7 +87,7 @@ jobs:
 
       - name: Upload editor-basics.mcaddon to node_module release
         id: upload-editor-basics
-        uses: actions/upload-release-asset@v1.0.1
+        uses: actions/upload-release-asset@64e5e85fc528f162d7ba7ce2d15a3bb67efb3d80 # v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -98,7 +98,7 @@ jobs:
 
       - name: Upload editor-script-box.mcaddon to node_module release
         id: upload-editor-script-box
-        uses: actions/upload-release-asset@v1.0.1
+        uses: actions/upload-release-asset@64e5e85fc528f162d7ba7ce2d15a3bb67efb3d80 # v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -109,7 +109,7 @@ jobs:
 
       - name: Upload howto-gallery.mcaddon to node_module release
         id: upload-howto-gallery
-        uses: actions/upload-release-asset@v1.0.1
+        uses: actions/upload-release-asset@64e5e85fc528f162d7ba7ce2d15a3bb67efb3d80 # v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -120,7 +120,7 @@ jobs:
 
       - name: Upload script-box.mcaddon to node_module release
         id: upload-script-box
-        uses: actions/upload-release-asset@v1.0.1
+        uses: actions/upload-release-asset@64e5e85fc528f162d7ba7ce2d15a3bb67efb3d80 # v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -131,7 +131,7 @@ jobs:
 
       - name: Upload ts-starter.mcaddon to node_module release
         id: upload-ts-starter
-        uses: actions/upload-release-asset@v1.0.1
+        uses: actions/upload-release-asset@64e5e85fc528f162d7ba7ce2d15a3bb67efb3d80 # v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -142,7 +142,7 @@ jobs:
 
       - name: Upload ts-starter-complete-cotta.mcaddon to node_module release
         id: upload-ts-starter-complete-cotta
-        uses: actions/upload-release-asset@v1.0.1
+        uses: actions/upload-release-asset@64e5e85fc528f162d7ba7ce2d15a3bb67efb3d80 # v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
