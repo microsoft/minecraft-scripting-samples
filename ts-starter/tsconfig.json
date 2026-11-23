@@ -1,8 +1,8 @@
 { 
     "compilerOptions":{ 
        "target":"es6",
-       "moduleResolution":"Node",
-       "module": "ES2020",
+       "moduleResolution":"nodenext",
+       "module": "nodenext",
        "declaration":false,
        "noLib":false,
        "emitDecoratorMetadata":true,
@@ -18,7 +18,6 @@
        "noImplicitUseStrict":false,
        "outDir":"lib",
        "rootDir": ".",
-       "baseUrl":"behavior_packs/",
        "listFiles":false,
        "noEmitHelpers":true,
        "skipLibCheck": true

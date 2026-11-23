@@ -32,5 +32,8 @@
     },
     "devDependencies": {
         "@minecraft/core-build-tasks": "^5.5.0"
+    },
+    "allowScripts": {
+        "esbuild@0.25.5": true
     }
 }
