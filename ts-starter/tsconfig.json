@@ -1,8 +1,8 @@
 { 
     "compilerOptions":{ 
        "target":"es6",
-       "moduleResolution":"nodenext",
-       "module": "nodenext",
+       "moduleResolution":"bundler",
+       "module": "ES2020",
        "declaration":false,
        "noLib":false,
        "emitDecoratorMetadata":true,
@@ -15,7 +15,6 @@
        "allowUnusedLabels":true,
        "noImplicitAny":true,
        "noImplicitReturns":false,
-       "noImplicitUseStrict":false,
        "outDir":"lib",
        "rootDir": ".",
        "listFiles":false,
