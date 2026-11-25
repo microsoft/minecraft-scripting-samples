@@ -312,8 +312,6 @@ class NetherPortal implements IPortalGenerator {
       return;
     }
 
-    uiSession.extensionContext.transactionManager.openTransaction("Transaction group portal generator");
-
     let from: Vector3 = location;
     let to: Vector3 = { x: 0, y: 0, z: 0 };
 
@@ -331,13 +329,15 @@ class NetherPortal implements IPortalGenerator {
       };
     } else {
       uiSession.log.error("Failed to get valid orientation");
-      uiSession.extensionContext.transactionManager.discardOpenTransaction();
       return;
     }
 
     const yEnd = this._sizeY.value - 1;
     const xEnd = this._sizeX.value - 1;
-    uiSession.extensionContext.transactionManager.trackBlockChangeArea(from, to);
+    const transaction = uiSession.extensionContext.transactionManager.createPendingTransaction(
+      "Transaction group portal generator"
+    );
+    transaction.trackBlockChangeArea(from, to);
     for (let y = 0; y < this._sizeY.value; ++y) {
       for (let x = 0; x < this._sizeX.value; ++x) {
         let block = MinecraftBlockTypes.Air;
@@ -397,7 +397,8 @@ class NetherPortal implements IPortalGenerator {
       );
     }
 
-    uiSession.extensionContext.transactionManager.commitOpenTransaction();
+    transaction.commitTrackedChanges();
+    transaction.submit();
   }
 }
 
@@ -472,8 +473,6 @@ class EndPortal implements IPortalGenerator {
       return;
     }
 
-    uiSession.extensionContext.transactionManager.openTransaction("Transaction group portal generator");
-
     const from: Vector3 = { x: location.x, y: location.y, z: location.z };
     const to: Vector3 = { x: location.x + 4, y: location.y, z: location.z + 4 };
 
@@ -490,7 +489,10 @@ class EndPortal implements IPortalGenerator {
     }
 
     let i = 0;
-    uiSession.extensionContext.transactionManager.trackBlockChangeArea(from, to);
+    const transaction = uiSession.extensionContext.transactionManager.createPendingTransaction(
+      "Transaction group portal generator"
+    );
+    transaction.trackBlockChangeArea(from, to);
 
     for (let z = 0; z < 5; ++z) {
       for (let x = 0; x < 5; ++x) {
@@ -534,7 +536,8 @@ class EndPortal implements IPortalGenerator {
       }
     }
 
-    uiSession.extensionContext.transactionManager.commitOpenTransaction();
+    transaction.commitTrackedChanges();
+    transaction.submit();
   }
 }
 

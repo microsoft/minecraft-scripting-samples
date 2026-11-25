@@ -312,13 +312,13 @@ function addToolSettingsPane(uiSession: IPlayerUISession, tool: IModalTool) {
     }
 
     // Begin transaction
-    uiSession.extensionContext.transactionManager.openTransaction("Tree Tool");
+    const transaction = uiSession.extensionContext.transactionManager.createPendingTransaction("Tree Tool");
 
     const selectedTreeType = treeTypes[settings.treeType.value];
     const affectedBlocks = selectedTreeType.type.place(location, settings);
 
     // Track changes
-    uiSession.extensionContext.transactionManager.trackBlockChangeList(affectedBlocks.map((x) => x.location));
+    transaction.trackBlockChangeList(affectedBlocks.map((x) => x.location));
 
     // Apply changes
     let invalidBlockCount = 0;
@@ -336,7 +336,8 @@ function addToolSettingsPane(uiSession: IPlayerUISession, tool: IModalTool) {
     }
 
     // End transaction
-    uiSession.extensionContext.transactionManager.commitOpenTransaction();
+    transaction.commitTrackedChanges();
+    transaction.submit();
   };
 
   // Add a dropdown for available tree types

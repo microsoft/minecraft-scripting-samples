@@ -1,6 +1,7 @@
 { 
     "compilerOptions":{ 
        "target":"es6",
+      "lib":["ES2017"],
        "moduleResolution":"bundler",
        "module": "ES2020",
        "declaration":false,

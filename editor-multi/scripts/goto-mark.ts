@@ -10,21 +10,16 @@ import {
   IPlayerUISession,
   IPropertyPane,
   IRootPropertyPane,
-  UserDefinedTransactionHandle,
+  TransactionHandler,
+  UserDefinedTransactionOperationHandler,
   makeObservable,
   registerEditorExtension,
-  registerUserDefinedTransactionHandler,
 } from "@minecraft/server-editor";
 import { Vector3, system } from "@minecraft/server";
 
 const storedLocationDynamicPropertyName = "goto-mark:storedLocations"; // The key of the stored location dynamic property
 const storedLocationNameMaxLength = 16; // This is the maximum length of the name of a stored location
 const storedLocationsMax = 9; // The maximum number of stored locations
-
-type GotoTeleportTransactionPayload = {
-  current: Vector3;
-  destination: Vector3;
-};
 
 // The stored location data structure that represents each of the stored locations
 // this is also the JSON format that is stored in the dynamic property
@@ -53,7 +48,8 @@ type ExtensionStorage = {
 
   storedLocations: LocationData[]; // The list of stored locations
 
-  transactionHandler: UserDefinedTransactionHandle<GotoTeleportTransactionPayload>; // The transaction handler for the extension
+  transactionHandler: TransactionHandler;
+  teleportOperationHandler: UserDefinedTransactionOperationHandler;
 
   teleportButton?: IButtonPropertyItem;
 };
@@ -85,21 +81,27 @@ function mapDropdownItems(storage: ExtensionStorage): IDropdownPropertyItemEntry
 }
 
 function createTransaction(uiSession: IPlayerUISession<ExtensionStorage>, current: Vector3, destination: Vector3) {
-  const transactionPayload: GotoTeleportTransactionPayload = {
-    current,
-    destination,
-  };
   if (!uiSession.scratchStorage) {
     return;
   }
 
-  uiSession.extensionContext.transactionManager.openTransaction("goto position");
-  uiSession.scratchStorage.transactionHandler.addUserDefinedOperation(transactionPayload, "Goto(Teleport)");
-  uiSession.extensionContext.transactionManager.commitOpenTransaction();
+  const { transactionHandler, teleportOperationHandler } = uiSession.scratchStorage;
+  const transaction = uiSession.extensionContext.transactionManager.createPendingTransaction("goto position");
+  transaction.addUserDefinedOperation(
+    teleportOperationHandler,
+    JSON.stringify(current),
+    JSON.stringify(destination),
+    "Goto(Teleport)"
+  );
+  transaction.submit(transactionHandler);
 }
 
 function teleportTo(uiSession: IPlayerUISession<ExtensionStorage>, destination: Vector3) {
   createTransaction(uiSession, uiSession.extensionContext.player.location, destination);
+  teleportPlayer(uiSession, destination);
+}
+
+function teleportPlayer(uiSession: IPlayerUISession<ExtensionStorage>, destination: Vector3) {
   uiSession.log.info(`Teleporting to location ${vector3ToString(destination)}`);
   try {
     uiSession.extensionContext.player.teleport(destination);
@@ -381,31 +383,15 @@ export function registerGotoMarkExtension() {
         `Initializing extension [${uiSession.extensionContext.extensionInfo.name}] for player [${uiSession.extensionContext.player.name}]`
       );
 
+      const transactionHandler = uiSession.extensionContext.transactionManager.registerTransactionHandler();
       const storage: ExtensionStorage = {
         previousLocation: uiSession.extensionContext.player.location,
         storedLocations: [],
         newLocationName: makeObservable(""),
-        transactionHandler: registerUserDefinedTransactionHandler<GotoTeleportTransactionPayload>(
-          uiSession.extensionContext.transactionManager,
-          (payload: GotoTeleportTransactionPayload) => {
-            // undo handler
-            uiSession.log.info(`Teleporting to location ${vector3ToString(payload.current)}`);
-            try {
-              uiSession.extensionContext.player.teleport(payload.current);
-            } catch (e) {
-              uiSession.log.error(`Teleport failed: ${stringFromException(e)}`);
-            }
-          },
-          (payload: GotoTeleportTransactionPayload) => {
-            // redo handler
-            uiSession.log.info(`Teleporting to location ${vector3ToString(payload.destination)}`);
-            try {
-              uiSession.extensionContext.player.teleport(payload.destination);
-            } catch (e) {
-              uiSession.log.error(`Teleport failed: ${stringFromException(e)}`);
-            }
-          }
-        ),
+        transactionHandler,
+        teleportOperationHandler: transactionHandler.addUserDefinedOperationHandler((payload) => {
+          teleportPlayer(uiSession, JSON.parse(payload) as Vector3);
+        }),
       };
 
       const me = uiSession.extensionContext.player;
