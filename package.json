@@ -9,28 +9,34 @@
     },
     "overrides": {
         "@minecraft/server-admin@1.0.0-beta.1.21.100-preview.22": {
-            "@minecraft/server": "2.2.0-beta.1.21.100-preview.22"
+            "@minecraft/server": "beta"
         },
         "@minecraft/server-gametest@1.0.0-beta.1.21.100-preview.22": {
-            "@minecraft/server": "2.2.0-beta.1.21.100-preview.22"
+            "@minecraft/server": "beta"
         },
         "@minecraft/server-net@1.0.0-beta.1.21.100-preview.22": {
-            "@minecraft/server": "2.2.0-beta.1.21.100-preview.22"
+            "@minecraft/server": "beta"
         },
         "@minecraft/server-ui@2.1.0-beta.1.21.100-preview.22": {
-            "@minecraft/server": "2.2.0-beta.1.21.100-preview.22"
+            "@minecraft/server": "beta"
         },
         "@minecraft/server-editor@0.1.0-beta.1.21.60-preview.25": {
-            "@minecraft/server": "1.18.0-beta.1.21.60-preview.25"
+            "@minecraft/server": "beta"
         },
         "@minecraft/server-ui@1.4.0-beta.1.21.60-preview.25": {
-            "@minecraft/server": "1.18.0-beta.1.21.60-preview.25"
+            "@minecraft/server": "beta"
         },
         "@minecraft/server-gametest@1.0.0-beta.1.21.60-preview.25": {
-            "@minecraft/server": "1.18.0-beta.1.21.60-preview.25"
+            "@minecraft/server": "beta"
         }
     },
     "devDependencies": {
         "@minecraft/core-build-tasks": "^5.5.0"
+    },
+    "allowScripts": {
+        "esbuild@0.28.2": true
+    },
+    "dependencies": {
+        "@minecraft/server": "^2.11.0"
     }
 }

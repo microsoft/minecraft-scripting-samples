@@ -1,7 +1,8 @@
 { 
     "compilerOptions":{ 
        "target":"es6",
-       "moduleResolution":"Node",
+      "lib":["ES2017"],
+       "moduleResolution":"bundler",
        "module": "ES2020",
        "declaration":false,
        "noLib":false,
@@ -15,10 +16,8 @@
        "allowUnusedLabels":true,
        "noImplicitAny":true,
        "noImplicitReturns":false,
-       "noImplicitUseStrict":false,
        "outDir":"lib",
        "rootDir": ".",
-       "baseUrl":"behavior_packs/",
        "listFiles":false,
        "noEmitHelpers":true,
        "skipLibCheck": true

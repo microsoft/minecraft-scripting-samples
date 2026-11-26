@@ -9,7 +9,7 @@
     "eslint-plugin-minecraft-linting": "^2.0.10",
     "source-map": "^0.7.4",
     "ts-node": "^10.9.1",
-    "typescript": "^5.5.4"
+    "typescript": "^5.6.2"
   },
   "scripts": {
     "lint": "just-scripts lint",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@minecraft/math": "^2.0.1",
-    "@minecraft/server": "^2.2.0-beta.1.21.100-preview.22",
+    "@minecraft/server": "beta",
     "@minecraft/server-editor": "^0.1.0-beta.1.21.100-preview.22",
     "@minecraft/vanilla-data": "^1.21.90"
   },
